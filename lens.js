@@ -668,6 +668,21 @@ makeLens.nfocal = function(lenses) {
 makeLens.clone = Symbol("cloneForLens");
 makeLens.isLens = isLensClass;
 makeLens.at_maybe = at_maybe;
+makeLens.eachFound = *function(maybe_val) {
+  if (!maybe_val.found) {
+    if (maybe_val.just) {
+      yield [maybe_val.just];
+    } else {
+      return;
+    }
+  }
+  for (var i of maybe_val.found) {
+    yield [maybe_val.just[i], i];
+  }
+};
+makeLens.maybeDo = function(maybe, then, orElse) {
+  return ('just' in maybe) ? then(maybe.just) : (orElse ? orElse() : undefined);
+};
 
 module.exports = makeLens;
 
