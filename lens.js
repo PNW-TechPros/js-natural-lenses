@@ -446,6 +446,38 @@ class AbstractNFocal extends Binder {
       []
     );
   }
+
+  /**
+   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
+   * @param                                 subject     The input structured data
+   * @param {Iterable<[number, Function]>}  xformArray  Iterable of lens key and transform function pairs to apply
+   * @param {(Function|Object)}             opts        Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
+   * @return A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
+   */
+  xformInClone(subject, xformArray, opts) {
+    if (!_.isFunction(opts)) {
+      opts = _.identity.bind(null, opts);
+    }
+    return _.reduce(
+      xformArray,
+      (cur, [key, xform]) => {
+        const lens = self.lenses[key];
+        return lens ? lens.xformInClone(cur, xform, opts(key)) : cur;
+      },
+      subject
+    );
+  }
+
+  xformInClone_maybe(subject, xformArray) {
+    return _.reduce(
+      xformArray,
+      (cur, [key, xform]) => {
+        const lens = self.lenses[key];
+        return lens ? lens.xformInClone_maybe(cur, xform) : cur;
+      },
+      subject
+    );
+  }
 }
 
 class ArrayNFocal extends AbstractNFocal {
@@ -488,72 +520,6 @@ class ArrayNFocal extends AbstractNFocal {
     );
     return {just: subjResult, found};
   }
-
-  /**
-   * @summary Apply a single transform to the slots selected by this multifocal while making a clone
-   * @param            subject  The input structured data
-   * @param {Function} fn       Value transforming function
-   * @param {Object}   opts     Options for {@link Lens#xformInClone}
-   * @return                    A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to *fn*
-   *
-   * @description
-   * This method is most useful when the values selected by this ArrayNFocal
-   * are homogeneous data needing a consistent type of transformation.
-   */
-  xformInClone(subject, fn, opts = {}) {
-    return _.reduce(
-      this.lenses,
-      (cur, lens) => lens.xformInClone(cur, fn, opts),
-      subject
-    );
-  }
-
-  /**
-   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
-   * @param                   subject  The input structured data
-   * @param {Function[]}      fns      Array of functions (or an Object implementing `[lens.at_maybe]`) to apply
-   * @param {Function|Object} opts     Options for {@link Lens#xformInClone} or a function taking the slot index and returning the options
-   * @return                           A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
-   *
-   * @description
-   * This method is most useful when the values selected by this ArrayNFocal
-   * are heterogeneous data needing differing transformations as the clone is
-   * constructed.
-   */
-  zipXformInClone(subject, fns, opts = {}) {
-    if (!_.isFunction(opts)) {
-      const xformOpts = opts;
-      opts = idx => xformOpts;
-    }
-    return _.reduce(
-      this.lenses,
-      (cur, lens, idx) => lens.xformInClone(
-        cur,
-        indexedTransform(fns, idx),
-        opts(idx)
-      ),
-      subject
-    );
-  }
-
-  xformInClone_maybe(subject, fn) {
-    return _.reduce(
-      this.lenses,
-      (cur, lens) => lens.xformInClone_maybe(cur, fn),
-      subject
-    );
-  }
-
-  zipXformInClone_maybe(subject, fns) {
-    return _.reduce(
-      this.lenses,
-      (cur, lens, idx) => lens.xformInClone_maybe(
-        cur,
-        indexedTransform(fns, idx),
-      ),
-      subject
-    );
-  }
 }
 
 class ObjectNFocal extends AbstractNFocal {
@@ -592,40 +558,6 @@ class ObjectNFocal extends AbstractNFocal {
       }
     });
     return {just: subjResult};
-  }
-
-  /**
-   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
-   * @param                   subject  The input structured data
-   * @param {Function[]}      fns      Array of functions (or an Object implementing `[lens.at_maybe]`) to apply
-   * @param {Function|Object} opts     Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
-   * @return                           A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
-   */
-  xformInClone(subject, fns, opts) {
-    if (!_.isFunction(opts)) {
-      const xformOpts = opts;
-      opts = key => xformOpts;
-    }
-    return _.reduce(
-      this.lenses,
-      (cur, lens, key) => lens.xformInClone(
-        cur,
-        indexedTransform(fns, key),
-        opts(key)
-      ),
-      subject
-    );
-  }
-
-  xformInClone_maybe(subject, fns) {
-    return _.reduce(
-      this.lenses,
-      (cur, lens, key) => lens.xformInClone_maybe(
-        cur,
-        indexedTransform(fns, key),
-      ),
-      subject
-    );
   }
 }
 
