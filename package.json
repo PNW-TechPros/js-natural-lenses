@@ -1,6 +1,6 @@
 {
   "name": "natural-lenses",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript-native lens (and ancillary optics) system loosely based on Kmett-style lenses.",
   "main": "lens.js",
   "scripts": {
