@@ -45,8 +45,21 @@ class Binder {
    * method allows retrieving and binding in a single call:
    *
    *     _.map(collection, myLens.$('get'))
+   *
+   * This syntactic sugar also works with backticks to further streamline
+   * functional-style programming:
+   *
+   *     _.map(collection, myLens.$`get`)
    */
   $(method) {
+    // Support tagged template syntax
+    if (_.isArray(method)) {
+      method = _.reduce(
+        _.range(1, arguments.length),
+        (cur, i) => cur + arguments[i].toString() + method[i],
+        method[0]
+      );
+    }
     return this[method].bind(this);
   }
 }
