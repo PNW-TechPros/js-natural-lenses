@@ -9,6 +9,9 @@ Object.assign(Object.prototype, {
     return (key in this) ? {just: this[key]} : {};
   },
   [cloneImpl]: function ({set, spliceOut}) {
+    if (spliceOut && !this.hasOwnProperty(spliceOut)) {
+      return this;
+    }
     const Species = this.constructor[Symbol.species] || this.constructor;
     let inst = null;
     try {
@@ -41,15 +44,19 @@ Object.assign(Array.prototype, {
     }
     return (key in this) ? {just: this[key]} : {};
   },
-  [cloneImpl]: function ({pop, set, spliceOut}) {
-    if (pop) {
-      return this.slice(0, -1);
-    }
+  [cloneImpl]: function ({set, spliceOut}) {
     if (set) {
       const result = this.concat();
       result[set[0]] = set[1];
       return result;
     } else if (spliceOut) {
+      const i = spliceOut < 0 ? this.length + spliceOut : spliceOut;
+      if (i < 0 || i >= this.length || !(i in this)) {
+        return this;
+      }
+      if (i === this.length - 1) {
+        return this.slice(0, i);
+      }
       const Species = this.constructor[Symbol.species];
       return (new Species()).concat(
         this.slice(0, spliceOut),
@@ -61,10 +68,13 @@ Object.assign(Array.prototype, {
   },
 });
 Object.assign(Map.prototype, {
-  [at_maybe]: function (attribute) {
+  [at_maybe]: function (key) {
     return this.has(key) ? {just: this.get(key)} : {};
   },
   [cloneImpl]: function ({set, spliceOut}) {
+    if (spliceOut && !this.has(spliceOut)) {
+      return this;
+    }
     const Species = this.constructor[Symbol.species];
     const result = new Species(this);
     if (set) {
@@ -204,8 +214,8 @@ class Lens {
       const next_maybe = slot.get_maybe();
       if ('just' in next_maybe) {
         cur = next_maybe.just;
-      } else {
-        cur = this._constructFor(i);
+      } else if (i + 1 < this.keys.length) {
+        cur = this._constructFor(i + 1);
       }
     }
     if (slots[slots.length - 1].get() === newVal) {
@@ -243,7 +253,9 @@ class Lens {
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else if (addMissing) {
-        cur = this._constructFor(i);
+        if (i + 1 < this.keys.length) {
+          cur = this._constructFor(i + 1);
+        }
       } else {
         return subject;
       }
@@ -293,8 +305,10 @@ class Lens {
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else {
-        cur = this._constructFor(i);
         present = false;
+        if (i + 1 < this.keys.length) {
+          cur = this._constructFor(i + 1);
+        }
       }
     }
     const prevVal = slots[slots.length - 1].get();
@@ -372,7 +386,7 @@ class CCCLens extends Lens {
   }
   
   _constructFor(depth) {
-    return this._containerFactory.construct(this.keys, depth);
+    return this._containerFactory.construct(this.keys.slice(0, depth + 1));
   }
 }
 
@@ -395,6 +409,80 @@ class JsContainerFactory {
   construct(keys) {
     const types = this.containerTypes, k = keys[keys.length - 1];
     return (typeof k === 'number') ? new types.Array() : new types.Map();
+  }
+}
+
+function ImmutableMixin({spliceOutWithDelete = false}) {
+  return {
+    [at_maybe]: function (key) {
+      return this.has(key) ? {just: this.get(key)} : {};
+    },
+    [cloneImpl]: function ({pop, set, spliceOut}) {
+      if (pop) {
+        return this.pop();
+      }
+      if (set) {
+        return this.set(...set);
+      }
+      if (spliceOut) {
+        return spliceOutWithDelete ? this.delete(spliceOut) : this.set(spliceOut, undefined);
+      }
+      return this;
+    },
+  };
+}
+function polyfillImmutable(containerType) {
+  const isList = containerType.isList;
+  const proto = containerType.prototype,
+    mixins = ImmutableMixin({spliceOutWithDelete: !isList});
+  _.forEach(
+    Object.getOwnPropertySymbols(mixins),
+    (name) => {
+      if (!proto.hasOwnProperty(name)) proto[name] = mixins[name];
+    }
+  )
+}
+
+/**
+ * @summary A class to construct containers from the "immutable" package based on key type
+ * @description
+ * The "immutable" package is popular for use with Flux and React state values,
+ * to obtain the benefits of programming with immutable data.  This factory
+ * allows a LensFactory to instantiate containers from "immutable" (or a
+ * library like it) in place of JSON types when making a clone-with-changes.
+ * 
+ * Passing the "immutable" library to the constructor will select the Map and
+ * List types from that library; an object explicitly specifying Map and List
+ * as other types may also be passed (e.g. for using OrderedMap instead of
+ * Map).  In any case, the Map and List types passed are softly polyfilled with
+ * \@\@at_maybe and \@\@clone Symbol-named methods.
+ *
+ * @example
+ * var immutable = require('immutable'), lens = require('natural-lenses');
+ * var lf = new lens.Factory({
+ *   containerFactory: new lens.ImmutableContainerFactory(immutable),
+ * });
+ * var oldData = new immutable.Map();
+ * var data = lf.lens('userInfo', 'address', 'city').setInClone(oldData, 'Digidapo');
+ * 
+ * @example
+ * var immutable = require('immutable'), lens = require('natural-lenses');
+ * var lf = new lens.Factory({
+ *   containerFactory: new lens.ImmutableContainerFactory({
+ *     Map: immutable.OrderedMap,
+ *   }),
+ * });
+ */
+class ImmutableContainerFactory {
+  constructor(lib) {
+    this.containerTypes = {Map: lib.Map, List: lib.List};
+    polyfillImmutable(lib.Map);
+    polyfillImmutable(lib.List);
+  }
+  
+  construct(keys) {
+    const types = this.containerTypes, k = keys[keys.length - 1];
+    return (typeof k === 'number') ? new types.List() : new types.Map();
   }
 }
 
@@ -441,32 +529,12 @@ class Slot {
   }
 
   cloneOmitting() {
-    if (Array.isArray(this.target)) {
-      if (typeof this.key === 'number') {
-        if (this.key === this.target.length - 1) {
-          return this.cloneTarget({pop: true});
-        }
-        if (this.key === -1 && this.target.length > 0) {
-          return this.cloneTarget({pop: true});
-        }
-        if (this.key >= rval.length || this.key < -rval.length) {
-          return this.target;
-        }
-        const index = (this.key < 0) ? this.target.length + this.key : this.key;
-        const rval = this.cloneTarget({spliceOut: index});
-        return rval;
-      }
-    } else {
-      if (this.target.hasOwnProperty(this.key)) {
-        const rval = this.cloneTarget({spliceOut: this.key});
-        return rval;
-      }
-    }
-    return this.target;
+    const rval = this.cloneTarget({spliceOut: this.key});
+    return rval;
   }
 
-  cloneTarget({pop, set, spliceOut} = {}) {
-    return this.target[makeLens.clone]({pop, set, spliceOut});
+  cloneTarget({set, spliceOut} = {}) {
+    return this.target[makeLens.clone]({set, spliceOut});
   }
 }
 
@@ -692,6 +760,8 @@ makeLens.maybeDo = function(maybe, then, orElse) {
 Object.assign(makeLens, {
   Factory: LensFactory,
   JsContainerFactory,
+  ImmutableContainerFactory,
+  polyfillImmutable,
 });
 
 module.exports = makeLens;

@@ -64,8 +64,15 @@ The first is the simpler possibility, where the lens factory can be constructed 
 ```js
 const lens = require('natural-lenses'), immutable = require('immutable');
 
-const es6lenses = new lens.Factory(new lens.JsContainerFactory());
-const es6_result = es6lenses.lens('userInfo', 'address', 'city').set(new Map(), 'Digidapo');
+const es6lenses = new lens.Factory({
+  containerFactory: new lens.JsContainerFactory(),
+});
+const es6_result = es6lenses.lens('userInfo', 'address', 'city').setInClone(new Map(), 'Digidapo');
+
+const imlenses = new lens.Factory({
+  containerFactory: new lens.ImmutableContainerFactory(immutable),
+});
+const im_result = imlenses.lens('userInfo', 'address', 'city').setInClone(new immutable.Map(), 'Digidapo');
 ```
 
 The second possibility uses the entire path of keys down to the missing container to determine what kind of object gets constructed.  This requires a custom container factory object:
@@ -80,12 +87,14 @@ class SecureAccessToken {
 }
 
 const requestLenses = new lens.Factory({
-  construct(keys) {
-    if (_.isEqual(keys, ['accessToken'])) {
-      return new SecureAccessToken();
-    }
-    const k = keys[keys.length - 1];
-    return (typeof k === 'number') ? [] : {};
+  containerFactory: {
+    construct(keys) {
+      if (_.isEqual(keys, ['accessToken'])) {
+        return new SecureAccessToken();
+      }
+      const k = keys[keys.length - 1];
+      return (typeof k === 'number') ? [] : {};
+    },
   },
 });
 const request = requestLenses.lens('accessToken', 'password').set({}, '12345');
@@ -116,3 +125,9 @@ const secondAnswer = lens('answer', 1).$`get`;
 When the target of a lens is intended to be a method of the object to which it is attached, the `bound` method is helpful to avoid repeated lookup through the whole data structure.  It looks up the target value of the lens and then — if that value is a Function — calls `Function.bind` on that value passing the object from which it was retrieved.  If the slot doesn't refer to a function, the result is the value in the slot.  If the slot does not exist, a no-op function is returned.
 
 `bound` also provides two options for alternate behavior as the second argument: `{or: defaultValue}` and `{orThrow: exceptionValue}`.  In the case of the `or` option and if the slot is not found in the subject, the default value associated with `or` is returned *without any modification* — specifically, `Function.bind` is *not* called.  If the `orThrow` option is given and the slot not exist, the given exception value will be thrown.  `orThrow` takes precedence over `or` if both are specified.
+
+### The `polyfillImmutable` Function
+
+To avoid introducing a dependency between this library and the "immutable" package, this library does not import from "immutable".  It does, however, offer support for integrating immutable as the two packages are conceptually related.  One aspect of that integration is the `lens.ImmutableContainerFactory` class usable with `lens.Factory`.  And though "immutable" objects share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `pop`, `set`, or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, it should be harmless to polyfill any "immutable" container type desired.
+
+Even if no modified clones are to be created, the `lens.at_maybe` must be defined for immutable container types to participate in lens *getting*, so it may be beneficial to run this function on all "immutable" types that might be present in data to be queried with lenses.

@@ -1,5 +1,6 @@
 const lens = require('../lens');
 const {assert} = require('chai');
+const immutable = require('immutable');
 
 describe('Lens', () => {
   describe('#present()', () => {
@@ -390,5 +391,50 @@ describe('ObjectNFocal', () => {
       const result = L.get_maybe(data);
       assert.deepEqual(result, {just: {name: 'Ferris Bueller', mailTo: undefined}});
     });
+  });
+});
+
+describe('Immutable integration', () => {
+  const lf = new lens.Factory({
+    containerFactory: new lens.ImmutableContainerFactory(immutable),
+  });
+  
+  it('instantiates immutable Maps', () => {
+    const cityName = 'Digidapo';
+    const im_result = lf.lens('userInfo', 'address', 'city').setInClone(new immutable.Map(), cityName);
+    assert.instanceOf(im_result, immutable.Map);
+    assert.instanceOf(im_result.get('userInfo'), immutable.Map);
+    assert.instanceOf(im_result.get('userInfo').get('address'), immutable.Map);
+    assert.strictEqual(
+      im_result.get('userInfo').get('address').get('city'),
+      cityName
+    );
+    assert.strictEqual(
+      im_result.get('userInfo').get('address').get('city'),
+      lens('userInfo', 'address', 'city').get(im_result)
+    );
+  });
+  
+  it('instantiates immutable Lists', () => {
+    const street0 = '360 Tied Key';
+    const im_result = lf.lens('address', 'street', 0).setInClone(new immutable.Map(), street0);
+    assert.instanceOf(im_result, immutable.Map);
+    assert.instanceOf(im_result.get('address'), immutable.Map);
+    assert.instanceOf(im_result.get('address').get('street'), immutable.List);
+    assert.strictEqual(
+      im_result.get('address').get('street').get(0),
+      street0
+    );
+    assert.strictEqual(
+      im_result.get('address').get('street').get(0),
+      lens('address', 'street', 0).get(im_result)
+    );
+  });
+  
+  it('deletes from List by setting to "undefined"', () => {
+    const data = new immutable.List(['x', 'y', 'z']);
+    const im_result = lf.lens(1).xformInClone_maybe( data, () => ({}) );
+    assert.strictEqual(im_result.size, 3);
+    assert.isUndefined(im_result.get(1));
   });
 });
