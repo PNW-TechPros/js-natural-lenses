@@ -17,6 +17,9 @@ Array.prototype[at_maybe] = function(key) {
   }
   return (key in this) ? {just: this[key]} : {};
 }
+Map.prototype[at_maybe] = function(key) {
+  return this.has(key) ? {just: this.get(key)} : {};
+}
 
 function index_maybe(subject, key) {
   return _.isObject(subject) ? subject[at_maybe](key) : {};
