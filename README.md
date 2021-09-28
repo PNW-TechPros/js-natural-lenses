@@ -51,9 +51,30 @@ While this difference of call interface might seem to indicate a different name 
 
 The code using lenses may want to vary actions depending on whether a given slot is present in the input JSON, using the value of the slot if it is present.  This condition of "presence plus the value present" or "no value present" is an instance of the Maybe monad.
 
-This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods returning such values are suffixed with `_maybe` (or `_maybe_fip` as described below).
+This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods returning such values are suffixed with `_maybe`.
 
-There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in theArray` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `theArray.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields an Array of the found value and the index for the lens which found it for each found value in the sparse array.  `lens.eachFound` also has the effect — on non-sparse array Maybe values — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
+There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in maybe_result.just` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `maybe_result.just.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields a two-element Array of each found value and the index for the lens which found it in the sparse array.  `lens.eachFound` also has the effect — on Maybe values not arising from multifocals — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
+
+```js
+const lens = require('natural-lenses');
+const data = {name: "Fred Flintstone", phone: "+15077392058"};
+
+const arrayNfocal = lens.nfocal([lens('name'), lens('phone')]);
+for (let [value, index] of lens.eachFound(arrayNfocal.get_maybe(data))) {
+  console.log({[index]: value});
+  // Will log:
+  //   {'0': 'Fred Flintstone'}
+  //   {'1': '+15077392058'}
+}
+
+const objectNfocal = lens.nfocal({nombre: lens('name'), "teléfono": lens('phone')});
+for (let [value, key] of lens.eachFound(objectNfocal.get_maybe(data))) {
+  console.log({[key]: value});
+  // Will log (though order may differ):
+  //   {'nombre': 'Fred Flintstone'}
+  //   {'teléfono': '+15077392058'}
+}
+```
 
 ## The `lens.Factory`
 
@@ -128,6 +149,6 @@ When the target of a lens is intended to be a method of the object to which it i
 
 ### The `polyfillImmutable` Function
 
-To avoid introducing a dependency between this library and the "immutable" package, this library does not import from "immutable".  It does, however, offer support for integrating immutable as the two packages are conceptually related.  One aspect of that integration is the `lens.ImmutableContainerFactory` class usable with `lens.Factory`.  And though "immutable" objects share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `pop`, `set`, or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, it should be harmless to polyfill any "immutable" container type desired.
+To avoid introducing a dependency between this library and the "immutable" package, this library does not import from "immutable".  It does, however, offer support for integrating immutable as the two packages are conceptually related.  One aspect of that integration is the `lens.ImmutableContainerFactory` class usable with `lens.Factory`.  And though "immutable" objects share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `set` or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, it should be harmless to polyfill any "immutable" container type desired.
 
 Even if no modified clones are to be created, the `lens.at_maybe` must be defined for immutable container types to participate in lens *getting*, so it may be beneficial to run this function on all "immutable" types that might be present in data to be queried with lenses.

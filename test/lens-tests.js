@@ -332,7 +332,7 @@ describe('ArrayNFocal', () => {
         address: {street: ['345 Cave Stone Rd']}
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, data.address.street[0]]});
+      assert.deepEqual(result, {just: [data.name, data.address.street[0]], multiFocal: true});
     });
 
     it('leaves indexes not found out of the "found" property of the result', () => {
@@ -341,7 +341,7 @@ describe('ArrayNFocal', () => {
         name: 'Fred Flintstone',
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, undefined]});
+      assert.deepEqual(result, {just: [data.name, undefined], multiFocal: true});
       assert.doesNotHaveAllKeys(result.just, [1]);
     });
 
@@ -352,7 +352,7 @@ describe('ArrayNFocal', () => {
         address: {street: [undefined]}
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, undefined]});
+      assert.deepEqual(result, {just: [data.name, undefined], multiFocal: true});
       assert.containsAllKeys(result.just, [1]);
     });
   });
@@ -368,7 +368,7 @@ describe('ObjectNFocal', () => {
           address: '123 Example Way'
         }
       };
-      assert.deepEqual(L.get_maybe(data), {just: {name: 'Ferris Bueller', mailTo: '123 Example Way'}});
+      assert.deepEqual(L.get_maybe(data), {just: {name: 'Ferris Bueller', mailTo: '123 Example Way'}, multiFocal: true});
     });
 
     it('omits properties not present in the input', () => {
@@ -377,7 +377,7 @@ describe('ObjectNFocal', () => {
         name: 'Ferris Bueller'
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: {name: 'Ferris Bueller'}});
+      assert.deepEqual(result, {just: {name: 'Ferris Bueller'}, multiFocal: true});
     });
 
     it('includes falsey properties present in the input', () => {
@@ -389,8 +389,56 @@ describe('ObjectNFocal', () => {
         }
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: {name: 'Ferris Bueller', mailTo: undefined}});
+      assert.deepEqual(result, {just: {name: 'Ferris Bueller', mailTo: undefined}, multiFocal: true});
     });
+  });
+});
+
+describe('eachFound', () => {
+  it('yields an Object wrapped in an Array in a (basic) maybe of that Object', () => {
+    const data = {
+      name: 'Ferris Bueller',
+      school: {
+        address: undefined
+      }
+    };
+    const unwound = Array.from(lens.eachFound({just: data}));
+    assert.strictEqual(unwound.length, 1);
+    assert.deepEqual(unwound[0][0], data);
+  });
+  
+  it('yields an Array wrapped in an Array in a (basic) maybe of that Array', () => {
+    const data = [1,2,3];
+    const unwound = Array.from(lens.eachFound({just: data}));
+    assert.strictEqual(unwound.length, 1);
+    assert.deepEqual(unwound[0][0], data);
+  });
+  
+  it('yields an empty Array for a Nothing', () => {
+    const unwound = Array.from(lens.eachFound({}));
+    assert.strictEqual(unwound.length, 0);
+  });
+  
+  it('yields each found value and its index from an ArrayNFocal#get_maybe', () => {
+    const nfocal = lens.nfocal(['name', 'email', 'phone'].map(k => lens(k)));
+    const data = {name: "Fred Flintstone", phone: "+15077392058"};
+    const result_maybe = nfocal.get_maybe(data);
+    const unwound = Array.from(lens.eachFound(result_maybe));
+    assert.strictEqual(unwound.length, 2);
+    assert.deepEqual(unwound[0], [data.name, 0]);
+    assert.deepEqual(unwound[1], [data.phone, 2]);
+  });
+  
+  it('yields each found value and its key from an ObjectNFocal#get_maybe', () => {
+    const nfocal = lens.nfocal(Object.fromEntries(
+      ['name', 'email', 'phone'].map(k => [k + 'View', lens(k)])
+    ));
+    const data = {name: "Fred Flintstone", phone: "+15077392058"};
+    const result_maybe = nfocal.get_maybe(data);
+    const unwound = Array.from(lens.eachFound(result_maybe));
+    assert.strictEqual(unwound.length, 2);
+    assert.deepInclude(unwound, [data.name, 'nameView']);
+    assert.deepInclude(unwound, [data.phone, 'phoneView']);
   });
 });
 

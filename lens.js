@@ -598,7 +598,7 @@ Object.assign(AbstractNFocal.prototype, BinderMixin);
 
 class ArrayNFocal extends AbstractNFocal {
   get(subject, ...tail) {
-    const subjResult = _.map(this.lenses, lens => lens.get(subject));
+    const subjResult = this.get_maybe(subject).just;
     if (tail.length > 0) {
       return new ArrayNFocal(
         _.map(subjResult, l => isLens(l) ? l : lensCap)
@@ -608,14 +608,19 @@ class ArrayNFocal extends AbstractNFocal {
   }
 
   get_maybe(subject, ...tail) {
-    const subjResult_maybes = _.map(this.lenses, lens => lens.get_maybe(subject));
-    const subjResult = _.map(subjResult_maybes, mr => mr.just);
+    const subjResult = new Array(this.lenses.length);
+    for (var i = 0; i < this.lenses.length; i++) {
+      const iVal_maybe = this.lenses[i].get_maybe(subject);
+      if ('just' in iVal_maybe) {
+        subjResult[i] = iVal_maybe.just;
+      }
+    }
     if (tail.length > 0) {
       return new ArrayNFocal(
         _.map(subjResult, r => isLens(r.just) ? r.just : lensCap)
       ).get_maybe(...tail);
     } else {
-      return {just: subjResult};
+      return {just: subjResult, multiFocal: true};
     }
   }
 }
@@ -644,7 +649,7 @@ class ObjectNFocal extends AbstractNFocal {
         _.mapObject(subjResult, r => isLens(r.just) ? r.just : lensCap)
       ).get_maybe(...tail);
     }
-    return {just: subjResult};
+    return {just: subjResult, multiFocal: true};
   }
 }
 
@@ -744,14 +749,29 @@ makeLens.clone = cloneImpl;
 makeLens.isLens = isLensClass;
 makeLens.at_maybe = at_maybe;
 makeLens.eachFound = function*(maybe_val) {
-  if (maybe_val.just && maybe_val.just[Symbol.iterator]) {
-    for (let key of maybe_val.just) {
-      if (key in maybe_val.just) {
-        yield [maybe_val.just[key], key];
+  if (!('just' in maybe_val)) {
+    return;
+  }
+  const val = maybe_val.just;
+  if (!maybe_val.multiFocal) {
+    yield [val];
+    return;
+  }
+  
+  if (_.isArray(val)) {
+    for (let i = 0; i < val.length; i++) {
+      if (i in val) {
+        yield [val[i], i];
       }
     }
-  } else if ('just' in maybe_val){
-    yield [maybe_val.just];
+  } else if (_.isObject(val)) {
+    for (var key in val) {
+      if (val.hasOwnProperty(key)) {
+        yield [val[key], key];
+      }
+    }
+  } else {
+    yield [val];
   }
 };
 makeLens.maybeDo = function(maybe, then, orElse) {
