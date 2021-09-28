@@ -2,7 +2,7 @@
 
 Edward Kmett implemented the concept of "lenses" in Haskell as a method of navigating and manipulating nested data types.  The lenses exist separate from the data they access, unlike class identity on JavaScript objects, which makes them ideal for accessing JSON data: JSON just contains the data and does not encode behaviors (a.k.a. methods), and there are no guarantees about what indexes or properties are present as one descends into any particular JSON data.
 
-One of the key aspects of Kmett lenses is their formulation as a single Haskell function, which allows composition of lenses with the Haskell `.` (function composition) operator -- though the order of the arguments is reversed from what a Haskell programmer unfamiliar with lenses would expect, and looks like property access notation in JavaScript.  Unfortunately, unlike Haskell, JavaScript does not have a convenient way to compose functions.
+One of the key aspects of Kmett lenses is their formulation as a single Haskell function, which allows composition of lenses with the Haskell `.` (function composition) operator — though the order of the arguments is reversed from what a Haskell programmer unfamiliar with lenses would expect, and looks like property access notation in JavaScript.  Unfortunately, unlike Haskell, JavaScript does not have a convenient way to compose functions.
 
 Lenses that access and modify JSON have additional problems around partiality and polymorphic updates.  This tends to bring the Maybe monad into play via prisms.  So now we have lack of syntactically easy function composition and the presence of the Maybe monad that are interfering with a straightforward port of Kmett lenses to JavaScript for the purpose of digging into JSON data.  While these obstacles can be overcome, and have been by other packages, the consequence is syntax very unusual to JavaScript.
 
@@ -25,11 +25,11 @@ console.log(newData); // prints [1,2,4]
 
 ### Key Points
 
-* Pass as many keys as desired -- one per layer of container through which to dig -- to `lens` to construct a lens to that slot.
+* Pass as many keys as desired — one per layer of container through which to dig — to `lens` to construct a lens to that slot.
 * Strings and numbers are different when used as keys, but only when _setting_, and only if the container itself is not present within _its_ container: a key that is a number will cause an Array to be created, where any other key will cause an Object to be created.
 * For *getting*, these optics work pretty well for any JavaScript data that does not require invoking methods along the way.  When *setting* or *transforming*, only JSON data is supported because otherwise creation of missing containers becomes odiously complicated.
 * Operations are intended to be immutable, but the library only encourages it and does not demand it.  Values returned by `get` are from the input data and are mutable.  Method names commemorate the imposition of immutability by including `InClone`.
-* Primary operations with lenses are `get`, `setInClone`, and `xformInClone`.  Some of these have variants that end in `_maybe` or `_maybe_fip` -- see the description of the Maybe monad below.
+* Primary operations with lenses are `get`, `setInClone`, and `xformInClone`.  Some of these have variants that end in `_maybe` — see the description of the Maybe monad below.
 
 ## Lens Composition
 
@@ -51,9 +51,7 @@ The code using lenses may want to vary actions depending on whether a given slot
 
 This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods returning such values are suffixed with `_maybe` (or `_maybe_fip` as described below).
 
-There is one wrinkle here that shows up with Array multifocal lenses: JavaScript does not explicitly support sparse Array values.  Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; if the Maybe monad were also "pushed down" to each element, using the Maybe monad method on an Array multifocal would require unwinding that extra layer of Maybe (even though the first layer is *guaranteed* to be a *Just*), breaking the multifocal concept.  Thus, the Maybe from the optic in that slot of the multifocal is unwrapped into the multifocal's result, and when the slot wants to return a *Nothing*, the value extracted into the Array is `undefined`, which it would also be if `undefined` were present in the referenced slot.  To kick this information about presence/absence up, the indexes of all *Just* values from the member optics are put (in ascending order) into the `found` property of the "Maybe" object.  Some operations available on the optic types defined in this package are suffixed with `_fip` (standing for "filter by indexes present"), which functions to unwind the introduction of `undefined` values through Maybe-unpacking by only referencing the Array elements at the `found` indexes.
-
-This "sparse array" can also be iterated for only the members present with `lens.eachFound`, where the iterator yields an Array of the found value and the index for the lens which found it for each found value in the sparse array.  `lens.eachFound` also has the effect -- on non-sparse array Maybe values -- of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
+There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in theArray` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `theArray.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields an Array of the found value and the index for the lens which found it for each found value in the sparse array.  `lens.eachFound` also has the effect — on non-sparse array Maybe values — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
 
 ## Utilities
 
@@ -69,6 +67,6 @@ const secondAnswer = lens('answer', 1).$`get`;
 
 ### The `bound` Method
 
-When the target of a lens is intended to be a method of the object to which it is attached, the `bound` method is helpful to avoid repeated lookup through the whole data structure.  It looks up the target value of the lens and then -- if that value is a Function -- calls `Function.bind` on that value passing the object from which it was retrieved.  If the slot doesn't refer to a function, the result is the value in the slot.  If the slot does not exist, a no-op function is returned.
+When the target of a lens is intended to be a method of the object to which it is attached, the `bound` method is helpful to avoid repeated lookup through the whole data structure.  It looks up the target value of the lens and then — if that value is a Function — calls `Function.bind` on that value passing the object from which it was retrieved.  If the slot doesn't refer to a function, the result is the value in the slot.  If the slot does not exist, a no-op function is returned.
 
-`bound` also provides two options for alternate behavior as the second argument: `{or: defaultValue}` and `{orThrow: exceptionValue}`.  In the case of the `or` option and if the slot is not found in the subject, the default value associated with `or` is returned *without any modification* -- specifically, `Function.bind` is *not* called.  If the `orThrow` option is given and the slot not exist, the given exception value will be thrown.  `orThrow` takes precedence over `or` if both are specified.
+`bound` also provides two options for alternate behavior as the second argument: `{or: defaultValue}` and `{orThrow: exceptionValue}`.  In the case of the `or` option and if the slot is not found in the subject, the default value associated with `or` is returned *without any modification* — specifically, `Function.bind` is *not* called.  If the `orThrow` option is given and the slot not exist, the given exception value will be thrown.  `orThrow` takes precedence over `or` if both are specified.

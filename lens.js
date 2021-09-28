@@ -3,21 +3,23 @@ const _ = require('underscore');
 const isLensClass = Symbol("isLens"), isLens = _.property(isLensClass);
 const at_maybe = Symbol("lensAt_maybe");
 
-function index_maybe(subject, key) {
-  const explicitImpl = _.property(at_maybe)(subject);
-  if (explicitImpl) {
-    return explicitImpl.call(subject, key);
-  }
-  if (_.isArray(subject) && typeof key === 'number') {
-    if (key < -subject.length || key >= subject.length) {
+Object.prototype[at_maybe] = function(key) {
+  return (key in this) ? {just: this[key]} : {};
+}
+Array.prototype[at_maybe] = function(key) {
+  if (typeof key === 'number') {
+    if (key < -this.length || key >= this.length) {
       return {};
-    } else {
-      return {just: subject[(key < 0) ? subject.length + key : key]};
     }
-  } else if (!_.has(subject, key)) {
-    return {}
+    if (key < 0) {
+      key = this.length + key;
+    }
   }
-  return {just: subject[key]};
+  return (key in this) ? {just: this[key]} : {};
+}
+
+function index_maybe(subject, key) {
+  return _.isObject(subject) ? subject[at_maybe](key) : {};
 }
 
 function indexedTransform(fns, key) {
@@ -148,31 +150,6 @@ class Lens extends Binder {
       return isLens(cur) ? cur.get_maybe(...tail) : {};
     }
     return {just: cur};
-  }
-
-  /**
-   * @private
-   * @summary Get a combination of presence and value of this slot, filtering for *present* indexes
-   * @param            subject         The data to query
-   * @param {number[]} indexesPresent  Indexes present at top level
-   *
-   * @description
-   * When an ArrayNFocal is fused into a OpticArray (except in the leftmost
-   * position), the `get_maybe` operation partially breaks, as the `just` value
-   * returned *has* to be an Array, but the ArrayNFocal might have discovered
-   * one or more Nothings from its constituent lenses.  This is reflected in
-   * the Array of `found` indexes also returned alongside the `just` value.
-   * This function allows those Nothings to propagate leftwards through the
-   * OpticArray, thus avoiding phantom `undefined` values cropping up because
-   * of ArrayNFocals in the array.
-   *
-   * `fip` stands for "filter by indexes present".
-   */
-  get_maybe_fip(subject, indexesPresent) {
-    if (typeof this.keys[0] === 'number' && !_.contains(indexesPresent, this.keys[0])) {
-      return {};
-    }
-    return this.get_maybe(subject);
   }
 
   /**
@@ -499,26 +476,8 @@ class ArrayNFocal extends AbstractNFocal {
         _.map(subjResult, r => isLens(r.just) ? r.just : lensCap)
       ).get_maybe(...tail);
     } else {
-      const found = _.reduce(
-        subjResult_maybes,
-        (found, mr, i) => ('just' in mr) ? found.concat(i) : found,
-        []
-      );
-      return {just: subjResult, found};
+      return {just: subjResult};
     }
-  }
-
-  get_maybe_fip(subject, indexesPresent) {
-    const subjResult_maybes = _.map(this.lenses, lens =>
-      lens.get_maybe_fip(subject, indexesPresent)
-    );
-    const subjResult = _.map(subjResult_maybes, mr => mr.just);
-    const found = _.reduce(
-      subjResult_maybes,
-      (found, mr, i) => ('just' in mr) ? found.concat(i) : found,
-      []
-    );
-    return {just: subjResult, found};
   }
 }
 
@@ -546,17 +505,6 @@ class ObjectNFocal extends AbstractNFocal {
         _.mapObject(subjResult, r => isLens(r.just) ? r.just : lensCap)
       ).get_maybe(...tail);
     }
-    return {just: subjResult};
-  }
-
-  get_maybe_fip(subject, indexesPresent) {
-    const subjResult = {};
-    _.each(this.lenses, (lens, prop) => {
-      const propVal_maybe = lens.get_maybe_fip(subject, indexesPresent);
-      if ('just' in propVal_maybe) {
-        subjResult[prop] = propVal_maybe.just;
-      }
-    });
     return {just: subjResult};
   }
 }
@@ -590,21 +538,11 @@ class OpticArray extends Binder {
     return stepSubject;
   }
 
-  get_maybe_fip(subject, indexesPresent) {
-    return this._get_maybe_internal(
-      {just: subject, found: indexesPresent}
-    );
-  }
-
   _get_maybe_internal(subject_maybe) {
     let stepSubject = subject_maybe;
     for (let i = this.lenses.length - 1; i >= 0; --i) {
       const lens = this.lenses[i];
-      if ('found' in stepSubject) {
-        stepSubject = lens.get_maybe_fip(stepSubject.just, stepSubject.found);
-      } else {
-        stepSubject = lens.get_maybe(stepSubject.just);
-      }
+      stepSubject = lens.get_maybe(stepSubject.just);
       if (_.isEmpty(stepSubject.just)) {
         return {};
       }
@@ -644,10 +582,8 @@ makeLens.fuse = function(...lenses) {
  * where the position of each lens in the input Array corresponds to the
  * output position of the data (when *getting* with the multifocal lens).  When
  * *getting* in a Maybe context (`#get_maybe`), the result will always be an
- * Object with a `just` property, but it will also contain a `found` property;
- * since Javascript does not define a true sparse array, the `found` property
- * indicates which array elements from the `just` property should be treated
- * as Just values even if they contain `undefined`.
+ * Object with a `just` property, though some elements of the Array may be
+ * empty.
  *
  * Pass an Object with lens values to create a multifocal lens outputting an
  * Object, which will bear the same properties as the input Object and whose
@@ -669,15 +605,14 @@ makeLens.clone = Symbol("cloneForLens");
 makeLens.isLens = isLensClass;
 makeLens.at_maybe = at_maybe;
 makeLens.eachFound = function*(maybe_val) {
-  if (!maybe_val.found) {
-    if (maybe_val.just) {
-      yield [maybe_val.just];
-    } else {
-      return;
+  if (maybe_val.just && maybe_val.just[Symbol.iterator]) {
+    for (let key of maybe_val.just) {
+      if (key in maybe_val.just) {
+        yield [maybe_val.just[key], key];
+      }
     }
-  }
-  for (var i of maybe_val.found) {
-    yield [maybe_val.just[i], i];
+  } else if ('just' in maybe_val){
+    yield [maybe_val.just];
   }
 };
 makeLens.maybeDo = function(maybe, then, orElse) {

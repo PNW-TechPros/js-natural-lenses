@@ -73,6 +73,11 @@ describe('Lens', () => {
       const data = [2,3,5];
       assert.deepEqual(lens(1).get_maybe(data), {just: data[1]});
     });
+    
+    it('should return {} (no "just" property) for empty element of Array', () => {
+      const data = new Array(5);
+      assert.notProperty(lens(3).get_maybe(data), 'just');
+    });
 
     it('should return {"just": value} for property of Object', () => {
       const data = {answer: 42};
@@ -324,7 +329,7 @@ describe('ArrayNFocal', () => {
         address: {street: ['345 Cave Stone Rd']}
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, data.address.street[0]], found: [0, 1]});
+      assert.deepEqual(result, {just: [data.name, data.address.street[0]]});
     });
 
     it('leaves indexes not found out of the "found" property of the result', () => {
@@ -333,7 +338,8 @@ describe('ArrayNFocal', () => {
         name: 'Fred Flintstone',
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, undefined], found: [0]});
+      assert.deepEqual(result, {just: [data.name, undefined]});
+      assert.doesNotHaveAllKeys(result.just, [1]);
     });
 
     it('includes falsey properties present in the input', () => {
@@ -343,7 +349,8 @@ describe('ArrayNFocal', () => {
         address: {street: [undefined]}
       };
       const result = L.get_maybe(data);
-      assert.deepEqual(result, {just: [data.name, undefined], found: [0, 1]});
+      assert.deepEqual(result, {just: [data.name, undefined]});
+      assert.containsAllKeys(result.just, [1]);
     });
   });
 });
