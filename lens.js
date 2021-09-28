@@ -27,33 +27,8 @@ function indexedTransform(fns, key) {
   return val_maybe.just || _.identity;
 }
 
-class Binder {
-  /**
-   * @summary Syntactic sugar for binding a method to the instance
-   * @param {String} method Name of the method to bind
-   * @return {Function}     The bound method for later calling
-   *
-   * @description
-   * This works like Python's method resolution, where the access to the
-   * "attribute" (in Python terms) causes the class instance to be curried
-   * as the first argument, thus "bound" to the instance.  In Javascript,
-   * however, retrieving the method via property *does not* bind the instance
-   * to `this` -- that happens at call time, and only binds to the instance
-   * if the `.` operator is used at the point of the call.
-   *
-   * This is highly inconvenient for functional-style programming, as binding
-   * `this` requires two references to the object: the first to get the
-   * proper Function, the second to lock the `this` reference.  Instead, this
-   * method allows retrieving and binding in a single call:
-   *
-   *     _.map(collection, myLens.$('get'))
-   *
-   * This syntactic sugar also works with backticks to further streamline
-   * functional-style programming:
-   *
-   *     _.map(collection, myLens.$`get`)
-   */
-  $(method) {
+const BinderMixin = {
+  '$': function(method) {
     // Support tagged template syntax
     if (_.isArray(method)) {
       method = _.reduce(
@@ -73,11 +48,10 @@ class Binder {
  * Working with Jasascript data (especially JSON data) that is deeply nested
  * in an immutable way can be
  */
-class Lens extends Binder {
+class Lens {
   [isLensClass] = true;
 
   constructor(...keys) {
-    super();
     this.keys = keys;
   }
 
@@ -323,6 +297,7 @@ class Lens extends Binder {
     return new Lens(...first.keys.concat(..._.map(others, l => l.keys)));
   }
 }
+Object.assign(Lens.prototype, BinderMixin);
 
 class Slot {
   constructor(target, key) {
@@ -404,11 +379,10 @@ const lensCap = {
   get_maybe: function() {return {};}
 };
 
-class AbstractNFocal extends Binder {
+class AbstractNFocal {
   [isLensClass] = true;
 
   constructor(lenses) {
-    super();
     this.lenses = lenses;
   }
 
@@ -456,6 +430,7 @@ class AbstractNFocal extends Binder {
     );
   }
 }
+Object.assign(AbstractNFocal.prototype, BinderMixin);
 
 class ArrayNFocal extends AbstractNFocal {
   get(subject, ...tail) {
@@ -509,9 +484,8 @@ class ObjectNFocal extends AbstractNFocal {
   }
 }
 
-class OpticArray extends Binder {
+class OpticArray {
   constructor(lenses) {
-    super();
     this.lenses = lenses;
   }
 
@@ -550,6 +524,7 @@ class OpticArray extends Binder {
     return stepSubject;
   }
 }
+Object.assign(OpticArray.prototype, BinderMixin);
 
 /**
  * Construct a Lens from the given indexing steps

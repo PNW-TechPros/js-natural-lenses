@@ -62,6 +62,14 @@ To support higher-order functional programming, this package provides the `$` me
 ```js
 const lens = require('natural-lenses');
 
+const secondAnswer = lens('answer', 1).$('get');
+```
+
+The `$` method also supports tagged template syntax, so the following is also legal (in ES6) and uses fewer characters:
+
+```js
+const lens = require('natural-lenses');
+
 const secondAnswer = lens('answer', 1).$`get`;
 ```
 
