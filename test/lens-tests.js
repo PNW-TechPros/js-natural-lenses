@@ -157,17 +157,19 @@ describe('Lens', () => {
       assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
     });
 
-    class Uncloneable {}
-    it('should raise an error for uncloneable data', () => {
-      const data = new Uncloneable();
-      assert.throws(() => lens('answer').setInClone(data, 42), /not\s+cloneable/);
-    });
-
-    class Cloneable {
-      [lens.clone]() {
-        return Object.assign(new Cloneable(), this);
+    class Uncloneable {
+      constructor() {
+        if (arguments.length < 1) {
+          throw new Error("Cannot construct without at least one argument!");
+        }
       }
     }
+    it('should raise an error for uncloneable data', () => {
+      const data = new Uncloneable(0);
+      assert.throws(() => lens('answer').setInClone(data, 42), /requires\s+arguments/);
+    });
+
+    class Cloneable {}
     it('should support an explicitly cloneable class', () => {
       const data = Object.assign(new Cloneable(), {answer: 42});
       const newVal = 'What is 6 times 7?';

@@ -27,13 +27,15 @@ console.log(newData); // prints [1,2,4]
 
 * Pass as many keys as desired — one per layer of container through which to dig — to `lens` to construct a lens to that slot.
 * Strings and numbers are different when used as keys, but only when _setting_, and only if the container itself is not present within _its_ container: a key that is a number will cause an Array to be created, where any other key will cause an Object to be created.
-* For *getting*, these optics work pretty well for any JavaScript data that does not require invoking methods along the way.  When *setting* or *transforming*, only JSON data is supported because otherwise creation of missing containers becomes odiously complicated.
-* Operations are intended to be immutable, but the library only encourages it and does not demand it.  Values returned by `get` are from the input data and are mutable.  Method names commemorate the imposition of immutability by including `InClone`.
+* For *getting*, these optics work pretty well for any JavaScript data that does not require invoking methods along the way.  When *setting* or *transforming*, default lenses only support JSON data; to *set* or *transform* with other data types, use `lens.Factory` with an appropriate container factory to construct the lenses.
+* Operations are intended to be immutable, but the library only encourages it and does not demand it.  Values returned by `get` are from the input data and are as mutable as the input data.  Method names commemorate the imposition of immutability by including `InClone`.
 * Primary operations with lenses are `get`, `setInClone`, and `xformInClone`.  Some of these have variants that end in `_maybe` — see the description of the Maybe monad below.
 
 ## Lens Composition
 
 Lenses can be composed through `lens.fuse`, which takes one or more lenses (or other optics) to fuse and creates either a new, fused lens that behaves as the composition of all the passed lenses (though this can only be done if _only_ lenses are passed) or an OpticArray that functions somewhat like a lens, at least for *getting*.
+
+Lenses constructed through a `lens.Factory` can only be incorporated in an OpticArray, and not directly fused into a single lens.
 
 ## Multifocal (N-focal) Lensing
 
@@ -52,6 +54,42 @@ The code using lenses may want to vary actions depending on whether a given slot
 This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods returning such values are suffixed with `_maybe` (or `_maybe_fip` as described below).
 
 There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in theArray` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `theArray.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields an Array of the found value and the index for the lens which found it for each found value in the sparse array.  `lens.eachFound` also has the effect — on non-sparse array Maybe values — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
+
+## The `lens.Factory`
+
+If non-JSON container types are to be constructed when a lens builds a clone, the relevant lenses must be constructed through a `lens.Factory`.  There are two primary cases for constructing such a factory.
+
+The first is the simpler possibility, where the lens factory can be constructed with an off-the-shelf container factory.  Two such container factories are included: one for ES6 containers (`Array` and `Map`) and one for integrating the "immutable" package containers.  These can be used like:
+
+```js
+const lens = require('natural-lenses'), immutable = require('immutable');
+
+const es6lenses = new lens.Factory(new lens.JsContainerFactory());
+const es6_result = es6lenses.lens('userInfo', 'address', 'city').set(new Map(), 'Digidapo');
+```
+
+The second possibility uses the entire path of keys down to the missing container to determine what kind of object gets constructed.  This requires a custom container factory object:
+
+```js
+const lens = require('natural-lenses'), _ = require('underscore');
+
+class SecureAccessToken {
+  set password(value) {
+    // Store salted & hashed value or value encrypted with public key
+  }
+}
+
+const requestLenses = new lens.Factory({
+  construct(keys) {
+    if (_.isEqual(keys, ['accessToken'])) {
+      return new SecureAccessToken();
+    }
+    const k = keys[keys.length - 1];
+    return (typeof k === 'number') ? [] : {};
+  },
+});
+const request = requestLenses.lens('accessToken', 'password').set({}, '12345');
+```
 
 ## Utilities
 

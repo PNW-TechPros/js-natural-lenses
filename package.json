@@ -4,7 +4,8 @@
   "description": "A JavaScript-native lens (and ancillary optics) system loosely based on Kmett-style lenses.",
   "main": "lens.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "dtest": "mocha --inspect-brk test"
   },
   "keywords": [
     "lens",

@@ -1,25 +1,80 @@
 const _ = require('underscore');
 
 const isLensClass = Symbol("isLens"), isLens = _.property(isLensClass);
-const at_maybe = Symbol("lensAt_maybe");
+const at_maybe = Symbol("lens.at_maybe");
+const cloneImpl = Symbol("lens.clone");
 
-Object.prototype[at_maybe] = function(key) {
-  return (key in this) ? {just: this[key]} : {};
-}
-Array.prototype[at_maybe] = function(key) {
-  if (typeof key === 'number') {
-    if (key < -this.length || key >= this.length) {
-      return {};
+Object.assign(Object.prototype, {
+  [at_maybe]: function (key) {
+    return (key in this) ? {just: this[key]} : {};
+  },
+  [cloneImpl]: function ({set, spliceOut}) {
+    const Species = this.constructor[Symbol.species] || this.constructor;
+    let inst = null;
+    try {
+      inst = new Species();
+    } catch (e) {
+      const cantConstruct = new Error(
+        `'${this.constructor.name}' requires arguments for instantiation; provide a [lens.clone] method`
+      );
+      cantConstruct.cause = e;
+      throw cantConstruct;
     }
-    if (key < 0) {
-      key = this.length + key;
+    const result = Object.assign(inst, this);
+    if (set) {
+      result[set[0]] = set[1];
+    } else if (spliceOut) {
+      delete result[spliceOut];
     }
-  }
-  return (key in this) ? {just: this[key]} : {};
-}
-Map.prototype[at_maybe] = function(key) {
-  return this.has(key) ? {just: this.get(key)} : {};
-}
+    return result;
+  },
+});
+Object.assign(Array.prototype, {
+  [at_maybe]: function (key) {
+    if (typeof key === 'number') {
+      if (key < -this.length || key >= this.length) {
+        return {};
+      }
+      if (key < 0) {
+        key = this.length + key;
+      }
+    }
+    return (key in this) ? {just: this[key]} : {};
+  },
+  [cloneImpl]: function ({pop, set, spliceOut}) {
+    if (pop) {
+      return this.slice(0, -1);
+    }
+    if (set) {
+      const result = this.concat();
+      result[set[0]] = set[1];
+      return result;
+    } else if (spliceOut) {
+      const Species = this.constructor[Symbol.species];
+      return (new Species()).concat(
+        this.slice(0, spliceOut),
+        new Array(1),
+        this.slice(spliceOut + 1)
+      );
+    }
+    return this.concat();
+  },
+});
+Object.assign(Map.prototype, {
+  [at_maybe]: function (attribute) {
+    return this.has(key) ? {just: this.get(key)} : {};
+  },
+  [cloneImpl]: function ({set, spliceOut}) {
+    const Species = this.constructor[Symbol.species];
+    const result = new Species(this);
+    if (set) {
+      result.set(...set);
+    } else if (spliceOut) {
+      result.delete(spliceOut);
+    }
+    return result;
+  },
+});
 
 function index_maybe(subject, key) {
   return _.isObject(subject) ? subject[at_maybe](key) : {};
@@ -150,7 +205,7 @@ class Lens {
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else {
-        cur = (typeof k === 'number') ? [] : {};
+        cur = this._constructFor(i);
       }
     }
     if (slots[slots.length - 1].get() === newVal) {
@@ -188,7 +243,7 @@ class Lens {
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else if (addMissing) {
-        cur = (typeof k === 'number') ? [] : {};
+        cur = this._constructFor(i);
       } else {
         return subject;
       }
@@ -238,7 +293,7 @@ class Lens {
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else {
-        cur = (typeof k === 'number') ? [] : {};
+        cur = this._constructFor(i);
         present = false;
       }
     }
@@ -299,6 +354,70 @@ class Lens {
   static fuse(first, ...others) {
     return new Lens(...first.keys.concat(..._.map(others, l => l.keys)));
   }
+  
+  /**
+   * @package
+   * @summary Construct a container for a clone given the depth
+   */
+  _constructFor(depth) {
+    const k = this.keys[depth];
+    return (typeof key === 'number') ? [] : {};
+  }
+}
+
+class CCCLens extends Lens {
+  constructor(...keys) {
+    super(...keys);
+    this._containerFactory = null;
+  }
+  
+  _constructFor(depth) {
+    return this._containerFactory.construct(this.keys, depth);
+  }
+}
+
+/**
+ * @summary A class to construct alternative sequential/mapping typings based on key type
+ * @description
+ * Use containers with the interfaces of the Array and ES6 Map classes as the
+ * constructed containers based on the type of the key to be used for indexing
+ * the container: a number indicates an Array and anything else uses a Map.
+ *
+ * Pass an instance of this class as the containerFactory option when
+ * constructing a LensFactory. The container types to be used can be customized
+ * when constructing this factory.
+ */
+class JsContainerFactory {
+  constructor(containerTypes = {Map, Array}) {
+    this.containerTypes = containerTypes;
+  }
+  
+  construct(keys) {
+    const types = this.containerTypes, k = keys[keys.length - 1];
+    return (typeof k === 'number') ? new types.Array() : new types.Map();
+  }
+}
+
+/**
+ * @summary A factory for Lens-derived objects with customized container construction
+ * @description
+ * When POD container types (Object and Array) are not the desired types to 
+ * construct in a clone -- as with use of immutable containers -- this class
+ * can be used to build lenses that *do* build the desired types of objects.
+ * 
+ * This class is often used in conjunction with a JsContainerFactory object
+ * implementing the container factory.
+ */
+class LensFactory {
+  constructor({containerFactory = new JsContainerFactory()} = {}) {
+    this.containerFactory = containerFactory;
+  }
+  
+  lens(...keys) {
+    const result = new CCCLens(...keys);
+    result._containerFactory = this.containerFactory;
+    return result;
+  }
 }
 Object.assign(Lens.prototype, BinderMixin);
 
@@ -317,8 +436,7 @@ class Slot {
   }
 
   cloneAndSet(val) {
-    const rval = this.cloneTarget();
-    rval[this.key] = val;
+    const rval = this.cloneTarget({set: [this.key, val]});
     return rval;
   }
 
@@ -334,46 +452,21 @@ class Slot {
         if (this.key >= rval.length || this.key < -rval.length) {
           return this.target;
         }
-        const rval = this.cloneTarget();
-        if (this.key >= 0) {
-          rval[this.key] = undefined;
-        } else {
-          rval[rval.length + this.key] = undefined;
-        }
+        const index = (this.key < 0) ? this.target.length + this.key : this.key;
+        const rval = this.cloneTarget({spliceOut: index});
         return rval;
       }
     } else {
       if (this.target.hasOwnProperty(this.key)) {
-        const rval = this.cloneTarget();
-        delete rval[this.key];
+        const rval = this.cloneTarget({spliceOut: this.key});
         return rval;
       }
     }
     return this.target;
   }
 
-  cloneTarget({pop = false} = {}) {
-    const explicitCloner = this.target[makeLens.clone];
-    if (explicitCloner) {
-      const rval = explicitCloner.call(this.target);
-      if (pop) {
-        rval.pop();
-      }
-      return rval;
-    }
-    if (Array.isArray(this.target)) {
-      const rval = pop ? this.target.slice(0, -1) : this.target.concat();
-      for (let k of _.keys(this.target)) {
-        if (isNaN(k)) {
-          rval[k] = this.target[k];
-        }
-      }
-      return rval;
-    }
-    if (this.target.constructor !== Object) {
-      throw `'${this.target.constructor.name}' is not cloneable; provide a [lens.clone] method or use a plain Object`;
-    }
-    return Object.assign({}, this.target);
+  cloneTarget({pop, set, spliceOut} = {}) {
+    return this.target[makeLens.clone]({pop, set, spliceOut});
   }
 }
 
@@ -579,7 +672,7 @@ makeLens.nfocal = function(lenses) {
     return new ObjectNFocal(lenses);
   }
 };
-makeLens.clone = Symbol("cloneForLens");
+makeLens.clone = cloneImpl;
 makeLens.isLens = isLensClass;
 makeLens.at_maybe = at_maybe;
 makeLens.eachFound = function*(maybe_val) {
@@ -596,6 +689,10 @@ makeLens.eachFound = function*(maybe_val) {
 makeLens.maybeDo = function(maybe, then, orElse) {
   return ('just' in maybe) ? then(maybe.just) : (orElse ? orElse() : undefined);
 };
+Object.assign(makeLens, {
+  Factory: LensFactory,
+  JsContainerFactory,
+});
 
 module.exports = makeLens;
 
