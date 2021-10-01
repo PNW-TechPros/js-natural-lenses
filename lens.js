@@ -374,7 +374,7 @@ class Lens {
    * @summary Construct a container for a clone given the depth
    */
   _constructFor(depth) {
-    const k = this.keys[depth];
+    const key = this.keys[depth];
     return (typeof key === 'number') ? [] : {};
   }
 }
