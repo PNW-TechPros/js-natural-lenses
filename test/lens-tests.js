@@ -1,4 +1,5 @@
 const lens = require('../lens');
+const { lensFactory: immutableLensFactory } = require('../natural-lenses/immutable');
 const {assert} = require('chai');
 const immutable = require('immutable');
 
@@ -443,9 +444,7 @@ describe('eachFound', () => {
 });
 
 describe('Immutable integration', () => {
-  const lf = new lens.Factory({
-    containerFactory: new lens.ImmutableContainerFactory(immutable),
-  });
+  const lf = immutableLensFactory;
   
   it('instantiates immutable Maps', () => {
     const cityName = 'Digidapo';

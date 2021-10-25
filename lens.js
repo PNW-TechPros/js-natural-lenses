@@ -110,6 +110,36 @@ const BinderMixin = {
 }
 
 /**
+ * @summary Defines a custom step in a Lens
+ *
+ * @description
+ * If standard logic for accessing data deeper in the conceptual structure
+ * is not adequate, an instance of this class may be passed as a step in a
+ * Lens, which will allow the Lens to have custom behavior.
+ *
+ * To construct this object, pass three Functions:
+ * 
+ * 1. A Function that returns a Maybe value for the slot within the container
+ *    it is passed.
+ * 2. A Function taking the current value of the container and applying a `set`
+ *    or `spliceOut` operation, returning a modified clone
+ * 3. A Function to construct a pristine instance of the container this step
+ *    navigates
+ *
+ * Passing `null` for any of these functions will limit the functionality of
+ * the lens: skipping either `construct` or `updatedClone` will prevent the lens
+ * from constructing a missing container, skipping `updatedClone` will
+ * additionally prevent the lens from modifying an existing container, and
+ * skipping `get_maybe` will prevent retrieving or transforming values in
+ * a subject.
+ */
+class CustomStep {
+  constructor(get_maybe, updatedClone, construct) {
+    Object.assign(this, {construct, updatedClone, get_maybe});
+  }
+}
+
+/**
  * @summary Class for operating immutably on a specific "slot" in complex data
  *
  * @description
@@ -181,7 +211,14 @@ class Lens {
   get_maybe(subject, ...tail) {
     let cur = subject;
     for (let i = 0; i < this.keys.length; i++) {
-      const k = this.keys[i], next_maybe = index_maybe(cur, k);
+      const k = this.keys[i];
+      const next_maybe = (function() {
+        if (k instanceof CustomStep) {
+          return k.get_maybe(cur);
+        } else {
+          return index_maybe(cur, k);
+        }
+      }());
       if ('just' in next_maybe) {
         cur = next_maybe.just;
       } else {
@@ -192,6 +229,13 @@ class Lens {
       return isLens(cur) ? cur.get_maybe(...tail) : {};
     }
     return {just: cur};
+  }
+  
+  *ifFound(subject) {
+    const maybeVal = this.get_maybe(subject);
+    if ('just' in maybeVal) {
+      yield maybeVal.just;
+    }
   }
 
   /**
@@ -210,7 +254,7 @@ class Lens {
     let cur = subject;
     for (let i = 0; i < this.keys.length; i++) {
       const k = this.keys[i];
-      const slot = slots[i] = new Slot(cur, k);
+      const slot = slots[i] = makeSlot(cur, k);
       const next_maybe = slot.get_maybe();
       if ('just' in next_maybe) {
         cur = next_maybe.just;
@@ -248,7 +292,7 @@ class Lens {
     let cur = subject;
     for (let i = 0; i < this.keys.length; i++) {
       const k = this.keys[i];
-      const slot = slots[i] = new Slot(cur, k);
+      const slot = slots[i] = makeSlot(cur, k);
       const next_maybe = slot.get_maybe();
       if ('just' in next_maybe) {
         cur = next_maybe.just;
@@ -300,7 +344,7 @@ class Lens {
     let cur = subject, present = true;
     for (let i = 0; i < this.keys.length; i++) {
       const k = this.keys[i];
-      const slot = slots[i] = new Slot(cur, k);
+      const slot = slots[i] = makeSlot(cur, k);
       const next_maybe = slot.get_maybe();
       if ('just' in next_maybe) {
         cur = next_maybe.just;
@@ -375,6 +419,9 @@ class Lens {
    */
   _constructFor(depth) {
     const key = this.keys[depth];
+    if (key instanceof CustomStep) {
+      return key.construct();
+    }
     return (typeof key === 'number') ? [] : {};
   }
 }
@@ -390,6 +437,7 @@ class CCCLens extends Lens {
   }
 }
 
+const jsContainerFactoryInstanceContainerTypes = new WeakMap();
 /**
  * @summary A class to construct alternative sequential/mapping typings based on key type
  * @description
@@ -403,14 +451,25 @@ class CCCLens extends Lens {
  */
 class JsContainerFactory {
   constructor(containerTypes = {Map, Array}) {
-    this.containerTypes = containerTypes;
+    jsContainerFactoryInstanceContainerTypes.set(this, {...containerTypes});
+  }
+  
+  get containerTypes() {
+    return {
+      Map, Array,
+      ...(jsContainerFactoryInstanceContainerTypes.get(this) || {})
+    };
   }
   
   construct(keys) {
-    const types = this.containerTypes, k = keys[keys.length - 1];
-    return (typeof k === 'number') ? new types.Array() : new types.Map();
+    const types = jsContainerFactoryInstanceContainerTypes.get(this);
+    const k = keys[keys.length - 1];
+    return (typeof k === 'number')
+      ? new (types.Array || Array)()
+      : new (types.Map || Map)();
   }
 }
+const jsContainers = new JsContainerFactory();
 
 function ImmutableMixin({spliceOutWithDelete = false}) {
   return {
@@ -444,49 +503,6 @@ function polyfillImmutable(containerType) {
 }
 
 /**
- * @summary A class to construct containers from the "immutable" package based on key type
- * @description
- * The "immutable" package is popular for use with Flux and React state values,
- * to obtain the benefits of programming with immutable data.  This factory
- * allows a LensFactory to instantiate containers from "immutable" (or a
- * library like it) in place of JSON types when making a clone-with-changes.
- * 
- * Passing the "immutable" library to the constructor will select the Map and
- * List types from that library; an object explicitly specifying Map and List
- * as other types may also be passed (e.g. for using OrderedMap instead of
- * Map).  In any case, the Map and List types passed are softly polyfilled with
- * \@\@at_maybe and \@\@clone Symbol-named methods.
- *
- * @example
- * var immutable = require('immutable'), lens = require('natural-lenses');
- * var lf = new lens.Factory({
- *   containerFactory: new lens.ImmutableContainerFactory(immutable),
- * });
- * var oldData = new immutable.Map();
- * var data = lf.lens('userInfo', 'address', 'city').setInClone(oldData, 'Digidapo');
- * 
- * @example
- * var immutable = require('immutable'), lens = require('natural-lenses');
- * var lf = new lens.Factory({
- *   containerFactory: new lens.ImmutableContainerFactory({
- *     Map: immutable.OrderedMap,
- *   }),
- * });
- */
-class ImmutableContainerFactory {
-  constructor(lib) {
-    this.containerTypes = {Map: lib.Map, List: lib.List};
-    polyfillImmutable(lib.Map);
-    polyfillImmutable(lib.List);
-  }
-  
-  construct(keys) {
-    const types = this.containerTypes, k = keys[keys.length - 1];
-    return (typeof k === 'number') ? new types.List() : new types.Map();
-  }
-}
-
-/**
  * @summary A factory for Lens-derived objects with customized container construction
  * @description
  * When POD container types (Object and Array) are not the desired types to 
@@ -497,7 +513,7 @@ class ImmutableContainerFactory {
  * implementing the container factory.
  */
 class LensFactory {
-  constructor({containerFactory = new JsContainerFactory()} = {}) {
+  constructor({containerFactory = jsContainers} = {}) {
     this.containerFactory = containerFactory;
   }
   
@@ -536,6 +552,33 @@ class Slot {
   cloneTarget({set, spliceOut} = {}) {
     return this.target[makeLens.clone]({set, spliceOut});
   }
+}
+
+class CSSlot {
+  constructor(target, customStep) {
+    this.target = target;
+    this.customStep = customStep;
+  }
+  
+  get() {
+    return this.get_maybe().just;
+  }
+  
+  get_maybe() {
+    return this.customStep.get_maybe(this.target);
+  }
+  
+  cloneAndSet(val) {
+    return this.customStep.updatedClone(this.target, {set: val});
+  }
+  
+  cloneOmitting() {
+    return this.customStep.updatedClone(this.target, {omit: true});
+  }
+}
+
+function makeSlot(cur, k) {
+  return new ((k instanceof CustomStep) ? CSSlot : Slot)(cur, k);
 }
 
 const lensCap = {
@@ -777,10 +820,11 @@ makeLens.eachFound = function*(maybe_val) {
 makeLens.maybeDo = function(maybe, then, orElse) {
   return ('just' in maybe) ? then(maybe.just) : (orElse ? orElse() : undefined);
 };
+makeLens.Step = CustomStep;
 Object.assign(makeLens, {
   Factory: LensFactory,
   JsContainerFactory,
-  ImmutableContainerFactory,
+  jsContainers,
   polyfillImmutable,
 });
 

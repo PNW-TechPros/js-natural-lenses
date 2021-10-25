@@ -1,10 +1,20 @@
 # JavaScript-Native Lenses
 
-Edward Kmett implemented the concept of "lenses" in Haskell as a method of navigating and manipulating nested data types.  The lenses exist separate from the data they access, unlike class identity on JavaScript objects, which makes them ideal for accessing JSON data: JSON just contains the data and does not encode behaviors (a.k.a. methods), and there are no guarantees about what indexes or properties are present as one descends into any particular JSON data.
+* Safely retrieve values from deep in JSON data or complex JavaScript data structures
+* Produce an altered clone of JSON or other data, reusing every unchanged branch of the subject tree
+* Build views into complex data
 
-One of the key aspects of Kmett lenses is their formulation as a single Haskell function, which allows composition of lenses with the Haskell `.` (function composition) operator — though the order of the arguments is reversed from what a Haskell programmer unfamiliar with lenses would expect, and looks like property access notation in JavaScript.  Unfortunately, unlike Haskell, JavaScript does not have a convenient way to compose functions.
+While retrieving or setting a property of an `Object` in JavaScript is trivially easy to code, when the data structure is more complex than a single `Object` or single `Array`, the code gets trickier: each level of retrieval has to check that the container it is accessing actually exists in the subject data and, when setting, has to ensure that a container exists at each level on the way down to the slot to be set.  Further complications arise when treating the data as immutable: each container to be "changed" must be cloned and the appropriate change made in the fresh clone returned.
 
-Lenses that access and modify JSON have additional problems around partiality and polymorphic updates.  This tends to bring the Maybe monad into play via prisms.  So now we have lack of syntactically easy function composition and the presence of the Maybe monad that are interfering with a straightforward port of Kmett lenses to JavaScript for the purpose of digging into JSON data.  While these obstacles can be overcome, and have been by other packages, the consequence is syntax very unusual to JavaScript.
+Lenses address these problems by codifying the concept of "slots" within a data structure as objects separate from the data structure, but knowing how to operate upon it.  They have a strong theoretical background and there are many ways to modify, combine, and use them.
+
+## Inspiration
+
+Edward Kmett implemented the concept of "lenses" in Haskell as a method of navigating and manipulating nested data types.  The lenses exist separate from the data they access, unlike methods on JavaScript objects associated with class identity, which makes them ideal for accessing JSON data: JSON just contains the data and does not encode behaviors (a.k.a. methods), and there are no guarantees about what indexes or properties are present as one descends into any particular JSON data.
+
+One of the key aspects of Kmett lenses is their formulation as a single Haskell function (the van Laarhoven formulation), which allows composition of lenses with the Haskell `.` (function composition) operator — though the order of application is reversed from what a Haskell programmer unfamiliar with lenses would expect, and looks like property access notation in JavaScript.  Unfortunately, unlike Haskell, JavaScript does not have a convenient way to compose functions.
+
+Lenses that access and modify JSON have additional problems around partiality and polymorphic updates.  This tends to bring the Maybe monad into play via prisms.  So now we have lack of syntactically easy function composition and the presence of the Maybe monad that are interfering with a straightforward port of Kmett lenses to JavaScript for the purpose of digging into JSON data.  While these obstacles can be overcome, and have been by other packages, the consequent syntax is awkward and very foreign to JavaScript.
 
 This package attempts to put a more JavaScript-friendly face on lenses, building around the syntax and native data types supported by the language.
 
@@ -39,7 +49,7 @@ Lenses constructed through a `lens.Factory` can only be incorporated in an Optic
 
 ## Multifocal (N-focal) Lensing
 
-Where a lens can retrieve the value from a single slot within the data, often multiple, dispersed values will need to be extracted; multifocal lensing is the provided solution.
+Where a lens can retrieve the value from a single slot within the data, often multiple, dispersed values will need to be extracted; multifocal lensing addresses this problem.
 
 A multifocal lens can be built from either an Array of optics or an Object whose own properties contain optics.  The result of *getting* through a multifocal lens is the same type as passed for constructing the multifocal.
 
@@ -51,9 +61,9 @@ While this difference of call interface might seem to indicate a different name 
 
 The code using lenses may want to vary actions depending on whether a given slot is present in the input JSON, using the value of the slot if it is present.  This condition of "presence plus the value present" or "no value present" is an instance of the Maybe monad.
 
-This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods returning such values are suffixed with `_maybe`.
+This package always represents a value of the Maybe monad as an Object.  The *Just* construction is an Object with a `just` property (test with `'just' in maybeVal`) associated with the contained value, where *Nothing* is just an empty Object.  Methods operating with such values are suffixed with `_maybe`.
 
-There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in maybe_result.just` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `maybe_result.just.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields a two-element Array of each found value and the index for the lens which found it in the sparse array.  `lens.eachFound` also has the effect — on Maybe values not arising from multifocals — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*.
+There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals *definitely* return an Array when *getting*, so in a Maybe monad, they always return `{just: [...]}`; missing elements are represented as *empty* cells of the Array (i.e. `n in maybe_result.just` returns `false` for index `n` of the element that would be *Nothing*).  Care must be used when iterating such an Array, as ES6 `for...of` and some libraries treat all indexes from 0 to `maybe_result.just.length - 1` as present.  `lens.eachFound` is available for iteration of this kind of sparse Array, where the iterator yields a two-element Array of each found value and the index for the lens which found it in the sparse array.
 
 ```js
 const lens = require('natural-lenses');
@@ -76,9 +86,38 @@ for (let [value, key] of lens.eachFound(objectNfocal.get_maybe(data))) {
 }
 ```
 
+`lens.eachFound` also has the effect — on Maybe values not arising from multifocals — of converting to a JavaScript iterable: yielding no items for *Nothing* or the single value of the *Just*, which simplifies coding "do something if the value is present" logic:
+
+```js
+const data = {name: "Fred Flintstone", phone: "+15077392058"};
+for (let value of lens.eachFound(lens('phone').get_maybe(data))) {
+  // Do something with "value"
+}
+```
+
+However, this same functionality is more conveniently wrapped up in the `ifFound` method of the Lens:
+
+```js
+const data = {name: "Fred Flintstone", phone: "+15077392058"};
+for (let value of lens('phone').ifFound(data)) {
+  // Do something with "value"
+}
+```
+
+A third alternative allows computation based on whether the value is *Just* or *Nothing*:
+
+```js
+const data = {name: "Fred Flintstone", phone: "+15077392058"};
+const result = lens.maybeDo(
+  lens('phone').get_maybe(data),
+  localeFormattedPhoneNumber,
+  () => "<none given>" // Optional to pass, default produces undefined
+);
+```
+
 ## The `lens.Factory`
 
-If non-JSON container types are to be constructed when a lens builds a clone, the relevant lenses must be constructed through a `lens.Factory`.  There are two primary cases for constructing such a factory.
+Sometimes it is convenient for lenses to construct missing non-JSON containers when they build a clone, in which case the container construction has to be specified.  To do this consistently at all levels accessed through a group of related lenses, use a `lens.Factory`.  There are two primary cases for constructing such a factory.
 
 The first is the simpler possibility, where the lens factory can be constructed with an off-the-shelf container factory.  Two such container factories are included: one for ES6 containers (`Array` and `Map`) and one for integrating the "immutable" package containers.  These can be used like:
 
@@ -121,6 +160,36 @@ const requestLenses = new lens.Factory({
 const request = requestLenses.lens('accessToken', 'password').set({}, '12345');
 ```
 
+While the first case handles integration of the container types with the lens system, for the second it is imperative to implement handler methods for the `Symbol`s `lens.at_maybe` and `lens.clone` on the container types used.
+
+## Support for the [Immutable](https://www.npmjs.com/package/immutable) Package
+
+Lenses and efficiently immutable data structures work together synergistically, yet not every application of lenses needs or wants the `immutable` package installed.  To avoid introducing a dependency between this library and the "immutable" package, `natural-lenses` limits its importing from "immutable" to one dangling submodule.  `natural-lenses/immutable` exports two objects, of which the `lensFactory` is the more convenient: it is a `Factory` (from `natural-lenses`) customized with a container factory for `immutable`'s `List` and `Map`.  That container factory is the other export, under the name `containerFactory`, which can be used in constructing a `lens.Factory`.
+
+The `natural-lenses/immutable` submodule also has a side-effect of polyfilling support for lenses into `immutable` types.  Though `immutable`'s `List`, `Map`, and `OrderedMap` classes share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `set` or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, this polyfill should not interfere with application code or any other libraries in use.
+
+Even if no modified clones are to be created, the `lens.at_maybe` must be defined for immutable container types to participate in lens *getting*, so it may be beneficial to run `lens.polyfillImmutable` on all `immutable` types that might be present in data to be queried with lenses.
+
+Because this library _does not_ declare a dependency on `immutable`, it is the responsibility of the including project to declare it's own dependency on both that package and this one if both are to be used.
+
+## Customized Access with `lens.Step`
+
+The second alternative for constructing non-JSON containers is to specify a `lens.Step` object as a step (i.e. key) when constructing a Lens.  Construction of a `lens.Step` requires three Functions:
+
+1. A function to retrieve the Maybe value on the "down" side of the step: it should return `{}` if the value is not present or `{just: value}` if the value is present (as described in the *Maybe Monad* section above).
+2. A function to create and return a clone of the container (first argument) with a specified change (second argument), either:
+    * `{set: newValue}`, or
+    * `{omit: true}`
+3. A function to construct the container in an empty state (no arguments given)
+
+While passing `null` for one or more of these won't cause an error immediately, it will cause errors if the Lens is used for for certain operations:
+
+| Argument to `lens.Step` Constructor | Missing Function | Operations that Fail |
+| --------: | :-------- | : ------------------------------------------ |
+| first | `get_maybe` | Retrieving or transforming any value, which also prevents any additional steps in the Lens |
+| second | `updatedClone` | Setting any item (even in a container that doesn't exist) |
+| third | `construct` | Setting an item in a container that doesn't exist in the input; `xformInClone` with `addMissing` and `xformInClone_maybe` if the container is missing from the subject |
+
 ## Utilities
 
 ### The `$` Method
@@ -146,9 +215,3 @@ const secondAnswer = lens('answer', 1).$`get`;
 When the target of a lens is intended to be a method of the object to which it is attached, the `bound` method is helpful to avoid repeated lookup through the whole data structure.  It looks up the target value of the lens and then — if that value is a Function — calls `Function.bind` on that value passing the object from which it was retrieved.  If the slot doesn't refer to a function, the result is the value in the slot.  If the slot does not exist, a no-op function is returned.
 
 `bound` also provides two options for alternate behavior as the second argument: `{or: defaultValue}` and `{orThrow: exceptionValue}`.  In the case of the `or` option and if the slot is not found in the subject, the default value associated with `or` is returned *without any modification* — specifically, `Function.bind` is *not* called.  If the `orThrow` option is given and the slot not exist, the given exception value will be thrown.  `orThrow` takes precedence over `or` if both are specified.
-
-### The `polyfillImmutable` Function
-
-To avoid introducing a dependency between this library and the "immutable" package, this library does not import from "immutable".  It does, however, offer support for integrating immutable as the two packages are conceptually related.  One aspect of that integration is the `lens.ImmutableContainerFactory` class usable with `lens.Factory`.  And though "immutable" objects share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `set` or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, it should be harmless to polyfill any "immutable" container type desired.
-
-Even if no modified clones are to be created, the `lens.at_maybe` must be defined for immutable container types to participate in lens *getting*, so it may be beneficial to run this function on all "immutable" types that might be present in data to be queried with lenses.
