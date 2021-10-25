@@ -178,8 +178,8 @@ The second alternative for constructing non-JSON containers is to specify a `len
 
 1. A function to retrieve the Maybe value on the "down" side of the step: it should return `{}` if the value is not present or `{just: value}` if the value is present (as described in the *Maybe Monad* section above).
 2. A function to create and return a clone of the container (first argument) with a specified change (second argument), either:
-    * `{set: newValue}`, or
-    * `{omit: true}`
+    * `{just: newValue}` indicating a `newValue` to give this slot in the clone, or
+    * `{}` indicating that the slot should not be present in the clone.
 3. A function to construct the container in an empty state (no arguments given)
 
 While passing `null` for one or more of these won't cause an error immediately, it will cause errors if the Lens is used for for certain operations:

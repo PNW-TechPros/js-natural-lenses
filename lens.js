@@ -3,6 +3,7 @@ const _ = require('underscore');
 const isLensClass = Symbol("isLens"), isLens = _.property(isLensClass);
 const at_maybe = Symbol("lens.at_maybe");
 const cloneImpl = Symbol("lens.clone");
+const getIterator = _.property(Symbol.iterator);
 
 Object.assign(Object.prototype, {
   [at_maybe]: function (key) {
@@ -231,6 +232,15 @@ class Lens {
     return {just: cur};
   }
   
+  getArray(subject) {
+    const maybeVal = this.get_maybe(subject);
+    if (getIterator(maybeVal.just)) {
+      return maybeVal.just;
+    } else {
+      return [];
+    }
+  }
+  
   *ifFound(subject) {
     const maybeVal = this.get_maybe(subject);
     if ('just' in maybeVal) {
@@ -378,6 +388,16 @@ class Lens {
       return subject;
     }
     return cur;
+  }
+  
+  xformArrayInClone(subject, fn) {
+    this.xformInClone(subject, (maybeVal) => {
+      if (getIterator(maybeVal.just)) {
+        return {just: fn(maybeVal)};
+      } else {
+        return {};
+      }
+    });
   }
 
   /**
@@ -569,11 +589,11 @@ class CSSlot {
   }
   
   cloneAndSet(val) {
-    return this.customStep.updatedClone(this.target, {set: val});
+    return this.customStep.updatedClone(this.target, {just: val});
   }
   
   cloneOmitting() {
-    return this.customStep.updatedClone(this.target, {omit: true});
+    return this.customStep.updatedClone(this.target, {});
   }
 }
 
