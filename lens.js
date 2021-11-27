@@ -3,7 +3,13 @@ const _ = require('underscore');
 const isLensClass = Symbol("isLens"), isLens = _.property(isLensClass);
 const at_maybe = Symbol("lens.at_maybe");
 const cloneImpl = Symbol("lens.clone");
-const getIterator = _.property(Symbol.iterator);
+const $iterator = _.property(Symbol.iterator);
+function getIterator(val) {
+  if (_.isString(val)) {
+    return;
+  }
+  return $iterator(val);
+}
 
 Object.assign(Object.prototype, {
   [at_maybe]: function (key) {
@@ -232,11 +238,35 @@ class Lens {
     return {just: cur};
   }
   
-  getArray(subject) {
+  /**
+   * @summary Get the (iterable) value of this slot within some subject data
+   * @param subject  The data to query
+   * @param orThrow  A value to throw if the slot does not contains a non-iterable value
+   * @return         An iterable of values from this slot (or an empty Array)
+   *
+   * @description
+   * If the slot does not exist within *subject*, this method returns an empty
+   * Array.  If the slot within *subject* contains a non-iterable value, this
+   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
+   * behavior is the same as if the slot did not exist: an empty Array is
+   * returned.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
+   * *orThrow* is an Object, its `noniterableValue` property will be set to the
+   * slot's value before being thrown. 
+   *
+   * This method differs from Lens#get in that the returned value will always
+   * be iterable; thus, the return value of this method may safely be passed
+   * into any function expecting an iterable value.  One example usage is
+   * constructing a `Seq` from the `immutable` package.
+   *
+   * Strings, though iterable, are considered scalar values; if the targeted
+   * slot contains a string, the slot will be treated as non-iterable.
+   */
+  getIterable(subject, {orThrow} = {}) {
     const maybeVal = this.get_maybe(subject);
     if (getIterator(maybeVal.just)) {
       return maybeVal.just;
     } else {
+      handleNoniterableValue(orThrow, maybeVal);
       return [];
     }
   }
@@ -390,16 +420,59 @@ class Lens {
     return cur;
   }
   
-  xformArrayInClone(subject, fn) {
-    this.xformInClone(subject, (maybeVal) => {
+  /**
+   * @summary Clone the input, transforming the iterable value within this slot with a function
+   * @param            subject  The input structured data
+   * @param {Function} fn       The function that transforms the (iterable) slot value
+   * @param            orThrow  A value to throw if the slot contains a non-iterable value
+   * @return                    A minimally changed clone of subject with the transformed value in this slot
+   *
+   * @description
+   * If the slot does not exist within *subject*, *fn* is invoked on an empty
+   * Array.  If the slot within *subject* contains a non-iterable value, this
+   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
+   * behavior is the same as if the slot did not exist: an empty Array is
+   * passed to *fn*.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
+   * *orThrow* is an Object, its `noniterableValue` property will be set to the
+   * slot's value before being thrown.
+   *
+   * The primary differences between this method and Lens#xformInClone are that
+   * this method always passes an iterable value to *fn* and always calls *fn*
+   * even if the slot is missing or does not contain an iterable value (unless
+   * *orThrow* is given).
+   *
+   * Strings, though iterable, are considered scalar values; if the targeted
+   * slot contains a string, the slot will be treated as non-iterable.
+   *
+   * "Minimally changed" means that reference-copies are used wherever possible
+   * while leaving subject unchanged, and that setting the slot to the strict-
+   * equal value it already has results in returning subject.
+   */
+  xformIterableInClone(subject, fn, {orThrow} = {}) {
+    return this.xformInClone_maybe(subject, (maybeVal) => {
+      let input, result;
       if (getIterator(maybeVal.just)) {
-        return {just: fn(maybeVal)};
+        result = fn(input = maybeVal.just);
       } else {
-        return {};
+        handleNoniterableValue(orThrow, maybeVal);
+        result = fn(input = []);
       }
+      if (!getIterator(result)) {
+        log({
+          level: 'warn',
+          message: "Noniterable result from fn of xformIterableInClone; substituting empty Array",
+          subject,
+          keys: this.keys,
+          input,
+          fn,
+          result,
+        });
+        return {just: []};
+      }
+      return {just: result};
     });
   }
-
+  
   /**
    * @summary DRYly bind a Function to the Object from which it was obtained
    * @param subject  The input structured data
@@ -429,8 +502,11 @@ class Lens {
   /**
    * Combine the effects of multiple Lenses
    */
-  static fuse(first, ...others) {
-    return new Lens(...first.keys.concat(..._.map(others, l => l.keys)));
+  static fuse(...lenses) {
+    if (!lenses.every(l => l.constructor === Lens)) {
+      throw "Expected all arguments to be exactly Lens (no derived classes)";
+    }
+    return new Lens(...lenses.flatMap(l => l.keys));
   }
   
   /**
@@ -601,6 +677,10 @@ function makeSlot(cur, k) {
   return new ((k instanceof CustomStep) ? CSSlot : Slot)(cur, k);
 }
 
+function log(info) {
+  console[info.level || 'info'](info);
+}
+
 const lensCap = {
   get: function () {},
   get_maybe: function() {return {};}
@@ -757,6 +837,16 @@ class OpticArray {
   }
 }
 Object.assign(OpticArray.prototype, BinderMixin);
+
+function handleNoniterableValue(excVal, maybeVal) {
+  if (_.isUndefined(excVal) || !('just' in maybeVal)) {
+    return;
+  }
+  if (_.isObject(excVal)) {
+    excVal.noniterableValue = maybeVal.just;
+  }
+  throw excVal;
+}
 
 /**
  * Construct a Lens from the given indexing steps

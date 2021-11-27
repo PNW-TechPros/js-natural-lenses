@@ -101,6 +101,37 @@ describe('Lens', () => {
       assert.notProperty(lens('question').get_maybe(data), 'just');
     });
   });
+  
+  describe('#getIterable', () => {
+    it('should fetch Array from slot', () => {
+      const data = {primes: [2,3,5]};
+      assert.strictEqual(lens('primes').getIterable(data), data.primes);
+    });
+    
+    it('should fetch an empty Array from a nonexistent slot', () => {
+      assert.deepEqual(lens('primes').getIterable({}), []);
+    });
+    
+    it('should default to returning an empty Array for noniterable in slot', () => {
+      assert.deepEqual(lens('primes').getIterable({primes: 6}), []);
+    });
+    
+    it('should throw the given Error for noniterable in slot', () => {
+      const niError = new Error('non-iterable value');
+      assert.throws(() => {
+        lens('primes').getIterable({primes: 6}, {orThrow: niError});
+      }, niError);
+    });
+    
+    it('should return empty Array for nonexistent slot even if orThrow specified', () => {
+      const niError = new Error('non-iterable value');
+      assert.deepEqual(lens('primes').getIterable({}, {orThrow: niError}), []);
+    });
+    
+    it('should treat a string as noniterable', () => {
+      assert.deepEqual(lens('primes').getIterable({primes: 'Aqasix'}), []);
+    });
+  });
 
   describe('#setInClone()', () => {
     it('should assign into an existing element of an Array', () => {
@@ -261,6 +292,46 @@ describe('Lens', () => {
       const result = lens('answer', 2).xformInClone_maybe(data, mv => ({just: 5}));
       assert.strictEqual(result, data);
       assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
+    });
+  });
+  
+  describe('#xformIterableInClone()', () => {
+    it('should return subject if slot value returned', () => {
+      const data = {primes: [2,3,5]};
+      assert.strictEqual(lens('primes').xformIterableInClone(data, x => x), data);
+    });
+    
+    it('should input an empty Array to fn if slot is missing', () => {
+      lens('primes').xformIterableInClone({}, x => {
+        assert.deepEqual(x, []);
+        return x;
+      })
+    });
+    
+    it('should log if output of fn is not an Array', () => {
+      lens('primes').xformIterableInClone({}, x => {
+        return 6;
+      })
+    });
+    
+    it('should return a modified clone if fn does not return its input', () => {
+      const data = {primes: [2,3,5]};
+      const result = lens('primes').xformIterableInClone(data, xs => Array.from(xs));
+      assert.deepEqual(data, result);
+      assert.notStrictEqual(data, result);
+    });
+    
+    it('should return a clone with modified iterable if fn modifies', () => {
+      const data = {primes: [2,3,5]};
+      const result = lens('primes').xformIterableInClone(data, xs => xs.concat([7]));
+      assert.notDeepEqual(data, result);
+      assert.deepEqual(result.primes, data.primes.concat([7]));
+    });
+    
+    it('should throw the given Error if the slot contains a noniterable value', () => {
+      const data = {primes: 6};
+      const niError = new Error('non-iterable value');
+      assert.throws(() => lens('primes').xformIterableInClone(data, x => x, {orThrow: niError}), niError);
     });
   });
 
@@ -483,5 +554,48 @@ describe('Immutable integration', () => {
     const im_result = lf.lens(1).xformInClone_maybe( data, () => ({}) );
     assert.strictEqual(im_result.size, 3);
     assert.isUndefined(im_result.get(1));
+  });
+  
+  describe('Lens#getSeq', () => {
+    it('returns a Seq for an Array in subject', () => {
+      const data = {
+        countries: ['United States of America', 'Canada', "Mexico"],
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+    });
+    
+    it('returns an empty Seq for a missing element in subject', () => {
+      const data = {};
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('returns an empty Seq for a noniterable element in subject', () => {
+      const data = {
+        countries: 3,
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('returns an empty Seq for a string element in subject', () => {
+      const data = {
+        countries: 'all',
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('throws the given "orThrow" for a noniterable element in subject', () => {
+      const data = {
+        countries: 3,
+      };
+      const niError = new Error("Not an iterable");
+      assert.throws(() => {lens('countries').getSeq(data, {orThrow: niError});}, niError);
+    });
   });
 });

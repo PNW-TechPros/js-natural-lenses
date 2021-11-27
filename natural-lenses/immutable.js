@@ -1,4 +1,4 @@
-const {List, Map, OrderedMap} = require('immutable');
+const {List, Map, OrderedMap, Seq} = require('immutable');
 const lens = require('../lens.js');
 
 lens.polyfillImmutable(List);
@@ -17,4 +17,10 @@ const lensFactory = new lens.Factory({containerFactory});
 Object.assign(module.exports, {
   containerFactory,
   lensFactory,
+});
+
+Object.assign(lens('x').constructor.prototype, {
+  getSeq: function(subject, {orThrow} = {}) {
+    return Seq(this.getIterable(subject, {orThrow}));
+  },
 });

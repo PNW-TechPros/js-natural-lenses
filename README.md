@@ -168,6 +168,8 @@ Lenses and efficiently immutable data structures work together synergistically, 
 
 The `natural-lenses/immutable` submodule also has a side-effect of polyfilling support for lenses into `immutable` types.  Though `immutable`'s `List`, `Map`, and `OrderedMap` classes share many interface semantics with ES6 container types, they are not identical, and two specific behaviors have to be defined for the container types to work with lenses (both named by `Symbol`s): `lens.at_maybe` and `lens.clone`.  The first implements the behavior for returning a Maybe monad value for the given key/index, and the second implements cloning with potential modifications of `set` or `spliceOut`.  Because the methods are named with `Symbol`s defined by this package, this polyfill should not interfere with application code or any other libraries in use.
 
+Importing `natural-lenses/immutable` also has the side-effect of polyfilling `Lens` with a `getSeq` method that constructs a `Seq` (from the `immutable` package) from the non-`String` iterable in the `Lens`'s target slot (or from an empty array if the slot's contents are a `String` or not iterable).
+
 Even if no modified clones are to be created, the `lens.at_maybe` must be defined for immutable container types to participate in lens *getting*, so it may be beneficial to run `lens.polyfillImmutable` on all `immutable` types that might be present in data to be queried with lenses.
 
 Because this library _does not_ declare a dependency on `immutable`, it is the responsibility of the including project to declare it's own dependency on both that package and this one if both are to be used.
@@ -215,3 +217,9 @@ const secondAnswer = lens('answer', 1).$`get`;
 When the target of a lens is intended to be a method of the object to which it is attached, the `bound` method is helpful to avoid repeated lookup through the whole data structure.  It looks up the target value of the lens and then — if that value is a Function — calls `Function.bind` on that value passing the object from which it was retrieved.  If the slot doesn't refer to a function, the result is the value in the slot.  If the slot does not exist, a no-op function is returned.
 
 `bound` also provides two options for alternate behavior as the second argument: `{or: defaultValue}` and `{orThrow: exceptionValue}`.  In the case of the `or` option and if the slot is not found in the subject, the default value associated with `or` is returned *without any modification* — specifically, `Function.bind` is *not* called.  If the `orThrow` option is given and the slot not exist, the given exception value will be thrown.  `orThrow` takes precedence over `or` if both are specified.
+
+### The `getIterable` and `xformArrayInClone` Methods
+
+`natural-lenses` does not provide any direct support for traversal, but instead simplifies accessing a slot expected to contain an *Array*.  `getIterable` (available on on lenses but not on other optics) converts a non-iterable value (including an missing value) to an empty Array.  To use methods like `Array.prototype.map` or `Array.prototype.flatMap`, the iterable result of `getIterable` can be passed to `Array.from`.
+
+`xformArrayInClone` works similarly for transforming a value expected to be Array-like, 
