@@ -455,7 +455,11 @@ class Lens {
         result = fn(input = maybeVal.just);
       } else {
         handleNoniterableValue(orThrow, maybeVal);
-        result = fn(input = []);
+        input = [];
+        if ('just' in maybeVal) {
+          input.noniterableValue = maybeVal.just;
+        }
+        result = fn(input);
       }
       if (!getIterator(result)) {
         log({

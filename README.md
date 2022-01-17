@@ -220,6 +220,6 @@ When the target of a lens is intended to be a method of the object to which it i
 
 ### The `getIterable` and `xformArrayInClone` Methods
 
-`natural-lenses` does not provide any direct support for traversal, but instead simplifies accessing a slot expected to contain an *Array*.  `getIterable` (available on on lenses but not on other optics) converts a non-iterable value (including an missing value) to an empty Array.  To use methods like `Array.prototype.map` or `Array.prototype.flatMap`, the iterable result of `getIterable` can be passed to `Array.from`.
+`natural-lenses` does not provide any direct support for traversal, but instead simplifies accessing a slot expected to contain an *Array*.  `getIterable` (available only on lenses but not on other optics) converts a non-iterable value (including an missing value) to an empty Array.  To use methods like `Array.prototype.map` or `Array.prototype.flatMap`, the iterable result of `getIterable` can be passed to `Array.from`.
 
 `xformArrayInClone` works similarly for transforming a value expected to be Array-like, 

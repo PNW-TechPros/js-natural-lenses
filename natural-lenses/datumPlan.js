@@ -1,7 +1,6 @@
+const _ = require('underscore');
 const lens = require('../lens.js');
 const {isArray, isObject} = require('underscore');
-// const value = Symbol('lens.DatumPlan.value');
-// const others = Symbol('lens.DatumPlan.others');
 const value = '$', others = '((others))';
 
 const lengthProp = lens('length');
@@ -40,7 +39,6 @@ class PlanBuilder {
         this.keys = theseKeys;
       }
       if (others in rawPlan) {
-        // TODO: Mixin dictionary entry iteration methods
         result.$entryValue = new PlanBuilder().buildPlan(rawPlan[others]);
         Object.assign(result, this.entriesMixin(result.$entryValue, Object.keys(rawPlan)));
       }
@@ -80,10 +78,10 @@ class PlanBuilder {
        * object targeted by this lens.
        *
        * Pattern 2 creates an optic (a lens where possible) targeting a slot
-       * within the *index*-th item of the indexable target by this lens, where
-       * the slot within the item is selected by the result of `itemSlotPicker`.
-       * `itemSlotPicker` is called with the item datum plan for the target
-       * of this lens.
+       * within the *index*-th item of the indexable targeted by this lens,
+       * where the slot within the item is selected by the result of
+       * `itemSlotPicker`.  `itemSlotPicker` is called with the item datum plan
+       * for the target of this lens if one is specified within the datum plan.
        *
        * Pattern 3 is similar to pattern 2, just directly passing a lens (or
        * lens-like object) rather than a function that returns one.
@@ -120,14 +118,16 @@ class PlanBuilder {
        * Pattern 2 is for applying a change *within* each item of the iterable
        * targeted by this lens as a clone is made, selecting the slot within
        * each item by returning a lens from `itemSlotPicker`.  `itemSlotPicker`
-       * is called with the item datum plan for the targeted iterable.
+       * is called with the item datum plan for the targeted iterable if one
+       * exists in the datum plan.
        *
        * Pattern 3 is similar to pattern 2, just directly passing a lens (or
        * something that knows how to `xformInClone`) rather than a
        * function that returns one.
        *
-       * The `itemXform` function in pattern 1 is called with the item value
-       * and index for each item of the target iterable of this lens.
+       * The `itemXform` function in pattern 1 is called with the item value,
+       * its index within the iterable and, if specified, the item datum plan
+       * for each item of the target iterable of this lens.
        *
        * The `itemSlotXform` function in patterns 2 and 3 is called with the
        * slot value and the index of the current item within the target iterable
@@ -138,20 +138,35 @@ class PlanBuilder {
           const [getLens, itemSlotXform] = manipulators;
           const itemLens = getLens.xformInClone ? getLens : getLens.call(undefined, itemPlan);
           
-          return this.xformIterableInClone(subject, items =>
-            Array.from(
+          return this.xformIterableInClone(subject, items => {
+            const mapped = Array.from(
               items,
               (item, index) => itemLens.xformInClone(
                 item,
                 slotValue => itemSlotXform.call(undefined, slotValue, index)
               )
-            )
-          );
+            );
+            if (
+              items instanceof Array && items.length === mapped.length &&
+              itemsStrictEqual(items, mapped)
+            ) {
+              return items;
+            }
+            return mapped;
+          });
         } else if (manipulators.length === 1) {
-          const [itemXform] = manipulators;
-          return this.xformIterableInClone(subject, items =>
-            Array.from(items, itemXform)
-          );
+          const [itemXform] = manipulators, itemPlan = this.$item;
+          return this.xformIterableInClone(subject, items => {
+            const mapped = Array.from(items,
+              (item, index) => itemXform.call(undefined, item, index, itemPlan));
+            if (
+              items instanceof Array && items.length === mapped.length &&
+              itemsStrictEqual(items, mapped)
+            ) {
+              return items;
+            }
+            return mapped;
+          });
         } else {
           throw `.mapInside() requires one or two manipulators, ${manipulators.length} given`;
         }
@@ -169,18 +184,46 @@ class PlanBuilder {
        * target of this lens has been replaced with an iterable composed of
        * zero or more values for each item in the equivalent slot in *subject*.
        *
-       * If *reduce* is supplied, it is applied to concatenated results of all
-       * calls to *subItemsForItem*.  There is no requirement the resulting
-       * value is iterable.
+       * When *subItemsForItem* is called, it is provided an item from the
+       * target of this lens, the index of the item within the target iterable
+       * of this lens and, if available, the datum plan for that item.  The
+       * Function passed for *subItemsForItem* MUST return an iterable of values
+       * to be substituted in place of the item it received in the returned
+       * clone.
+       *
+       * If *reduce* is supplied, it is applied to an iterable chaining all the
+       * result items returned by all calls to *subItemsForItem*.  The value
+       * returned by *reduce* must be iterable.
        */
-      flatMapInside: function (subject, subItemsForItem, reduce) {
+      flatMapInside: function (subject, subItemsForItem, {reduce, orThrow} = {}) {
+        const itemPlan = this.$item;
         return this.xformIterableInClone(subject, items => {
-          const result = [];
+          let result = [];
+          let index = 0;
           for (let item of items) {
-            result.push(...subItemsForItem.call(undefined, item, itemPlan));
+            result.push(...subItemsForItem.call(undefined, item, index, itemPlan));
+            ++index;
           }
-          return reduce ? reduce.call(undefined, result) : result;
-        });
+          if (reduce) {
+            if (
+              _.isArray(result) && result.length === 0 &&
+              items !== this.get(subject)
+            ) {
+              result.injected = true;
+            }
+            if ('noniterableValue' in items) {
+              result.noniterableValue = items.noniterableValue;
+            }
+            result = reduce.call(undefined, result);
+          }
+          if (
+            items instanceof Array && _.isObject(result) &&
+            items.length === result.length && itemsStrictEqual(items, result)
+          ) {
+            return items;
+          }
+          return result;
+        }, {orThrow});
       },
     };
   }
@@ -194,6 +237,26 @@ class PlanBuilder {
        * @param {string}          key         Key (i.e. property name) of the targeted Object on which to focus
        * @param {Function | Lens} [pickLens]  A lens to a slot within the selected value or a Function returning such a lens given the value plan
        * @return                              A lens (or at least some optic) to the value or a slot within the value
+       *
+       * @description
+       * There are several ways to call this method, with different argument
+       * patterns:
+       * 1. `datumLens.at(key)`
+       * 2. `datumLens.ad(key, propvalSlotPicker)`
+       * 3. `datumLens.ad(key, porpvalSlotLens)`
+       *
+       * Pattern 1 creates a lens to the *key* property value of the Object
+       * targeted by this lens.
+       *
+       * Pattern 2 creates an optic (a lens where possible) targeting a slot
+       * within the *key* property of the Object targeted by this lens, where
+       * the slot within the item is selected by the result of
+       * `propvalSlotPicker`.  `propvalSlotPicker` is called with the "other
+       * property" datum plan for the target of this lens if one is specified
+       * within the datum plan.
+       *
+       * Pattern 3 is similar to pattern 2, just directly passing a lens (or
+       * lens-like object) rather than a function that returns one.
        */
       at: function (key, pickLens) {
         const itemLens = lens(...this.keys, key);
@@ -206,6 +269,47 @@ class PlanBuilder {
         }
       },
       
+      /**
+       * @summary Clone the subject with the target of this lens altered by mapping property values
+       * @param  subject       The input structured data
+       * @param  manipulators  See description
+       * @return               A minimally changed clone of the subject with the transformed value in this slot
+       *
+       * @description
+       * There are several ways to call this method, with different types of
+       * manipulators:
+       * 1. `datumLens.mapInside(subject, propvalXform)`
+       * 2. `datumLens.mapInside(subject, propvalSlotPicker, propvalSlotXform)`
+       * 3. `datumLens.mapInside(subject, propvalSlotLens, propvalSlotXform)`
+       *
+       * All of these patterns iterate only over the *non-explicit*
+       * own-properties of the Object targeted within *subject* by this lens.
+       * Explicit properties are those whose names are given within the datum
+       * plan in the position corresponding to this lens.
+       *
+       * Pattern 1 applies a transformation function (`propvalXform`) to each
+       * own-property of the Object selected by this lens not explicitly
+       * specified in the datum plan as the clone of *subject* is made.
+       *
+       * Pattern 2 is for applying a change *within* each non-explicit
+       * own-property value of the Object targeted by this lens as a clone is
+       * made, selecting the slot within each item by returning a lens from
+       * `propvalSlotPicker`.  `propvalSlotPicker` is called with the "other
+       * property" datum plan for the targeted Object if one exists in the datum
+       * plan.
+       *
+       * Pattern 3 is similar to pattern 2, just directly passing a lens (or
+       * something that knows how to `xformInClone`) rather than a function
+       * that returns one.
+       *
+       * The `propvalXform` function in pattern 1 is called with the property
+       * value, the property name and, if specified, the "other property" datum
+       * plan for the target Object of this lens.
+       *
+       * The `propvalSlotXform` function in patterns 2 and 3 is called with the
+       * slot value within the property value and the name of the property
+       * within the Object target of this lens.
+       */
       mapInside: function (subject, ...manipulators) {
         let valueModifier = null;
         if (manipulators.length === 2) {
@@ -226,15 +330,27 @@ class PlanBuilder {
         
         return this.xformInClone(subject, container => {
           const result = {...container};
+          let sameValues = true;
           for (let key of Object.keys(container)) {
             if (explicitKeys.has(key)) continue;
+            const origValue = result[key];
             result[key] = valueModifier(result, key);
+            if (result[key] !== origValue) {
+              sameValues = false;
+            }
           }
-          return result;
+          return sameValues ? container : result;
         });
       },
     };
   }
+}
+
+function itemsStrictEqual(a, b) {
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 }
 
 function makeDatumPlan(rawPlan) {
