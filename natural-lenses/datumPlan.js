@@ -22,7 +22,7 @@ class PlanBuilder {
       }
       return result;
     } else if (rawPlan.constructor === Object) {
-      const result = this.keys.length ? lens(...this.keys) : {};
+      const result = this.keys.length ? lens(...this.keys) : lens();
       const theseKeys = this.keys;
       try {
         for (let key of Object.keys(rawPlan)) {

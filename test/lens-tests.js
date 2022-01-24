@@ -68,6 +68,18 @@ describe('Lens', () => {
       const data = {};
       assert.isUndefined(lens('address', 'street').get({address: null}));
     });
+    
+    it('should chain "get" via tail', () => {
+      const lenses = [lens('answer')];
+      const data = {answer: [2, 3, 5]};
+      assert.strictEqual(lens(0).get(lenses, data), data.answer);
+    });
+    
+    it('should fail chained "get" because of non-lens to undefined result', () => {
+      const lenses = [lens('answer')];
+      const data = {answer: [2, 3, 5]};
+      assert.isUndefined(lens(1).get(lenses, data));
+    });
   });
 
   describe('#get_maybe()', () => {
@@ -99,6 +111,49 @@ describe('Lens', () => {
     it('should return {} (no "just" property) for property not on an Object', () => {
       const data = {answer: 42};
       assert.notProperty(lens('question').get_maybe(data), 'just');
+    });
+    
+    it('should access a property of an Array if given a non-number step', () => {
+      const data = [2,3,5];
+      assert.deepEqual(lens('length').get_maybe(data), {just: 3});
+    });
+    
+    it('should recognize a non-property of an Array if given a non-number step', () => {
+      const data = [2,3,5];
+      assert.notProperty(lens('question').get_maybe(data), 'just');
+    });
+    
+    it('accesses from the end of an Array if given negative numeric index', () => {
+      const data = [2,3,5];
+      assert.deepEqual(lens(-1).get_maybe(data), {just: 5});
+    });
+    
+    it('correctly evaluates for items in a Map', () => {
+      const o = {}, data = new Map([
+        ['theObject', o],
+      ]);
+      assert.strictEqual(lens('theObject').get_maybe(data).just, o);
+    });
+    
+    it('correctly evaluates for items not in a Map', () => {
+      const o = {}, data = new Map([
+        ['theObject', o],
+      ]);
+      assert.notProperty(lens('somethingElse').get_maybe(data), 'just');
+    })
+    
+    it('should chain "get_maybe" via tail', () => {
+      const lenses = [lens('answer')];
+      const data = {answer: [2, 3, 5]};
+      const result = lens(0).get_maybe(lenses, data);
+      assert.property(result, 'just');
+      assert.strictEqual(result.just, data.answer);
+    });
+    
+    it('should fail chained "get" because of non-lens to undefined result', () => {
+      const lenses = [lens('answer'), null];
+      const data = {answer: [2, 3, 5]};
+      assert.notProperty(lens(1).get_maybe(lenses, data), 'just');
     });
   });
   
@@ -237,6 +292,15 @@ describe('Lens', () => {
       assert.deepEqual(data, {answer: 42});
       assert.deepEqual(result, Object.assign({question: undefined + '!'}, data));
     });
+    
+    it('should transform a slot within a missing container if expressly requested', () => {
+      const data = {question: "What are the first three primes?"};
+      const { answer, ...otherResult } = lens('answer', 1).xformInClone(data, s => 3, {addMissing: true});
+      assert.deepEqual(otherResult, data);
+      assert.notProperty(answer, 0);
+      assert.strictEqual(answer[1], 3);
+      assert.strictEqual(answer.length, 2);
+    });
 
     it('should return the original if the strict-equal-same value is the result of the transform callback', () => {
       const data = {question: 'What are the first three primes?', answer: [2,3,5]};
@@ -269,15 +333,31 @@ describe('Lens', () => {
       assert.deepEqual(data, {question: 'What are the first four primes?', answer: [2,3,5]});
       assert.deepEqual(result, {question: 'What are the first four primes?', answer: [2,3,5,7]});
     });
-
-    it('should delete an element from an array when no "just" is returned', () => {
-      const data = {question: 'What are the first three primes?', answer: [2,3,5]};
-      const result = lens('answer').xformInClone_maybe(data, mv => ({}));
+    
+    it('should transform a {} of a missing slot within a missing container', () => {
+      const data = {question: 'What are the first four primes?'};
+      const result = lens('answer', 1).xformInClone_maybe(data, mv => {
+        assert.notProperty(mv, 'just');
+        return {just: 3};
+      });
       assert.notStrictEqual(result, data);
       assert.strictEqual(result.question, data.question);
       assert.notStrictEqual(result.answer, data.answer);
-      assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
-      assert.deepEqual(result, {question: 'What are the first three primes?'});
+      assert.notProperty(result.answer, 0);
+      assert.strictEqual(result.answer[1], 3);
+      assert.strictEqual(result.answer.length, 2);
+      // assert.deepEqual(data, {question: 'What are the first four primes?', answer: [2,3,5]});
+      // assert.deepEqual(result, {question: 'What are the first four primes?', answer: [2,3,5,7]});
+    });
+
+    it('should delete an element from an array when no "just" is returned', () => {
+      const data = {question: 'What are the first three primes?', answer: [2,3,5,7]};
+      const result = lens('answer', 3).xformInClone_maybe(data, mv => ({}));
+      assert.notStrictEqual(result, data);
+      assert.strictEqual(result.question, data.question);
+      assert.notStrictEqual(result.answer, data.answer);
+      assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5,7]});
+      assert.deepEqual(result, {question: 'What are the first three primes?', answer: [2,3,5]});
     });
 
     it('should return the input value when no "just" is returned for a missing value', () => {
@@ -292,6 +372,87 @@ describe('Lens', () => {
       const result = lens('answer', 2).xformInClone_maybe(data, mv => ({just: 5}));
       assert.strictEqual(result, data);
       assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
+    });
+    
+    it('should delete a property from the clone of an Object when no "just" is returned', () => {
+      const data = {question: 'What are the first three primes?', answer: [2,3,5]};
+      const result = lens('answer').xformInClone_maybe(data, mv => ({}));
+      assert.notStrictEqual(result, data);
+      assert.strictEqual(result.question, data.question);
+      assert.notStrictEqual(result.answer, data.answer);
+      assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
+      assert.deepEqual(result, {question: 'What are the first three primes?'});
+    });
+    
+    it('should return the original if transforming Nothing to Nothing', () => {
+      const data = {question: 'What are the first three primes?', answer: [2,3,5]};
+      const result = lens('answer', 3).xformInClone_maybe(data, mv => ({}));
+      assert.strictEqual(result, data);
+      assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
+    });
+    
+    it('should not alter an Object when transforming a non-own property', () => {
+      const data = {question: 'What are the first three primes?', answer: [2,3,5]};
+      const result = lens('toString').xformInClone_maybe(data, mv => ({}));
+      assert.strictEqual(result, data);
+      assert.deepEqual(data, {question: 'What are the first three primes?', answer: [2,3,5]});
+    });
+    
+    it('should leave an empty slot in an Array if transforming to Nothing', () => {
+      const data = [2,3,5];
+      const result = lens(-2).xformInClone_maybe(data, mv => ({}));
+      assert.notProperty(result, 1);
+    });
+    
+    it('should not alter an Array if the deleted slot is out of bounds', () => {
+      const data = lens(-2).xformInClone_maybe([2,3,5], mv => ({}));;
+      const result = lens(-2).xformInClone_maybe(data, mv => ({}));
+      assert.strictEqual(result, data);
+    });
+    
+    it('should not alter a Map if an entry is returned unchanged', () => {
+      const data = new Map([
+        ['answer', 42],
+      ]);
+      const result = lens('answer').xformInClone_maybe(data, x => x);
+      assert.strictEqual(result, data);
+    });
+    
+    it('can set an item in a clone of a Map', () => {
+      const data = new Map([
+        ['answer', 42],
+      ]);
+      const result = lens('answer').xformInClone_maybe(data, () => ({just: 48}));
+      assert.notStrictEqual(result, data);
+      assert.strictEqual(result.get('answer'), 48);
+      assert.deepEqual(result.keys(), data.keys());
+    });
+    
+    it('can delete an item from the clone of a Map', () => {
+      const data = new Map([
+        ['answer', 42],
+      ]);
+      const result = lens('answer').xformInClone_maybe(data, () => ({}));
+      assert.notStrictEqual(result, data);
+      assert.deepEqual(Array.from(result.keys()), []);
+    });
+    
+    it('returns the original subject when deleting a empty element from an Array', () => {
+      const data = new Array(3);
+      data[1] = 2;
+      data[2] = 3;
+      assert.notProperty(data, 0);
+      const result = lens(0).xformInClone_maybe(data, () => ({}));
+      assert.strictEqual(result, data);
+    });
+    
+    it('returns the original subject when deleting an out-of-bounds element from an Array', () => {
+      const data = new Array(3);
+      data[1] = 2;
+      data[2] = 3;
+      assert.notProperty(data, 0);
+      const result = lens(-10).xformInClone_maybe(data, () => ({}));
+      assert.strictEqual(result, data);
     });
   });
   
@@ -332,6 +493,62 @@ describe('Lens', () => {
       const data = {primes: 6};
       const niError = new Error('non-iterable value');
       assert.throws(() => lens('primes').xformIterableInClone(data, x => x, {orThrow: niError}), niError);
+    });
+  });
+  
+  describe('#$', () => {
+    it('should work when called with a string', () => {
+      const data = [2,3,5], getter = lens(1).$('get');
+      assert.strictEqual(getter(data), data[1]);
+    });
+    
+    it('should work as a tagged template', () => {
+      const data = [2,3,5], getter = lens(1).$`get`;
+      assert.strictEqual(getter(data), data[1]);
+    });
+    
+    it('should work with tagged template substitution', () => {
+      const data = [2,3,5], getter = lens(1).$`g${'e'}t`;
+      assert.strictEqual(getter(data), data[1]);
+    });
+  });
+  
+  describe('#bound', () => {
+    it('should work when the target is present', () => {
+      const data = {question: 'What is the air speed of an unladen swallow?'};
+      const sliceQuestion = lens('question', 'slice').bound(data);
+      assert.strictEqual(sliceQuestion(0, 4), data.question.slice(0, 4));
+    });
+    
+    it('should return a no-op function when the target is not present', () => {
+      const data = {question: 'What is the air speed of an unladen swallow?'};
+      const spliceQuestion = lens('question', 'splice').bound(data);
+      assert.isUndefined(spliceQuestion(0, 4, 'WAT'));
+      assert.strictEqual(data.question, 'What is the air speed of an unladen swallow?');
+    });
+    
+    it('should return the given default function when the target is not present', () => {
+      const data = {question: 'What is the air speed of an unladen swallow?'};
+      const spliceQuestion = lens('question', 'splice').bound(data, {or: () => 'Who'});
+      assert.strictEqual(spliceQuestion(0, 4, 'WAT'), 'Who');
+    });
+    
+    it('should throw the given value when the target is not present', () => {
+      const data = {question: 'What is the air speed of an unladen swallow?'};
+      const mnpError = new Error("Method not present");
+      assert.throws(() => lens('question', 'splice').bound(data, {orThrow: mnpError}), mnpError);
+    });
+  });
+  
+  describe('#ifFound', () => {
+    it('should iterate over exactly the target if present', () => {
+      const data = {answer: [2,3,5]};
+      assert.deepEqual(Array.from(lens('answer', 1).ifFound(data)), [3]);
+    });
+    
+    it('should iterate over nothing if the target is not present', () => {
+      const data = {answer: [2,3,5]};
+      assert.deepEqual(Array.from(lens('answer', 15).ifFound(data)), []);
     });
   });
 
@@ -382,6 +599,59 @@ describe('Lens', () => {
       assert.deepEqual(result, data.location.streetAddress[0]);
     });
   });
+  
+  describe('#fuse()', () => {
+    it("throws if non-Lenses are provided (use .fuse() instead)", () => {
+      const Lens = lens(0).constructor;
+      assert.throws(
+        () => Lens.fuse(lens(0), lens.nfocal([lens(1)])),
+        /exactly\s+Lens/
+      );
+    });
+  });
+});
+
+describe('CustomStep', () => {
+  const elementZeroStep = new lens.Step(
+    (c) => ({just: c[0]}),
+    (c, v_m) => ('just' in v_m ? [v_m.just] : new Array(1)).concat(c.slice(1)),
+    () => []
+  );
+  
+  it("can be used in a 'get' to fetch in an arbitrary way", () => {
+    const data = [{v: 2}, {v: 3}, {v: 5}];
+    assert.strictEqual(lens(elementZeroStep).get(data), data[0]);
+  });
+  
+  it("can be used in a 'setInClone' to update in an arbitrary way", () => {
+    const data = [{v: 1}, {v: 3}, {v: 5}], elt0repl = {v: 2};
+    const result = lens(elementZeroStep).setInClone(data, elt0repl);
+    assert.deepEqual(data[0], {v: 1});
+    assert.notStrictEqual(result, data);
+    assert.strictEqual(result[0], elt0repl);
+    for (var i of [1, 2]) {
+      assert.strictEqual(result[i], data[i]);
+    }
+  });
+  
+  it("can be used to construct a missing container", () => {
+    const elt0val = {v:2};
+    const result = lens('answers', elementZeroStep).setInClone({}, elt0val);
+    assert.typeOf(result.answers, 'array', 'Array was constructed');
+    assert.strictEqual(result.answers[0], elt0val);
+  });
+  
+  it("can be used to eliminate a slot in an arbitrary way", () => {
+    const data = {answers: [{v: 2}, {v: 3}, {v: 5}]};
+    const result = lens('answers', elementZeroStep).xformInClone_maybe(
+      data,
+      () => ({})
+    );
+    assert.strictEqual(data.answers.length, 3);
+    assert.notStrictEqual(result, data);
+    assert.notProperty(result.answers, 0);
+    assert.strictEqual(result.answers.length, 3);
+  });
 });
 
 describe('ArrayNFocal', () => {
@@ -428,6 +698,66 @@ describe('ArrayNFocal', () => {
       assert.containsAllKeys(result.just, [1]);
     });
   });
+  
+  describe("#present()", () => {
+    it("returns an Array of the indexes of each constituent lens present in the subject", () => {
+      const L = lens.nfocal([lens('name'), lens('address', 'street', 0)]);
+      assert.deepEqual(L.present({name: "Fred Flintstone"}), [0]);
+      assert.deepEqual(L.present({
+        name: "Fred Flintstone",
+        address: {street: ['345 Cave Stone Rd']},
+      }), [0, 1]);
+    });
+  });
+  
+  describe("#xformInClone()", () => {
+    const L = lens.nfocal([lens('name'), lens('address', 'street', 0)]);
+    
+    it("applies the given transforms", () => {
+      const data = {
+        name: "Fred Flintstone",
+        address: {street: ['345 Cave Stone Rd']},
+      };
+      const result = L.xformInClone(
+        data,
+        [
+          [0, n => n.toLowerCase()],
+        ]
+      );
+      assert.deepEqual(result, {...data, name: "fred flintstone"});
+    });
+  });
+  
+  describe("#xformInClone_maybe()", () => {
+    const L = lens.nfocal([lens('name'), lens('address', 'street', 0)]);
+    
+    it("can supply a value for a missing slot", () => {
+      const insertedName = "Barney Rubble";
+      const result = L.xformInClone_maybe(
+        {},
+        [
+          [0, n_m => 'just' in n_m ? n_m : {just: insertedName}],
+        ]
+      );
+      assert.strictEqual(result.name, insertedName);
+    });
+  });
+  
+  describe("(as an Array-like collection of lenses)", () => {
+    const L = lens.nfocal([lens('name'), lens('address', 'street', 0)]);
+    
+    it("allows 'getting' of a constituent lens", () => {
+      const lens0 = lens(0).get(L);
+      assert.strictEqual(lens0, L.lenses[0]);
+    });
+    
+    it("can construct an altered clone", () => {
+      const institutionLens = lens('institution');
+      const L2 = lens(0).setInClone(L, institutionLens);
+      assert.strictEqual(L2.lenses[0], institutionLens);
+      assert.strictEqual(L2.lenses[1], L.lenses[1]);
+    });
+  });
 });
 
 describe('ObjectNFocal', () => {
@@ -462,6 +792,60 @@ describe('ObjectNFocal', () => {
       };
       const result = L.get_maybe(data);
       assert.deepEqual(result, {just: {name: 'Ferris Bueller', mailTo: undefined}, multiFocal: true});
+    });
+  });
+  
+  describe("(as an Object-like collection of lenses)", () => {
+    const L = lens.nfocal({name: lens('name'), mailTo: lens('school', 'address')});
+    
+    it("allows 'getting' of a constituent lens", () => {
+      const lensName = lens('name').get(L);
+      assert.strictEqual(lensName, L.lenses.name);
+    });
+  });
+});
+
+describe('OpticArray', () => {
+  const mfl = lens.nfocal([lens('name'), lens('address', 'street', 0)]);
+  
+  describe('#get()', () => {
+    it('retrieves the target value when target is present', () => {
+      const fusedLens = lens.fuse(lens(0), mfl);
+      const name = "Fred Flintstone";
+      assert.strictEqual(fusedLens.get({name}), name);
+    });
+    
+    it('returns undefined when intermediate lens is missing', () => {
+      const fusedLens = lens.fuse(lens(7), mfl);
+      const name = "Fred Flintstone";
+      assert.isUndefined(fusedLens.get({name}));
+    });
+    
+    it('returns undefined when target slot is missing', () => {
+      const fusedLens = lens.fuse(lens(0), mfl);
+      assert.isUndefined(fusedLens.get({}));
+    });
+  });
+  
+  describe('#get_maybe()', () => {
+    it('returns a Just construct with the target value when target is present', () => {
+      const fusedLens = lens.fuse(lens(0), mfl);
+      const name = "Fred Flintstone";
+      const result = fusedLens.get_maybe({ name });
+      assert.deepEqual(result, {just: name});
+    });
+    
+    it('returns a Nothing when intermediate lens is missing', () => {
+      const fusedLens = lens.fuse(lens(7), mfl);
+      const name = "Fred Flintstone";
+      const result = fusedLens.get_maybe({ name });
+      assert.notProperty(result, 'just');
+    });
+    
+    it('returns a Nothing when the target slot is missing', () => {
+      const fusedLens = lens.fuse(lens(0), mfl);
+      const result = fusedLens.get_maybe({});
+      assert.notProperty(result, 'just');
     });
   });
 });
@@ -554,6 +938,16 @@ describe('Immutable integration', () => {
     const im_result = lf.lens(1).xformInClone_maybe( data, () => ({}) );
     assert.strictEqual(im_result.size, 3);
     assert.isUndefined(im_result.get(1));
+  });
+  
+  it('deletes from Map by delete()', () => {
+    const data = new immutable.Map({
+      question: "What are the first three primes?",
+      answer: [2,3,5]
+    });
+    const im_result = lf.lens('answer').xformInClone_maybe( data, () => ({}) );
+    assert.strictEqual(im_result.size, 1);
+    assert.isFalse(im_result.has('answer'));
   });
   
   describe('Lens#getSeq', () => {

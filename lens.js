@@ -97,11 +97,6 @@ function index_maybe(subject, key) {
   return _.isObject(subject) ? subject[at_maybe](key) : {};
 }
 
-function indexedTransform(fns, key) {
-  const val_maybe = index_maybe(fns, key);
-  return val_maybe.just || _.identity;
-}
-
 const BinderMixin = {
   '$': function(method) {
     // Support tagged template syntax
@@ -344,13 +339,17 @@ class Lens {
         return subject;
       }
     }
-    const prevVal = slots[slots.length - 1].get();
-    cur = fn(prevVal);
-    if (cur === prevVal) {
-      return subject;
-    }
-    for (let i = slots.length - 1; i >= 0; i--) {
-      cur = slots[i].cloneAndSet(cur);
+    if (slots.length) {
+      const prevVal = slots[slots.length - 1].get();
+      cur = fn(prevVal);
+      if (cur === prevVal) {
+        return subject;
+      }
+      for (let i = slots.length - 1; i >= 0; i--) {
+        cur = slots[i].cloneAndSet(cur);
+      }
+    } else {
+      cur = fn(subject);
     }
     return cur;
   }
@@ -488,12 +487,11 @@ class Lens {
    */
   bound(subject, {orThrow, or} = {}) {
     const lCopy = new Lens(...this.keys), mname = lCopy.keys.pop();
-    const mSubj = lCopy.get(subject);
-    if (_.isObject(mSubj)) {
-      const fn = mSubj[mname];
-      if (_.isFunction(fn)) {
-        return fn.bind(mSubj);
-      }
+    const mSubj = lCopy.get(subject), fn = (function() {
+      try {return mSubj[mname];} catch (e) {}
+    }());
+    if (_.isFunction(fn)) {
+      return fn.bind(mSubj);
     }
     if (orThrow) {
       throw orThrow;
@@ -686,6 +684,7 @@ function log(info) {
 }
 
 const lensCap = {
+  [isLensClass]: true,
   get: function () {},
   get_maybe: function() {return {};}
 };
@@ -699,6 +698,10 @@ class AbstractNFocal {
 
   [at_maybe](idx) {
     return index_maybe(this.lenses, idx);
+  }
+  
+  [cloneImpl](alteration) {
+    return makeLens.nfocal(this.lenses[cloneImpl](alteration));
   }
 
   present(subject) {
@@ -716,14 +719,14 @@ class AbstractNFocal {
    * @param {(Function|Object)}             opts        Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
    * @return A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
    */
-  xformInClone(subject, xformArray, opts) {
+  xformInClone(subject, xformArray, opts = {}) {
     if (!_.isFunction(opts)) {
       opts = _.identity.bind(null, opts);
     }
     return _.reduce(
       xformArray,
       (cur, [key, xform]) => {
-        const lens = self.lenses[key];
+        const lens = this.lenses[key];
         return lens ? lens.xformInClone(cur, xform, opts(key)) : cur;
       },
       subject
@@ -734,7 +737,7 @@ class AbstractNFocal {
     return _.reduce(
       xformArray,
       (cur, [key, xform]) => {
-        const lens = self.lenses[key];
+        const lens = this.lenses[key];
         return lens ? lens.xformInClone_maybe(cur, xform) : cur;
       },
       subject
@@ -805,7 +808,15 @@ class OpticArray {
     this.lenses = lenses;
   }
 
-  present() {return true;}
+  present(subject) {
+    if (this.lenses.length === 0) return true;
+    const rval = _.reduceRight(
+      this.lenses.slice(1),
+      (subject, lens) => lens.get(subject),
+      subject
+    );
+    return this.lenses[0].present(rval);
+  }
 
   get(subject, ...tail) {
     const subjResult = _.reduceRight(
