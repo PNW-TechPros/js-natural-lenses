@@ -1,0 +1,36 @@
+{
+  "name": "natural-lenses",
+  "version": "2.0.0",
+  "description": "A JavaScript-native lens (and ancillary optics) system loosely based on Kmett-style lenses.",
+  "main": "index.js",
+  "scripts": {
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
+    "test": "mocha",
+    "dtest": "mocha --inspect-brk test"
+  },
+  "keywords": [
+    "lens",
+    "lenses",
+    "optics",
+    "kmett"
+  ],
+  "author": "Richard T. Weeks",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "immutable": "^3.8.2",
+    "mocha": "^9.1.1",
+    "nyc": "^15.1.0"
+  },
+  "dependencies": {
+    "underscore": "^1.13.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PNW-TechPros/js-natural-lenses.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PNW-TechPros/js-natural-lenses/issues"
+  },
+  "homepage": "https://github.com/PNW-TechPros/js-natural-lenses#readme"
+}
