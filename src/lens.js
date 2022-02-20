@@ -1,145 +1,13 @@
-const _ = require('underscore');
+import { isFunction, isObject, isUndefined } from 'underscore';
+import BinderMixin from './binder_mixin';
+import { cloneImpl, isLensClass } from './constants';
+import CustomStep from './custom_step';
+import { getIterator, index_maybe, isLens } from './utils';
 
-const isLensClass = Symbol("isLens"), isLens = _.property(isLensClass);
-const at_maybe = Symbol("lens.at_maybe");
-const cloneImpl = Symbol("lens.clone");
-const $iterator = _.property(Symbol.iterator);
-function getIterator(val) {
-  if (_.isString(val)) {
-    return;
-  }
-  return $iterator(val);
-}
-
-Object.assign(Object.prototype, {
-  [at_maybe]: function (key) {
-    return (key in this) ? {just: this[key]} : {};
-  },
-  [cloneImpl]: function ({set, spliceOut}) {
-    if (spliceOut && !this.hasOwnProperty(spliceOut)) {
-      return this;
-    }
-    const Species = this.constructor[Symbol.species] || this.constructor;
-    let inst = null;
-    try {
-      inst = new Species();
-    } catch (e) {
-      const cantConstruct = new Error(
-        `'${this.constructor.name}' requires arguments for instantiation; provide a [lens.clone] method`
-      );
-      cantConstruct.cause = e;
-      throw cantConstruct;
-    }
-    const result = Object.assign(inst, this);
-    if (set) {
-      result[set[0]] = set[1];
-    } else if (spliceOut) {
-      delete result[spliceOut];
-    }
-    return result;
-  },
-});
-Object.assign(Array.prototype, {
-  [at_maybe]: function (key) {
-    if (typeof key === 'number') {
-      if (key < -this.length || key >= this.length) {
-        return {};
-      }
-      if (key < 0) {
-        key = this.length + key;
-      }
-    }
-    return (key in this) ? {just: this[key]} : {};
-  },
-  [cloneImpl]: function ({set, spliceOut}) {
-    if (set) {
-      const result = this.concat();
-      result[set[0]] = set[1];
-      return result;
-    } else if (spliceOut) {
-      const i = spliceOut < 0 ? this.length + spliceOut : spliceOut;
-      if (i < 0 || i >= this.length || !(i in this)) {
-        return this;
-      }
-      if (i === this.length - 1) {
-        return this.slice(0, i);
-      }
-      const Species = this.constructor[Symbol.species];
-      return (new Species()).concat(
-        this.slice(0, spliceOut),
-        new Array(1),
-        this.slice(spliceOut + 1)
-      );
-    }
-    return this.concat();
-  },
-});
-Object.assign(Map.prototype, {
-  [at_maybe]: function (key) {
-    return this.has(key) ? {just: this.get(key)} : {};
-  },
-  [cloneImpl]: function ({set, spliceOut}) {
-    if (spliceOut && !this.has(spliceOut)) {
-      return this;
-    }
-    const Species = this.constructor[Symbol.species];
-    const result = new Species(this);
-    if (set) {
-      result.set(...set);
-    } else if (spliceOut) {
-      result.delete(spliceOut);
-    }
-    return result;
-  },
-});
-
-function index_maybe(subject, key) {
-  return _.isObject(subject) ? subject[at_maybe](key) : {};
-}
-
-const BinderMixin = {
-  '$': function(method) {
-    // Support tagged template syntax
-    if (_.isArray(method)) {
-      method = _.reduce(
-        _.range(1, arguments.length),
-        (cur, i) => cur + arguments[i].toString() + method[i],
-        method[0]
-      );
-    }
-    return this[method].bind(this);
-  }
-}
-
-/**
- * @summary Defines a custom step in a Lens
- *
- * @description
- * If standard logic for accessing data deeper in the conceptual structure
- * is not adequate, an instance of this class may be passed as a step in a
- * Lens, which will allow the Lens to have custom behavior.
- *
- * To construct this object, pass three Functions:
- * 
- * 1. A Function that returns a Maybe value for the slot within the container
- *    it is passed.
- * 2. A Function taking the current value of the container and applying a `set`
- *    or `spliceOut` operation, returning a modified clone
- * 3. A Function to construct a pristine instance of the container this step
- *    navigates
- *
- * Passing `null` for any of these functions will limit the functionality of
- * the lens: skipping either `construct` or `updatedClone` will prevent the lens
- * from constructing a missing container, skipping `updatedClone` will
- * additionally prevent the lens from modifying an existing container, and
- * skipping `get_maybe` will prevent retrieving or transforming values in
- * a subject.
- */
-class CustomStep {
-  constructor(get_maybe, updatedClone, construct) {
-    Object.assign(this, {construct, updatedClone, get_maybe});
-  }
-}
+// Polyfill support for lenses to standard JavaScript types
+import './stdlib_support/object';
+import './stdlib_support/array';
+import './stdlib_support/map';
 
 /**
  * @summary Class for operating immutably on a specific "slot" in complex data
@@ -148,7 +16,7 @@ class CustomStep {
  * Working with Jasascript data (especially JSON data) that is deeply nested
  * in an immutable way can be
  */
-class Lens {
+export default class Lens {
   [isLensClass] = true;
 
   constructor(...keys) {
@@ -490,7 +358,7 @@ class Lens {
     const mSubj = lCopy.get(subject), fn = (function() {
       try {return mSubj[mname];} catch (e) {}
     }());
-    if (_.isFunction(fn)) {
+    if (isFunction(fn)) {
       return fn.bind(mSubj);
     }
     if (orThrow) {
@@ -523,104 +391,6 @@ class Lens {
     return (typeof key === 'number') ? [] : {};
   }
 }
-
-class CCCLens extends Lens {
-  constructor(...keys) {
-    super(...keys);
-    this._containerFactory = null;
-  }
-  
-  _constructFor(depth) {
-    return this._containerFactory.construct(this.keys.slice(0, depth + 1));
-  }
-}
-
-const jsContainerFactoryInstanceContainerTypes = new WeakMap();
-/**
- * @summary A class to construct alternative sequential/mapping typings based on key type
- * @description
- * Use containers with the interfaces of the Array and ES6 Map classes as the
- * constructed containers based on the type of the key to be used for indexing
- * the container: a number indicates an Array and anything else uses a Map.
- *
- * Pass an instance of this class as the containerFactory option when
- * constructing a LensFactory. The container types to be used can be customized
- * when constructing this factory.
- */
-class JsContainerFactory {
-  constructor(containerTypes = {Map, Array}) {
-    jsContainerFactoryInstanceContainerTypes.set(this, {...containerTypes});
-  }
-  
-  get containerTypes() {
-    return {
-      Map, Array,
-      ...(jsContainerFactoryInstanceContainerTypes.get(this) || {})
-    };
-  }
-  
-  construct(keys) {
-    const types = jsContainerFactoryInstanceContainerTypes.get(this);
-    const k = keys[keys.length - 1];
-    return (typeof k === 'number')
-      ? new (types.Array || Array)()
-      : new (types.Map || Map)();
-  }
-}
-const jsContainers = new JsContainerFactory();
-
-function ImmutableMixin({spliceOutWithDelete = false}) {
-  return {
-    [at_maybe]: function (key) {
-      return this.has(key) ? {just: this.get(key)} : {};
-    },
-    [cloneImpl]: function ({pop, set, spliceOut}) {
-      if (pop) {
-        return this.pop();
-      }
-      if (set) {
-        return this.set(...set);
-      }
-      if (spliceOut) {
-        return spliceOutWithDelete ? this.delete(spliceOut) : this.set(spliceOut, undefined);
-      }
-      return this;
-    },
-  };
-}
-function polyfillImmutable(containerType) {
-  const isList = containerType.isList;
-  const proto = containerType.prototype,
-    mixins = ImmutableMixin({spliceOutWithDelete: !isList});
-  _.forEach(
-    Object.getOwnPropertySymbols(mixins),
-    (name) => {
-      if (!proto.hasOwnProperty(name)) proto[name] = mixins[name];
-    }
-  )
-}
-
-/**
- * @summary A factory for Lens-derived objects with customized container construction
- * @description
- * When POD container types (Object and Array) are not the desired types to 
- * construct in a clone -- as with use of immutable containers -- this class
- * can be used to build lenses that *do* build the desired types of objects.
- * 
- * This class is often used in conjunction with a JsContainerFactory object
- * implementing the container factory.
- */
-class LensFactory {
-  constructor({containerFactory = jsContainers} = {}) {
-    this.containerFactory = containerFactory;
-  }
-  
-  lens(...keys) {
-    const result = new CCCLens(...keys);
-    result._containerFactory = this.containerFactory;
-    return result;
-  }
-}
 Object.assign(Lens.prototype, BinderMixin);
 
 class Slot {
@@ -647,8 +417,8 @@ class Slot {
     return rval;
   }
 
-  cloneTarget({set, spliceOut} = {}) {
-    return this.target[makeLens.clone]({set, spliceOut});
+  cloneTarget(opDesc /* {set, spliceOut} */ = {}) {
+    return this.target[cloneImpl](opDesc);
   }
 }
 
@@ -683,279 +453,12 @@ function log(info) {
   console[info.level || 'info'](info);
 }
 
-const lensCap = {
-  [isLensClass]: true,
-  get: function () {},
-  get_maybe: function() {return {};}
-};
-
-class AbstractNFocal {
-  [isLensClass] = true;
-
-  constructor(lenses) {
-    this.lenses = lenses;
-  }
-
-  [at_maybe](idx) {
-    return index_maybe(this.lenses, idx);
-  }
-  
-  [cloneImpl](alteration) {
-    return makeLens.nfocal(this.lenses[cloneImpl](alteration));
-  }
-
-  present(subject) {
-    return _.reduce(
-      this.lenses,
-      (found, lens, idx) => lens.present(subject) ? found.concat(idx) : found,
-      []
-    );
-  }
-
-  /**
-   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
-   * @param                                 subject     The input structured data
-   * @param {Iterable<[number, Function]>}  xformArray  Iterable of lens key and transform function pairs to apply
-   * @param {(Function|Object)}             opts        Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
-   * @return A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
-   */
-  xformInClone(subject, xformArray, opts = {}) {
-    if (!_.isFunction(opts)) {
-      opts = _.identity.bind(null, opts);
-    }
-    return _.reduce(
-      xformArray,
-      (cur, [key, xform]) => {
-        const lens = this.lenses[key];
-        return lens ? lens.xformInClone(cur, xform, opts(key)) : cur;
-      },
-      subject
-    );
-  }
-
-  xformInClone_maybe(subject, xformArray) {
-    return _.reduce(
-      xformArray,
-      (cur, [key, xform]) => {
-        const lens = this.lenses[key];
-        return lens ? lens.xformInClone_maybe(cur, xform) : cur;
-      },
-      subject
-    );
-  }
-}
-Object.assign(AbstractNFocal.prototype, BinderMixin);
-
-class ArrayNFocal extends AbstractNFocal {
-  get(subject, ...tail) {
-    const subjResult = this.get_maybe(subject).just;
-    if (tail.length > 0) {
-      return new ArrayNFocal(
-        _.map(subjResult, l => isLens(l) ? l : lensCap)
-      ).get(...tail);
-    }
-    return subjResult;
-  }
-
-  get_maybe(subject, ...tail) {
-    const subjResult = new Array(this.lenses.length);
-    for (var i = 0; i < this.lenses.length; i++) {
-      const iVal_maybe = this.lenses[i].get_maybe(subject);
-      if ('just' in iVal_maybe) {
-        subjResult[i] = iVal_maybe.just;
-      }
-    }
-    if (tail.length > 0) {
-      return new ArrayNFocal(
-        _.map(subjResult, r => isLens(r.just) ? r.just : lensCap)
-      ).get_maybe(...tail);
-    } else {
-      return {just: subjResult, multiFocal: true};
-    }
-  }
-}
-
-class ObjectNFocal extends AbstractNFocal {
-  get(subject, ...tail) {
-    const subjResult = {};
-    _.each(this.lenses, (lens, prop) => {
-      const propVal_maybe = lens.get_maybe(subject);
-      if ('just' in propVal_maybe) {
-        subjResult[prop] = propVal_maybe.just;
-      }
-    });
-    if (tail.length > 0) {
-      return new ObjectNFocal(
-        _.mapObject(subjResult, l => isLens(l) ? l : lensCap)
-      ).get(...tail);
-    }
-    return subjResult;
-  }
-
-  get_maybe(subject, ...tail) {
-    const subjResult = this.get(subject);
-    if (tail.length > 0) {
-      return new ObjectNFocal(
-        _.mapObject(subjResult, r => isLens(r.just) ? r.just : lensCap)
-      ).get_maybe(...tail);
-    }
-    return {just: subjResult, multiFocal: true};
-  }
-}
-
-class OpticArray {
-  constructor(lenses) {
-    this.lenses = lenses;
-  }
-
-  present(subject) {
-    if (this.lenses.length === 0) return true;
-    const rval = _.reduceRight(
-      this.lenses.slice(1),
-      (subject, lens) => lens.get(subject),
-      subject
-    );
-    return this.lenses[0].present(rval);
-  }
-
-  get(subject, ...tail) {
-    const subjResult = _.reduceRight(
-      this.lenses,
-      (subject, lens) => lens.get(subject),
-      subject
-    );
-    if (tail.length > 0) {
-      return isLens(subjResult) ? subjResult.get(...tail) : undefined;
-    }
-    return subjResult;
-  }
-
-  get_maybe(subject, ...tail) {
-    const stepSubject = this._get_maybe_internal({just: subject});
-    const subjResult = stepSubject.just;
-    if (tail.length > 0) {
-      return isLens(subjResult) ? subjResult.get_maybe(...tail) : undefined;
-    }
-    return stepSubject;
-  }
-
-  _get_maybe_internal(subject_maybe) {
-    let stepSubject = subject_maybe;
-    for (let i = this.lenses.length - 1; i >= 0; --i) {
-      const lens = this.lenses[i];
-      stepSubject = lens.get_maybe(stepSubject.just);
-      if (_.isEmpty(stepSubject.just)) {
-        return {};
-      }
-    }
-    return stepSubject;
-  }
-}
-Object.assign(OpticArray.prototype, BinderMixin);
-
 function handleNoniterableValue(excVal, maybeVal) {
-  if (_.isUndefined(excVal) || !('just' in maybeVal)) {
+  if (isUndefined(excVal) || !('just' in maybeVal)) {
     return;
   }
-  if (_.isObject(excVal)) {
+  if (isObject(excVal)) {
     excVal.noniterableValue = maybeVal.just;
   }
   throw excVal;
 }
-
-/**
- * Construct a Lens from the given indexing steps
- *
- * A Lens is a way to safely apply the indexing (i.e. square-bracket) operator
- * repeatedly, and to clone-with-changes a complex value to assist programming
- * in an immutable-data style.
- */
-function makeLens(...keys) {
-  return new Lens(...keys);
-}
-makeLens.fuse = function(...lenses) {
-  for (let i = 0, step = null; (step = 1) && i < lenses.length - 1; i += step) {
-    const [a, b] = lenses.slice(i, i + 2);
-    if (a.constructor === Lens && b.constructor === Lens) {
-      lenses.splice(i, 2, Lens.fuse(a, b)); step = 0;
-    }
-  }
-  return (lenses.length === 1) ? lenses[0] : new OpticArray(lenses);
-};
-/**
- * Construct a multifocal lens
- *
- * Where a standard lens looks at a single *slot* within a JSONic object, a
- * multifocal lens consists of multiple lenses (standard or multifocal) whose
- * results are aggregated into a single value, which can be a dictionary-like
- * Object or an Array.
- *
- * Pass an Array of lenses to create a multifocal lens that outputs an Array,
- * where the position of each lens in the input Array corresponds to the
- * output position of the data (when *getting* with the multifocal lens).  When
- * *getting* in a Maybe context (`#get_maybe`), the result will always be an
- * Object with a `just` property, though some elements of the Array may be
- * empty.
- *
- * Pass an Object with lens values to create a multifocal lens outputting an
- * Object, which will bear the same properties as the input Object and whose
- * values are the values in the data referenced by the corresponding lens (when
- * *getting* using this multifocal lens).
- *
- * Be aware that the `xformInClone` method on these kinds of multifocal lenses
- * works differently on Object-based and Array-based multifocals, and both are
- * different from a basic Lens.
- */
-makeLens.nfocal = function(lenses) {
-  if (_.isArray(lenses)) {
-    return new ArrayNFocal(lenses);
-  } else {
-    return new ObjectNFocal(lenses);
-  }
-};
-makeLens.clone = cloneImpl;
-makeLens.isLens = isLensClass;
-makeLens.at_maybe = at_maybe;
-makeLens.eachFound = function*(maybe_val) {
-  if (!('just' in maybe_val)) {
-    return;
-  }
-  const val = maybe_val.just;
-  if (!maybe_val.multiFocal) {
-    yield [val];
-    return;
-  }
-  
-  if (_.isArray(val)) {
-    for (let i = 0; i < val.length; i++) {
-      if (i in val) {
-        yield [val[i], i];
-      }
-    }
-  } else if (_.isObject(val)) {
-    for (var key in val) {
-      if (val.hasOwnProperty(key)) {
-        yield [val[key], key];
-      }
-    }
-  } else {
-    yield [val];
-  }
-};
-makeLens.maybeDo = function(maybe, then, orElse) {
-  return ('just' in maybe) ? then(maybe.just) : (orElse ? orElse() : undefined);
-};
-makeLens.Step = CustomStep;
-Object.assign(makeLens, {
-  Factory: LensFactory,
-  JsContainerFactory,
-  jsContainers,
-  polyfillImmutable,
-});
-
-module.exports = makeLens;
-
-// lens(2, 'a').xform(collection, v => v.concat().splice(1, 1, 13, 14))
-// lens.nfocal(lens(1), lens(2)).get()
-// lens(0).get(lens.nfocal(lens(1), lens(2))).get([2,4,6,8])
-// lens(0).get(lens.nfocal(lens(1), lens(2)), [2,4,6,8])

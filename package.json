@@ -4,14 +4,17 @@
   "description": "A JavaScript-native lens (and ancillary optics) system loosely based on Kmett-style lenses.",
   "type": "module",
   "main": "index.cjs",
-  "exports": {
-    "require": "./index.cjs",
-    "import": "./index.js"
-  },
+  "module": "index.js",
+  "sideEffects": [
+    "./src/stdlib_support/*.js"
+  ],
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "babel src -d cjs",
+    "prepare": "rm -f cjs/{,**/}*.js && npm run build",
     "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
+    "pretest": "npm run prepare",
     "test": "mocha",
+    "predtest": "npm run prepare",
     "dtest": "mocha --inspect-brk test"
   },
   "keywords": [
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "chai": "^4.3.4",
     "immutable": "^3.8.2",
@@ -32,6 +36,7 @@
     "nyc": "^15.1.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.17.2",
     "underscore": "^1.13.1"
   },
   "repository": {

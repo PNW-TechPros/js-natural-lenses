@@ -1,5 +1,4 @@
 node_modules
-dist/
+cjs/**/*.js
 coverage/
 .nyc_output
-
