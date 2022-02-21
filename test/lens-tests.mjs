@@ -1,7 +1,8 @@
-const lens = require('#this'), lensUtils = lens;
-const { lensFactory: immutableLensFactory } = require('../cjs/immutable');
-const {assert} = require('chai');
-const immutable = require('immutable');
+// import lens, * as lensUtils from '../index.mjs';
+import lens, * as lensUtils from '#this';
+import { lensFactory as immutableLensFactory } from '../esm/immutable.js';
+import { assert } from 'chai';
+import immutable from 'immutable';
 
 function xxdescribe() {}
 
