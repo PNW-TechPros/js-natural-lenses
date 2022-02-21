@@ -2,9 +2,9 @@ import {
   each as _each, identity, isArray, isFunction, map as _map, mapObject,
   reduce as _reduce, reduceRight
 } from 'underscore';
-import BinderMixin from './binder_mixin';
-import { at_maybe, cloneImpl, isLensClass } from './constants';
-import { index_maybe, isLens, lensCap } from './utils';
+import BinderMixin from './binder_mixin.js';
+import { at_maybe, cloneImpl, isLensClass } from './constants/index.js';
+import { index_maybe, isLens, lensCap } from './utils.js';
 
 export class AbstractNFocal {
   [isLensClass] = true;

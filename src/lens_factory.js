@@ -1,5 +1,5 @@
-import BinderMixin from './binder_mixin';
-import CCCLens from './ccc_lens';
+import BinderMixin from './binder_mixin.js';
+import CCCLens from './ccc_lens.js';
 
 /**
  * @summary A factory for Lens-derived objects with customized container construction

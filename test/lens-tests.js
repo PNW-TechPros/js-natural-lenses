@@ -1,4 +1,5 @@
 const lens = require('../index.cjs');
+const { lensFactory: immutableLensFactory } = require('../cjs/immutable');
 const {assert} = require('chai');
 const immutable = require('immutable');
 
@@ -896,5 +897,101 @@ describe('eachFound', () => {
     assert.strictEqual(unwound.length, 2);
     assert.deepInclude(unwound, [data.name, 'nameView']);
     assert.deepInclude(unwound, [data.phone, 'phoneView']);
+  });
+});
+
+describe('Immutable integration', () => {
+  const lf = immutableLensFactory;
+  
+  it('instantiates immutable Maps', () => {
+    const cityName = 'Digidapo';
+    const im_result = lf.lens('userInfo', 'address', 'city').setInClone(new immutable.Map(), cityName);
+    assert.instanceOf(im_result, immutable.Map);
+    assert.instanceOf(im_result.get('userInfo'), immutable.Map);
+    assert.instanceOf(im_result.get('userInfo').get('address'), immutable.Map);
+    assert.strictEqual(
+      im_result.get('userInfo').get('address').get('city'),
+      cityName
+    );
+    assert.strictEqual(
+      im_result.get('userInfo').get('address').get('city'),
+      lens('userInfo', 'address', 'city').get(im_result)
+    );
+  });
+  
+  it('instantiates immutable Lists', () => {
+    const street0 = '360 Tied Key';
+    const im_result = lf.lens('address', 'street', 0).setInClone(new immutable.Map(), street0);
+    assert.instanceOf(im_result, immutable.Map);
+    assert.instanceOf(im_result.get('address'), immutable.Map);
+    assert.instanceOf(im_result.get('address').get('street'), immutable.List);
+    assert.strictEqual(
+      im_result.get('address').get('street').get(0),
+      street0
+    );
+    assert.strictEqual(
+      im_result.get('address').get('street').get(0),
+      lens('address', 'street', 0).get(im_result)
+    );
+  });
+  
+  it('deletes from List by setting to "undefined"', () => {
+    const data = new immutable.List(['x', 'y', 'z']);
+    const im_result = lf.lens(1).xformInClone_maybe( data, () => ({}) );
+    assert.strictEqual(im_result.size, 3);
+    assert.isUndefined(im_result.get(1));
+  });
+  
+  it('deletes from Map by delete()', () => {
+    const data = new immutable.Map({
+      question: "What are the first three primes?",
+      answer: [2,3,5]
+    });
+    const im_result = lf.lens('answer').xformInClone_maybe( data, () => ({}) );
+    assert.strictEqual(im_result.size, 1);
+    assert.isFalse(im_result.has('answer'));
+  });
+  
+  describe('Lens#getSeq', () => {
+    it('returns a Seq for an Array in subject', () => {
+      const data = {
+        countries: ['United States of America', 'Canada', "Mexico"],
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+    });
+    
+    it('returns an empty Seq for a missing element in subject', () => {
+      const data = {};
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('returns an empty Seq for a noniterable element in subject', () => {
+      const data = {
+        countries: 3,
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('returns an empty Seq for a string element in subject', () => {
+      const data = {
+        countries: 'all',
+      };
+      const seq = lens('countries').getSeq(data);
+      assert.instanceOf(seq, immutable.Seq);
+      assert.strictEqual(seq.count(), 0);
+    });
+    
+    it('throws the given "orThrow" for a noniterable element in subject', () => {
+      const data = {
+        countries: 3,
+      };
+      const niError = new Error("Not an iterable");
+      assert.throws(() => {lens('countries').getSeq(data, {orThrow: niError});}, niError);
+    });
   });
 });

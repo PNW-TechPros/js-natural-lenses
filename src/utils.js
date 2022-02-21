@@ -1,5 +1,5 @@
 import { isArray, isObject, isString, property } from 'underscore';
-import { isLensClass, at_maybe } from './constants';
+import { isLensClass, at_maybe } from './constants/index.js';
 
 export const isLens = property(isLensClass);
 export const $iterator = property(Symbol.iterator);

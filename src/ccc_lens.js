@@ -1,4 +1,4 @@
-import Lens from './lens';
+import Lens from './lens.js';
 
 export default class CCCLens extends Lens {
   constructor(...keys) {

@@ -1,6 +1,6 @@
 import { isEmpty, reduceRight } from 'underscore';
-import BinderMixin from './binder_mixin';
-import { isLens, lensCap } from './utils';
+import BinderMixin from './binder_mixin.js';
+import { isLens, lensCap } from './utils.js';
 
 export default class OpticArray {
   constructor(lenses) {

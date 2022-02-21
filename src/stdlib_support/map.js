@@ -1,5 +1,5 @@
 import { forEach } from 'underscore';
-import { at_maybe, cloneImpl } from '../constants';
+import { at_maybe, cloneImpl } from '../constants/index.js';
 
 forEach([
   // Define how a Map retrieves the value of a key in the Maybe monad

@@ -1,1 +1,1 @@
-export { makeNFocal as default } from './src/nfocal';
+export { makeNFocal as default } from './src/nfocal.js';

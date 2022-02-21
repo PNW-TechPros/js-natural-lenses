@@ -1,13 +1,13 @@
 import { isFunction, isObject, isUndefined } from 'underscore';
-import BinderMixin from './binder_mixin';
-import { cloneImpl, isLensClass } from './constants';
-import CustomStep from './custom_step';
-import { getIterator, index_maybe, isLens } from './utils';
+import BinderMixin from './binder_mixin.js';
+import { cloneImpl, isLensClass } from './constants/index.js';
+import CustomStep from './custom_step.js';
+import { getIterator, index_maybe, isLens } from './utils.js';
 
 // Polyfill support for lenses to standard JavaScript types
-import './stdlib_support/object';
-import './stdlib_support/array';
-import './stdlib_support/map';
+import './stdlib_support/object.js';
+import './stdlib_support/array.js';
+import './stdlib_support/map.js';
 
 /**
  * @summary Class for operating immutably on a specific "slot" in complex data

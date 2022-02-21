@@ -1,5 +1,5 @@
-import Lens from './src/lens';
-import OpticArray from './src/optic_array';
+import Lens from './src/lens.js';
+import OpticArray from './src/optic_array.js';
 
 export default function fuse(...lenses) {
   for (let i = 0, step = null; (step = 1) && i < lenses.length - 1; i += step) {

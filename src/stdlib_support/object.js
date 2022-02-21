@@ -1,5 +1,5 @@
 import { forEach, isUndefined } from 'underscore';
-import { at_maybe, cloneImpl } from '../constants';
+import { at_maybe, cloneImpl } from '../constants/index.js';
 
 forEach([
   // Define how an Object retrieves the value of a property in the Maybe monad
