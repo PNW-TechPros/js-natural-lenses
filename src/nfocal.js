@@ -3,7 +3,7 @@ import {
   reduce as _reduce, reduceRight
 } from 'underscore';
 import BinderMixin from './binder_mixin.js';
-import { at_maybe, cloneImpl, isLensClass } from './constants/index.js';
+import { at_maybe, cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import { index_maybe, isLens, lensCap } from './utils.js';
 
 export class AbstractNFocal {

@@ -3,7 +3,7 @@ import Lens from './src/lens.js';
 export default function makeLens(...keys) {
   return new Lens(...keys);
 }
-export { at_maybe, cloneImpl as clone, isLensClass as isLens } from './src/constants/index.js';
+export { at_maybe, cloneImpl as clone, isLensClass as isLens } from './src-cjs/constants.js';
 export { eachFound, maybeDo } from './src/utils.js';
 export { default as Factory } from './src/lens_factory.js';
 export { default as fuse} from './fuse.js';

@@ -1,6 +1,6 @@
 import { isFunction, isObject, isUndefined } from 'underscore';
 import BinderMixin from './binder_mixin.js';
-import { cloneImpl, isLensClass } from './constants/index.js';
+import { cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import CustomStep from './custom_step.js';
 import { getIterator, index_maybe, isLens } from './utils.js';
 

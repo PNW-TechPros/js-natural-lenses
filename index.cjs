@@ -1,4 +1,4 @@
-const { at_maybe, cloneImpl, isLensClass } = require('./cjs/constants');
+const { at_maybe, cloneImpl, isLensClass } = require('./src-cjs/constants');
 const Lens = require('./cjs/lens').default;
 const { eachFound, maybeDo } = require('./cjs/utils');
 

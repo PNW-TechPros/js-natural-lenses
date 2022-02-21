@@ -1,5 +1,5 @@
 import { forEach, isUndefined } from 'underscore';
-import { at_maybe, cloneImpl } from '../constants/index.js';
+import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
 
 forEach([
   // Define how an Array retrieves the element at an index/key in the Maybe monad
