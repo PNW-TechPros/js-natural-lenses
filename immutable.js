@@ -1,1 +1,1 @@
-export * from './src/immutable.js';
+module.exports = require('./cjs/immutable.js')
