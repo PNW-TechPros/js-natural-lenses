@@ -6,8 +6,14 @@
   "main": "./index",
   "module": "index.mjs",
   "exports": {
-    "import": "./index.mjs",
-    "require": "./index.js"
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./*": {
+      "import": "./*.mjs",
+      "require": "./*.js"
+    }
   },
   "sideEffects": [
     "./src/stdlib_support/*.js",
@@ -17,6 +23,10 @@
     "#this": {
       "import": "./index.mjs",
       "default": "./index.js"
+    },
+    "#this/*": {
+      "import": "./*.mjs",
+      "default": "./*.js"
     }
   },
   "scripts": {
