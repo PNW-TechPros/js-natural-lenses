@@ -102,7 +102,7 @@ describe('lens.DatumPlan', () => {
         cookies: {...OTHERS({
           content: VALUE,
           attributes: {
-            ...OTHERS(VALUE),
+            ...OTHERS,
           },
           flags: [VALUE],
         })},
@@ -446,7 +446,7 @@ describe('lens.DatumPlan', () => {
         host: VALUE,
         contentType: VALUE,
         cookie: VALUE,
-        ...OTHERS(VALUE),
+        ...OTHERS,
       }));
       const data = {
         host: 'www.example.com',

@@ -379,7 +379,10 @@ export function makeExports({fuse, isLens, lens}) {
     if (isFunction(rawPlan)) {
       rawPlan = rawPlan.call(undefined, {
         VALUE: value,
-        OTHERS: (spec) => ({[others]: spec}),
+        OTHERS: Object.assign(
+          (spec) => ({[others]: spec}),
+          {[others]: value}
+        ),
       });
     }
     return new PlanBuilder().buildPlan(rawPlan);
