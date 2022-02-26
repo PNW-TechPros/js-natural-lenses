@@ -1,4 +1,4 @@
-import { isArray, isObject } from 'underscore';
+import { isArray, isFunction, isObject } from 'underscore';
 import Lens from './lens.js';
 import { isLensClass as isLens } from '../src-cjs/constants.js';
 
@@ -313,42 +313,75 @@ export function makeExports({fuse, isLens, lens}) {
          * within the Object target of this lens.
          */
         mapInside: function (subject, ...manipulators) {
-          let valueModifier = null;
-          if (manipulators.length === 2) {
-            const [getLens, valueSlotXform] = manipulators;
-            const valueLens = getLens.xformInClone ? getLens : getLens.call(undefined, valuePlan);
-            valueModifier = (result, key) => valueLens.xformInClone(
-              result[key],
-              slotValue => valueSlotXform.call(undefined, slotValue, key)
-            );
-          } else if (manipulators.length === 1) {
-            const [valueXform] = manipulators;
-            valueModifier = (result, key) => (
-              valueXform.call(undefined, result[key], key)
-            );
-          } else {
-            throw `.mapInside() requires one or two manipulators, ${manipulators.length} given`;
-          }
-          
-          return this.xformInClone(subject, container => {
-            const result = {...container};
-            let sameValues = true;
-            for (let key of Object.keys(container)) {
-              if (explicitKeys.has(key)) continue;
-              const origValue = result[key];
-              result[key] = valueModifier(result, key);
-              if (result[key] !== origValue) {
-                sameValues = false;
-              }
-            }
-            return sameValues ? container : result;
+          const valueModifier = entryValueModifier({
+            manipulators, valuePlan, fnName: 'mapInside'
           });
+          
+          return this.xformInClone(subject, entryValueXform({
+            valueModifier,
+            explicitKeys,
+          }));
+        },
+        
+        /**
+         * @summary Clone the subject with the target of this lens altered by mapping property values
+         * @param  subject       The input structured data
+         * @param  manipulators  See description
+         * @return               A minimally changed clone of the subject with the transformed value in this slot
+         *
+         * @description
+         * There are several ways to call this method, with different types of
+         * manipulators:
+         * 1. `datumLens.mapInside(subject, propvalXform)`
+         * 2. `datumLens.mapInside(subject, propvalSlotPicker, propvalSlotXform)`
+         * 3. `datumLens.mapInside(subject, propvalSlotLens, propvalSlotXform)`
+         *
+         * All of these patterns iterate only over all own-properties of the
+         * Object targeted within *subject* by this lens.
+         *
+         * Pattern 1 applies a transformation function (`propvalXform`) to each
+         * own-property of the Object selected by this lens.
+         *
+         * Pattern 2 is for applying a change *within* each own-property value
+         * of the Object targeted by this lens as a clone is made, selecting the
+         * slot within each item by returning a lens from `propvalSlotPicker`.
+         * `propvalSlotPicker` is called with the "other property" datum plan
+         * for the targeted Object if one exists in the datum plan.
+         *
+         * Pattern 3 is similar to pattern 2, just directly passing a lens (or
+         * something that knows how to `xformInClone`) rather than a function
+         * that returns one.
+         *
+         * The `propvalXform` function in pattern 1 is called with the property
+         * value, the property name and, if specified, the "other property" datum
+         * plan for the target Object of this lens.  The "other property" datum
+         * plan is passed in *even for explicitly specified properties of the
+         * target object that might have conflicting datum plans*.
+         *
+         * The `propvalSlotXform` function in patterns 2 and 3 is called with the
+         * slot value within the property value and the name of the property
+         * within the Object target of this lens.
+         */
+        mapAllInside: function (subject, ...manipulators) {
+          const valueModifier = entryValueModifier({
+            manipulators, valuePlan, fnName: 'mapAllInside'
+          });
+          
+          return this.xformInClone(subject, entryValueXform({
+            valueModifier,
+          }));
         },
       };
     }
   }
 
   function makeDatumPlan(rawPlan) {
+    if (isFunction(rawPlan)) {
+      rawPlan = rawPlan.call(undefined, {
+        VALUE: value,
+        OTHERS: (spec) => ({[others]: spec}),
+      });
+    }
     return new PlanBuilder().buildPlan(rawPlan);
   }
   Object.assign(makeDatumPlan, {
@@ -364,4 +397,36 @@ function itemsStrictEqual(a, b) {
     if (a[i] !== b[i]) return false;
   }
   return true;
+}
+
+function entryValueModifier({ manipulators, valuePlan, fnName }) {
+  if (manipulators.length === 2) {
+    const [getLens, valueSlotXform] = manipulators;
+    const valueLens = getLens.xformInClone ? getLens : getLens.call(undefined, valuePlan);
+    return (result, key) => valueLens.xformInClone(
+      result[key],
+      slotValue => valueSlotXform.call(undefined, slotValue, key)
+    );
+  } else if (manipulators.length === 1) {
+    const [valueXform] = manipulators;
+    return (result, key) => (
+      valueXform.call(undefined, result[key], key, valuePlan)
+    );
+  } else {
+    throw `.${fnName}() requires one or two manipulators, ${manipulators.length} given`;
+  }
+}
+
+function entryValueXform({ valueModifier, explicitKeys }) {
+  return (container) => {
+    const result = {...container};
+    let sameValues = true;
+    for (const key of Object.keys(container)) {
+      if (explicitKeys && explicitKeys.has(key)) continue;
+      const origValue = result[key];
+      result[key] = valueModifier(result, key);
+      sameValues = sameValues && result[key] === origValue;
+    }
+    return sameValues ? container : result;
+  };
 }

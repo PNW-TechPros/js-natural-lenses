@@ -88,6 +88,31 @@ describe('lens.DatumPlan', () => {
         /invalid/i
       );
     });
+    
+    it('can be constructed with a Function returning the spec', () => {
+      datumPlan(({ VALUE, OTHERS }) => ({
+        method: VALUE,
+        url: VALUE,
+        headers: [{
+          name: VALUE,
+          value: VALUE,
+        }],
+        verifiedCertDNs: [VALUE],
+        securityPrincipals: [VALUE],
+        cookies: {...OTHERS({
+          content: VALUE,
+          attributes: {
+            ...OTHERS(VALUE),
+          },
+          flags: [VALUE],
+        })},
+        preferredLanguages: [{
+          lang: VALUE,
+          factor: VALUE,
+        }],
+        body: VALUE,
+      }));
+    });
   });
   
   describe("#at()", () => {
@@ -394,6 +419,65 @@ describe('lens.DatumPlan', () => {
           assert.notStrictEqual(result[prop], data[prop]);
         }
       });
+    });
+  });
+  
+  describe("#mapAllInside", () => {
+    it("requires at least one manipulator", () => {
+      assert.throws(
+        () => plan.cookies.mapAllInside(data),
+        /mapAllInside.+requires/i
+      );
+    });
+    
+    it("accepts no more than two manipulators", () => {
+      assert.throws(
+        () => plan.cookies.mapAllInside(data, 1, 2, 3),
+        /mapAllInside.+requires/i
+      );
+    });
+    
+    it("returns the subject when no change is made", () => {
+      assert.strictEqual(plan.cookies.mapAllInside(data, c => c), data);
+    });
+    
+    it("iterates even explicit keys of the target object", () => {
+      const headersPlan = datumPlan(({ VALUE, OTHERS }) => ({
+        host: VALUE,
+        contentType: VALUE,
+        cookie: VALUE,
+        ...OTHERS(VALUE),
+      }));
+      const data = {
+        host: 'www.example.com',
+        xForwardedFor: '27.71.44.150',
+      };
+      const PARSER_VALIDATORS = {
+        xForwardedFor(untrustedIpList) {
+          const items = untrustedIpList.split(/,\s*/);
+          return items.map((item, i) => {
+            const ip4Match = /^\d{1,3}(\.\d{1,3}){3}$/.exec(item);
+            if (ip4Match) {
+              const byteVals = ip4Match[0].split('.').map(ns => parseInt(ns));
+              if (byteVals.findIndex(n => n < 0 || n > 255) < 0) {
+                return ip4Match[0];
+              }
+            }
+            return {invalidAddress: item};
+          });
+        }
+      };
+      
+      const result = headersPlan.mapAllInside(data, (headerValue, headerName) => {
+        const validatedValue = lens(headerName).bound(PARSER_VALIDATORS)(headerValue);
+        return _.isUndefined(validatedValue) ? {unvalidated: headerValue} : validatedValue;
+      });
+      
+      for (const prop of Object.keys(data)) {
+        assert.notStrictEqual(result[prop], data[prop]);
+      }
+      assert.deepEqual(result.host, {unvalidated: data.host});
+      assert.deepEqual(result.xForwardedFor, [data.xForwardedFor]);
     });
   });
   
