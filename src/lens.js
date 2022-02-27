@@ -312,8 +312,8 @@ export default class Lens {
    * slot contains a string, the slot will be treated as non-iterable.
    *
    * "Minimally changed" means that reference-copies are used wherever possible
-   * while leaving subject unchanged, and that setting the slot to the strict-
-   * equal value it already has results in returning subject.
+   * while leaving *subject* unchanged, and that setting the slot to the strict-
+   * equal value it already has results in returning *subject*.
    */
   xformIterableInClone(subject, fn, {orThrow} = {}) {
     return this.xformInClone_maybe(subject, (maybeVal) => {
