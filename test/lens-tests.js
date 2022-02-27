@@ -844,6 +844,7 @@ function testSequence(loaderName, subjects) {
       describe("(as an Object-like collection of lenses)", () => {
         let L;
         before(async () => {
+          await loadSubjects();
           L = lensUtils.nfocal({name: lens('name'), mailTo: lens('school', 'address')});
         });
         
@@ -857,6 +858,7 @@ function testSequence(loaderName, subjects) {
     describe('OpticArray', () => {
       let mfl;
       before(async () => {
+        await loadSubjects();
         mfl = lensUtils.nfocal([lens('name'), lens('address', 'street', 0)]);
       });
       
