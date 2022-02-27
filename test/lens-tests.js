@@ -860,6 +860,24 @@ function testSequence(loaderName, subjects) {
         mfl = lensUtils.nfocal([lens('name'), lens('address', 'street', 0)]);
       });
       
+      describe('#present()', () => {
+        it('returns truthy if target is present', () => {
+          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const name = "Fred Flintstone";
+          assert(fusedLens.present({name}), "name is present");
+        });
+        
+        it('returns falsey if target is not present', () => {
+          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          assert(!fusedLens.present({}), "name is not present");
+        });
+        
+        it('returns truthy if OpticArray contains no lenses', () => {
+          const fusedLens = lensUtils.fuse();
+          assert(fusedLens.present({}), "Empty OpticArray is present in any subject");
+        });
+      });
+      
       describe('#get()', () => {
         it('retrieves the target value when target is present', () => {
           const fusedLens = lensUtils.fuse(lens(0), mfl);
