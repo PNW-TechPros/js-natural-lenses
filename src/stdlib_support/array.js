@@ -1,7 +1,8 @@
 import { forEach, isUndefined } from 'underscore';
 import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
+import { incorporateStdlibSupport } from '../utils.js';
 
-forEach([
+incorporateStdlibSupport(Array, [
   // Define how an Array retrieves the element at an index/key in the Maybe monad
   [at_maybe, function(key) {
     if (typeof key === 'number') {
@@ -42,10 +43,4 @@ forEach([
     }
     return this.concat();
   }]
-], function([sym, method]) {
-  Object.defineProperty(Array.prototype, sym, {
-    configurable: true,
-    writable: true,
-    value: method,
-  });
-});
+]);

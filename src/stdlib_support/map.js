@@ -1,7 +1,8 @@
 import { forEach } from 'underscore';
 import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
+import { incorporateStdlibSupport } from '../utils.js';
 
-forEach([
+incorporateStdlibSupport(Map, [
   // Define how a Map retrieves the value of a key in the Maybe monad
   [at_maybe, function(key) {
     return this.has(key) ? {just: this.get(key)} : {};
@@ -22,10 +23,4 @@ forEach([
     }
     return result;
   }],
-], function([sym, method]) {
-  Object.defineProperty(Map.prototype, sym, {
-    configurable: true,
-    writable: true,
-    value: method,
-  });
-});
+]);

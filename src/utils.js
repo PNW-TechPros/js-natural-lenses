@@ -50,3 +50,16 @@ export const lensCap = {
   get: function () {},
   get_maybe: function() {return {};}
 };
+
+export function incorporateStdlibSupport(targetClass, methods) {
+  const classProto = targetClass.prototype;
+  methods.forEach(([sym, method]) => {
+    if (!classProto.hasOwnProperty(sym)) {
+      Object.defineProperty(classProto, sym, {
+        configurable: true,
+        writable: true,
+        value: method,
+      });
+    }
+  });
+}

@@ -1,7 +1,8 @@
 import { forEach, isUndefined } from 'underscore';
 import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
+import { incorporateStdlibSupport } from '../utils.js';
 
-forEach([
+incorporateStdlibSupport(Object, [
   // Define how an Object retrieves the value of a property in the Maybe monad
   [at_maybe, function(key) {
     return (key in this) ? {just: this[key]} : {};
@@ -31,10 +32,4 @@ forEach([
     }
     return result;
   }],
-], function([sym, method]) {
-  Object.defineProperty(Object.prototype, sym, {
-    configurable: true,
-    writable: true,
-    value: method,
-  });
-});
+]);
