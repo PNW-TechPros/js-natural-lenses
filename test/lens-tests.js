@@ -636,13 +636,7 @@ function testSequence(loaderName, subjects) {
     });
 
     describe('CustomStep', () => {
-      // const elementZeroStep = new lensUtils.Step(
-      //   (c) => ({just: c[0]}),
-      //   (c, v_m) => ('just' in v_m ? [v_m.just] : new Array(1)).concat(c.slice(1)),
-      //   () => []
-      // );
       let elementZeroStep;
-      
       before(async () => {
         await loadSubjects();
         elementZeroStep = new lensUtils.Step(
