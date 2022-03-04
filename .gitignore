@@ -4,3 +4,4 @@ cjs/**/*.js.map
 esm/**/*.js
 coverage/
 .nyc_output
+doc/

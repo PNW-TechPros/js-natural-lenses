@@ -37,7 +37,7 @@ console.log(newData); // prints [1,2,4]
 
 * Pass as many keys as desired — one per layer of container through which to dig — to `lens` to construct a lens to that slot.
 * Strings and numbers are different when used as keys, but only when _setting_, and only if the container itself is not present within _its_ container: a key that is a number will cause an Array to be created, where any other key will cause an Object to be created.
-* For *getting*, these optics work pretty well for any JavaScript data that does not require invoking methods along the way.  When *setting* or *transforming*, default lenses only support JSON data; to *set* or *transform* with other data types, use `lens.Factory` with an appropriate container factory to construct the lenses.
+* For *getting*, these optics work pretty well for any JavaScript data that does not require invoking methods along the way.  When *setting* or *transforming*, default lenses only support JSON data; to *set* or *transform* with other data types, use `lens.Factory` with an appropriate container factory to construct the lenses, or use a `lens.Step`.
 * Operations are intended to be immutable, but the library only encourages it and does not demand it.  Values returned by `get` are from the input data and are as mutable as the input data.  Method names commemorate the imposition of immutability by including `InClone`.
 * Primary operations with lenses are `get`, `setInClone`, and `xformInClone`.  Some of these have variants that end in `_maybe` — see the description of the Maybe monad below.
 
@@ -229,7 +229,7 @@ The JSONizable value passed to the datum plan construction function has a few qu
 Let's use as an example a partial plan for an NPM `package.json` file:
 
 ```js
-const $npmPackage = datumPlan(({ VALUE, OTHERS }) => ({
+const $npmPackage = datumPlan(({ VALUE, NAMED_VALUES }) => ({
   name: VALUE,
   version: VALUE,
   author: VALUE,
@@ -238,13 +238,13 @@ const $npmPackage = datumPlan(({ VALUE, OTHERS }) => ({
     url: VALUE,
     email: VALUE,
   }],
-  dependencies: {...OTHERS(VALUE)},
+  dependencies: {...NAMED_VALUES(VALUE)},
   main: VALUE,
   module: VALUE,
   exports: {
     import: VALUE,
     require: VALUE,
-    ...OTHERS({
+    ...NAMED_VALUES({
       import: VALUE,
       require: VALUE,
     }),
@@ -328,7 +328,7 @@ const noAContribPackage = $npmPackage.contributors.flatMapInside(thePackage,
 
 ### Accessing a Dictionary-like Object
 
-An Object in the datum plan spec can specify a key of `datumPlan.others` (or use the `...OTHERS(plan)` when passing a spec Function) to indicate dictionary-like or partially dictionary-like behavior.  In this case, the lens targeting the corresponding slot in the subject data receives the additional methods `at(...)`, `mapInside(...)`, and `mapAllInside(...)`.
+An Object in the datum plan spec can specify a key of `datumPlan.others` (or use the `...NAMED_VALUES(plan)` when passing a spec Function) to indicate dictionary-like or partially dictionary-like behavior.  In this case, the lens targeting the corresponding slot in the subject data receives the additional methods `at(...)`, `mapInside(...)`, and `mapAllInside(...)`.
 
 #### `at`
 

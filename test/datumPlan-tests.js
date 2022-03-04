@@ -115,7 +115,7 @@ function testSequence(loaderName, subjects) {
         });
         
         it('can be constructed with a Function returning the spec', () => {
-          datumPlan(({ VALUE, OTHERS }) => ({
+          datumPlan(({ VALUE, NAMED_VALUES }) => ({
             method: VALUE,
             url: VALUE,
             headers: [{
@@ -124,10 +124,10 @@ function testSequence(loaderName, subjects) {
             }],
             verifiedCertDNs: [VALUE],
             securityPrincipals: [VALUE],
-            cookies: {...OTHERS({
+            cookies: {...NAMED_VALUES({
               content: VALUE,
               attributes: {
-                ...OTHERS,
+                ...NAMED_VALUES,
               },
               flags: [VALUE],
             })},
@@ -467,11 +467,11 @@ function testSequence(loaderName, subjects) {
         });
         
         it("iterates even explicit keys of the target object", () => {
-          const headersPlan = datumPlan(({ VALUE, OTHERS }) => ({
+          const headersPlan = datumPlan(({ VALUE, NAMED_VALUES }) => ({
             host: VALUE,
             contentType: VALUE,
             cookie: VALUE,
-            ...OTHERS,
+            ...NAMED_VALUES,
           }));
           const data = {
             host: 'www.example.com',

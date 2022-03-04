@@ -3,7 +3,23 @@ const Lens = require('./cjs/lens').default;
 const { eachFound, maybeDo } = require('./cjs/utils');
 
 /**
- * Construct a Lens from the given indexing steps
+ * @module natural-lenses
+ * @summary Construct a Lens from the given indexing steps
+ *
+ * @param {...*} keys  The names or indexes to use in successive subscripting (i.e. square bracket) operations
+ * @returns {Lens}  The constructed lens
+ *
+ * @property {Function} Factory             [Class]{@link Factory} for customized lens creation
+ * @property {Function} fuse                [Documentation]{@link module:natural-lenses#fuse}
+ * @property {Function} JsContainerFactory  [Class]{@link JsContainerFactory} for customized container creation
+ * @property {Object}   jsContainers        {@link JsContainerFactory} for standard JavaScript containers (Map and Array)
+ * @property {Function} nfocal              [Construct]{@link module:natural-lenses#nfocal} a multifocal lens
+ * @property {Function} polyfillImmutable   [Documentation]{@link module:natural-lenses#polyfillImmutable}
+ * @property {Function} Step                [Class]{@link Step} for customized Lens steps
+ *
+ * @description
+ * This module is (when `require`d) or exports as default (when `import`ed) a
+ * Function accepting an arbitrary number of keys and returning a {@link Lens}.
  *
  * A Lens is a way to safely apply the indexing (i.e. square-bracket) operator
  * repeatedly, and to clone-with-changes a complex value to assist programming
@@ -19,6 +35,15 @@ Object.defineProperties(makeLens, {
   isLens: {enumerable: true, value: isLensClass},
   maybeDo: {enumerable: true, value: maybeDo},
   
+  /**
+   * @function module:natural-lenses#fuse
+   * @summary Fuse optics
+   * @param {...*} optics
+   * @returns {Lens|OpticArray}
+   *
+   * @description
+   * If all *optics* are [Lenses]{@link Lens}, the result will be a Lens. 
+   */
   fuse: {enumerable: true, get: () => (...lenses) => {
     for (let i = 0, step = null; (step = 1) && i < lenses.length - 1; i += step) {
       const [a, b] = lenses.slice(i, i + 2);
@@ -32,8 +57,12 @@ Object.defineProperties(makeLens, {
   }},
   
   /**
-   * Construct a multifocal lens
+   * @function module:natural-lenses#nfocal
+   * @summary Construct a multifocal lens
+   * @param {Array | Object} lenses  Collection of [Lenses]{@link Lens} to combine
+   * @returns {ArrayNFocal|ObjectNFocal}
    *
+   * @description
    * Where a standard lens looks at a single *slot* within a JSONic object, a
    * multifocal lens consists of multiple lenses (standard or multifocal) whose
    * results are aggregated into a single value, which can be a dictionary-like
@@ -65,5 +94,6 @@ Object.defineProperties(makeLens, {
   polyfillImmutable: {enumerable: true, get: () => require('./cjs/immutable_support').polyfillImmutable},
   Step: {enumerable: true, get: () => require('./cjs/custom_step').default},
 });
+
 
 module.exports = makeLens;

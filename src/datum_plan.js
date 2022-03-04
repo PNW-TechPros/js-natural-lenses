@@ -52,22 +52,30 @@ export function makeExports({fuse, isLens, lens}) {
       }
     }
     
+    /**
+     * @mixin
+     * @name IndexableMixin
+     */
     indexableMixin(itemPlan) {
       return {
         /**
+         * @function
+         * @name IndexableMixin~length
          * @summary Get the length of the targeted Array (or Array-like)
          * @param subject The input structured data
-         * @return        The length of the targeted Array, or `undefined`
+         * @return {number}  The length of the targeted Array, or `undefined`
          */
         length: function (subject) {
           return lengthProp.get(this.get(subject));
         },
         
         /**
+         * @function
+         * @name IndexableMixin~at
          * @summary Build a lens through a specific index
          * @param  {number}          index       Index into the Array targeted by this lens on which to focus
          * @param  {Function | Lens} [pickLens]  A lens to a slot within the selected item or a Function returning such a lens given the item plan
-         * @return                               A lens (or at least some optic) to the item or a slot within the item
+         * @return {Lens}                        A lens (or at least some optic) to the item or a slot within the item
          *
          * @description
          * There are several ways to call this method, with different argument
@@ -101,10 +109,13 @@ export function makeExports({fuse, isLens, lens}) {
         },
         
         /**
+         * @function
+         * @template T
+         * @name IndexableMixin~mapInside
          * @summary Clone the subject with the target of this lens altered by mapping items
-         * @param  subject       The input structured data
-         * @param  manipulators  See description
-         * @return               A minimally changed clone of subject with the transformed value in this slot
+         * @param  {T} subject       The input structured data
+         * @param  {...*} manipulators  See description
+         * @return {T}           A minimally changed clone of subject with the transformed value in this slot
          *
          * @description
          * There are several ways to call this method, with different types of
@@ -175,11 +186,16 @@ export function makeExports({fuse, isLens, lens}) {
         },
         
         /**
+         * @function
+         * @template T
+         * @name IndexableMixin~flatMapInside
          * @summary Clone the subject with the target of this lens altered by flatMapping items
-         * @param            subject          The input structured data
-         * @param {Function} subItemsForItem  Callback providing the iterable of items (possibly empty) to replace each item
-         * @param {Function} [reduce]         Callback to reduce the sequence of accumulated items
-         * @return                            A minimally changed clone of subject with the transformed value in this slot
+         * @param {T}        subject                The input structured data
+         * @param {Function} subItemsForItem        Callback providing the iterable of items (possibly empty) to replace each item
+         * @param {Object} [options]
+         * @param [options.orThrow]  {@link OptionalThrow}
+         * @param {Function} [options.reduce]       Callback to reduce the sequence of accumulated items
+         * @return {T}  A minimally changed clone of subject with the transformed value in this slot
          *
          * @description
          * This method allows the creation of a clone of *subject* where the
@@ -230,11 +246,17 @@ export function makeExports({fuse, isLens, lens}) {
       };
     }
     
+    /**
+     * @mixin
+     * @name EntriesMixin
+     */
     entriesMixin(valuePlan, explicitKeys) {
       explicitKeys = new Set(explicitKeys);
       
       return {
         /**
+         * @function
+         * @name EntriesMixin~at
          * @summary Build a lens through a specific key
          * @param {string}          key         Key (i.e. property name) of the targeted Object on which to focus
          * @param {Function | Lens} [pickLens]  A lens to a slot within the selected value or a Function returning such a lens given the value plan
@@ -272,9 +294,11 @@ export function makeExports({fuse, isLens, lens}) {
         },
         
         /**
+         * @function
+         * @name EntriesMixin~mapInside
          * @summary Clone the subject with the target of this lens altered by mapping property values
          * @param  subject       The input structured data
-         * @param  manipulators  See description
+         * @param  {...*} manipulators  See description
          * @return               A minimally changed clone of the subject with the transformed value in this slot
          *
          * @description
@@ -324,17 +348,19 @@ export function makeExports({fuse, isLens, lens}) {
         },
         
         /**
+         * @function
+         * @name EntriesMixin~mapAllInside
          * @summary Clone the subject with the target of this lens altered by mapping property values
          * @param  subject       The input structured data
-         * @param  manipulators  See description
+         * @param  {...*} manipulators  See description
          * @return               A minimally changed clone of the subject with the transformed value in this slot
          *
          * @description
          * There are several ways to call this method, with different types of
          * manipulators:
-         * 1. `datumLens.mapInside(subject, propvalXform)`
-         * 2. `datumLens.mapInside(subject, propvalSlotPicker, propvalSlotXform)`
-         * 3. `datumLens.mapInside(subject, propvalSlotLens, propvalSlotXform)`
+         * 1. `datumLens.mapAllInside(subject, propvalXform)`
+         * 2. `datumLens.mapAllInside(subject, propvalSlotPicker, propvalSlotXform)`
+         * 3. `datumLens.mapAllInside(subject, propvalSlotLens, propvalSlotXform)`
          *
          * All of these patterns iterate only over all own-properties of the
          * Object targeted within *subject* by this lens.
@@ -375,11 +401,79 @@ export function makeExports({fuse, isLens, lens}) {
     }
   }
 
+  
+  /**
+   * @typedef DatumPlan_Dsl
+   * @property VALUE   Indicator of a "tip" of the {@link Lens} branch to construct;
+   *                   equivalent to *value* exported by this module
+   * @property NAMED_VALUES  May be used as an Object spec to indicate a dictionary-type
+   *                         object in the structure or called with the datum plan spec of
+   *                         the entries to indicate a dictionary-type having entries with
+   *                         specified structure; either kind of use may be mixed into an
+   *                         Object spec with other explicit own-properties via spread
+   *                         syntax
+   */
+  
+  /**
+   * @callback DatumPlan_DslCallback
+   * @param {DatumPlan_Dsl} DSL  Helpful values and Functions for creating a datum plan specification
+   * @returns A datum plan specification
+   *
+   * @description
+   * A callback Function of this kind can be passed to
+   * [datumPlan]{@link module:natural-lenses/datum-plan} in order to use
+   * active JavaScript in defining the datum plan specification or for use of
+   * the named values and Functions passed in the *DSL* parameter.
+   */
+  
+  /**
+   * @module natural-lenses/datum-plan
+   * @summary Construct a structure of [Lenses]{@link Lens} for accessing a structure by example
+   *
+   * @param {Array|Object|string|DatumPlan_DslCallback} spec  An object specifying the datum plan to be generated, or a {@link DatumPlan_DslCallback} to return such an object
+   * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
+   *
+   * @property {string} value   Used as a "tip" indicator for where generation of nested [Lenses]{@link Lens} ends
+   * @property {string} others  Used as a key in an Object to indicate dictionary-like behavior
+   *
+   * @description
+   * This module is (when `require`d) or exports as default (when `import`ed) a
+   * Function accepting a datum plan specification and returning a structure
+   * with the same names composed of [Lenses]{@link Lens}.  The plan
+   * specification can be provided either directly as a plan or as a
+   * [Function]{@link module:natural-lenses/datum-plan~DslCallback} that
+   * receives as its first argument a DSL object providing relevantly named
+   * values.
+   *
+   * The terminal *value* indicates where descent into *spec* terminates.
+   * Otherwise, specification descent continues, though differently through
+   * Arrays and other Objects.
+   *
+   * Descent through an Array expects either 0 or 1 elements in the Array:
+   * if one entry is given, it is the "item spec" for items in the Array; if
+   * no element is given, the Array has no "item spec."  The item spec — if one
+   * is given — is passed to certain {@link IndexableMixin} methods attached
+   * to the {@link Lens} that retrieves the equivalent slot in a subject.
+   *
+   * Descent through an Object produces [Lenses]{@link Lens} for each own-property
+   * of the spec Object, attaching them to the {@link Lens} which would retrieve
+   * the instant Object spec.  Spec Objects can have a special own-property with
+   * the key given by *others*, which specifies A) that this Object behaves at
+   * in a dictionary-like manner for any non-explicit properties, and B) the
+   * datum plan spec for each non-explicit entry's value (if something other than
+   * *value* is provided).
+   *
+   * The resulting datum plan will be structured vaguely like *spec* and
+   * constructed to access a value of similar shape to *spec*.
+   *
+   * @see module:natural-lenses/datum-plan~DslCallback
+   * @see the [README](./index.html)
+   */
   function makeDatumPlan(rawPlan) {
     if (isFunction(rawPlan)) {
       rawPlan = rawPlan.call(undefined, {
         VALUE: value,
-        OTHERS: Object.assign(
+        NAMED_VALUES: Object.assign(
           (spec) => ({[others]: spec}),
           {[others]: value}
         ),

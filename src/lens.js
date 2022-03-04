@@ -10,22 +10,65 @@ import './stdlib_support/array.js';
 import './stdlib_support/map.js';
 
 /**
- * @summary Class for operating immutably on a specific "slot" in complex data
+ * @typedef {Object} OptionalThrow
+ * @property {*} [orThrow]  The value to `throw` in case of an error.
+ */
+
+/**
+ * @typedef {Object} Maybe
+ * @property {*} [just]  The contained value
  *
  * @description
- * Working with Jasascript data (especially JSON data) that is deeply nested
- * in an immutable way can be
+ * The presence of `just` as a property indicates the "Just" construction of
+ * the Maybe monad — the presence of a value (even if `undefined`).  A Maybe
+ * without a `just` property is the "Nothing" construction.
  */
-export default class Lens {
+
+class Lens {
   [isLensClass] = true;
 
+  /**
+   * @summary Class for operating immutably on a specific "slot" in complex data
+   * @param {...*} keys  Values to use in repeated applications of subscripting (i.e. square bracket operator)
+   *
+   * @description
+   * A Lens constructed as `let l = new Lens('address', 'street', 0)` represents
+   * a certain slot within a complex subject value.  If we had a record
+   * ```js
+   * const record = {
+   *   address: {
+   *     street: ["123 Somewhere Ln.", "Apt. 42"]
+   *   }
+   * };
+   * ```
+   * then applying our lens with `l.get(record)` would evaluate to "123 Somewhere Ln.".
+   *
+   * **NOTE:** If a *key* of a Lens is a negative number and
+   * the container accessed at that level is an Array, the negtive index works
+   * like `Array.prototype.slice`, counting from the end of the Array.
+   *
+   * But Lenses offer more functionality than retrieval of values from a deeply
+   * structured value — they can create a minimally cloned value deeply equal
+   * to the subject but for the slot targeted by the lens and strictly equal
+   * but for the slot targeted by the lens and the nodes in the input subject
+   * above that slot in the subject's tree.
+   *
+   * When constructing a modified clone, it is possible that some step of the
+   * Lens will target a slot within a container-not-existing-in-subject.  In this
+   * case, the container to be created is intuited from the key that would
+   * access it: an Array if the key is a number, otherwise an Object.
+   *
+   * Typically, instances are constructed by calling the Function exported
+   * from `natural-lenses` (if `require`d) or its default export (if `import`ed),
+   * conventionally named `lens`.
+   */
   constructor(...keys) {
     this.keys = keys;
   }
 
   /**
    * @summary Test for the presence of this slot in subject data
-   * @param            subject The data to test
+   * @param {*}        subject The data to test
    * @return {Boolean}         Whether this slot is present in *subject*
    */
   present(subject) {
@@ -43,9 +86,9 @@ export default class Lens {
 
   /**
    * @summary Get the value of this slot within subject data
-   * @param subject The data to query
-   * @param tail    Additional subjects for repeated application
-   * @return        The value of this slot, or `undefined` if this slot is not present in *subject*
+   * @param {*}    subject  The data to query
+   * @param {...*} tail     Additional subjects for repeated application
+   * @return {*} The value of this slot, or `undefined` if this slot is not present in *subject*
    *
    * @description
    * If *tail* is given, then `#get()` is called on the result of getting this
@@ -64,9 +107,10 @@ export default class Lens {
 
   /**
    * @summary Get a combination of presence and value of this slot
-   * @param subject The data to query
-   * @return        Empty Object if this slot is not present in *subject*,
-   *                otherwise Object with `just` property containing value of this slot in *subject*
+   * @param {*} subject  The data to query
+   * @param {...*} tail  Additional subject for repeated application
+   * @return {Maybe}  Empty Object if this slot is not present in *subject*,
+   *                  otherwise Object with `just` property containing value of this slot in *subject*
    *
    * @description
    * This implements the Maybe monad (familiar from Haskell), where Nothing is
@@ -103,9 +147,10 @@ export default class Lens {
   
   /**
    * @summary Get the (iterable) value of this slot within some subject data
-   * @param subject  The data to query
-   * @param orThrow  A value to throw if the slot does not contains a non-iterable value
-   * @return         An iterable of values from this slot (or an empty Array)
+   * @param {*} subject  The data to query
+   * @param {Object} [options]
+   * @param {*} [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
+   * @return {Iterable.<*>} An iterable of values from this slot (or an empty Array)
    *
    * @description
    * If the slot does not exist within *subject*, this method returns an empty
@@ -142,10 +187,11 @@ export default class Lens {
   }
 
   /**
+   * @template T
    * @summary Clone the input, setting the value of this slot within the clone
-   * @param subject The input structured data
-   * @param newVal  The new value to inject into the slot identified by this lens
-   * @return        A minimally changed clone of subject with newVal in this slot
+   * @param {T} subject  The input structured data
+   * @param {*} newVal   The new value to inject into the slot identified by this lens
+   * @return {T} A minimally changed clone of subject with newVal in this slot
    *
    * @description
    * "Minimally changed" means that reference-copies are used wherever possible
@@ -176,14 +222,16 @@ export default class Lens {
   }
 
   /**
+   * @template T
    * @summary Clone the input, transforming the value within this slot with a function
-   * @param            subject             The input structured data
-   * @param {Function} fn                  The function that transforms the slot value
-   * @param {Boolean}  addMissinng=false   Whether to add the slot if missing in subject
-   * @return                               A minimally changed clone of subject with the transformed value in this slot
+   * @param {T}              subject  The input structured data
+   * @param {function(*): *} fn  The function that transforms the slot value
+   * @param {Object}         [opts]
+   * @param {Boolean}        opts.addMissinng=false  Whether to add the slot if missing in subject
+   * @return {T} A minimally changed clone of *subject* with *fn* applied to the value in this slot
    *
    * @description
-   * If this slot is missing in subject, fn will not be called unless addMissing
+   * If this slot is missing in subject, fn will not be called unless *addMissing*
    * is true, in which case fn will be called with undefined.
    *
    * "Minimally changed" means that reference-copies are used wherever possible
@@ -223,10 +271,11 @@ export default class Lens {
   }
 
   /**
+   * @template T
    * @summary Clone the input, transforming or deleting the Maybe value of this slot with a function
-   * @param            subject  The input structured data
-   * @param {Function} fn       The function transforming the Maybe value of the slot
-   * @return                    A minimally changed clone of subject with this slot transformed per fn
+   * @param {T}                      subject  The input structured data
+   * @param {function(Maybe): Maybe} fn       The function transforming the {@link Maybe} value of the slot
+   * @return {T} A minimally changed clone of *subject* with this slot transformed per *fn*
    *
    * @description
    * The value given to *fn* will be the result of {@link Lens#get_maybe}, which
@@ -288,11 +337,13 @@ export default class Lens {
   }
   
   /**
+   * @template T
    * @summary Clone the input, transforming the iterable value within this slot with a function
-   * @param            subject  The input structured data
+   * @param {T}        subject  The input structured data
    * @param {Function} fn       The function that transforms the (iterable) slot value
-   * @param            orThrow  A value to throw if the slot contains a non-iterable value
-   * @return                    A minimally changed clone of subject with the transformed value in this slot
+   * @param {Object}   [options]
+   * @param {*}        [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
+   * @return {T} A minimally changed clone of subject with the transformed value in this slot
    *
    * @description
    * If the slot does not exist within *subject*, *fn* is invoked on an empty
@@ -303,7 +354,7 @@ export default class Lens {
    * *orThrow* is an Object, its `noniterableValue` property will be set to the
    * slot's value before being thrown.
    *
-   * The primary differences between this method and Lens#xformInClone are that
+   * The primary differences between this method and {@link Lens#xformInClone} are that
    * this method always passes an iterable value to *fn* and always calls *fn*
    * even if the slot is missing or does not contain an iterable value (unless
    * *orThrow* is given).
@@ -346,12 +397,15 @@ export default class Lens {
   
   /**
    * @summary DRYly bind a Function to the Object from which it was obtained
-   * @param subject  The input structured data
-   * @return         A Function bound to the previous object in the chain used to access the Function
+   * @param {*} subject  The input structured data
+   * @param {Object} [options]
+   * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
+   * @param {*} [options.or]  A value to return if the slot referenced does not contain a Function
+   * @return {Function} A Function bound to the previous object in the chain used to access the Function
    *
    * @description
    * Use this to avoid the dreaded Javascript binding repetition of
-   * `o.fn.bind(o)`.  Instead, use `makeLens('fn').bound(o)`.
+   * `o.fn.bind(o)`.  Instead, use `lens('fn').bound(o)`.
    */
   bound(subject, {orThrow, or} = {}) {
     const lCopy = new Lens(...this.keys), mname = lCopy.keys.pop();
@@ -371,6 +425,8 @@ export default class Lens {
 
   /**
    * Combine the effects of multiple Lenses
+   *
+   * It is preferred to use {@link module:natural-lenses#fuse}
    */
   static fuse(...lenses) {
     if (!lenses.every(l => l.constructor === Lens)) {
@@ -379,7 +435,7 @@ export default class Lens {
     return new Lens(...lenses.flatMap(l => l.keys));
   }
   
-  /**
+  /*
    * @package
    * @summary Construct a container for a clone given the depth
    */
@@ -462,3 +518,5 @@ function handleNoniterableValue(excVal, maybeVal) {
   }
   throw excVal;
 }
+
+export default Lens;

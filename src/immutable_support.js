@@ -20,7 +20,17 @@ function ImmutableMixin({spliceOutWithDelete = false}) {
     },
   };
 }
-export function polyfillImmutable(containerType) {
+
+/**
+ * @function module:natural-lenses#polyfillImmutable
+ * @summary Add lensing support methods to an Immutable type
+ * @param {Function} containerType  Target container type for support
+ *
+ * @description
+ * Adds mixin methods for supporting lenses to the given Immutable container
+ * type.
+ */
+function polyfillImmutable(containerType) {
   const isList = containerType.isList;
   const proto = containerType.prototype,
     mixins = ImmutableMixin({spliceOutWithDelete: !isList});
@@ -38,3 +48,5 @@ export function polyfillImmutable(containerType) {
     }
   )
 }
+
+export { polyfillImmutable };

@@ -6,13 +6,24 @@ import BinderMixin from './binder_mixin.js';
 import { at_maybe, cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import { index_maybe, isLens, lensCap } from './utils.js';
 
+/**
+ * @property {Array | Object} lenses  [Lenses]{@link Lens} aggregated by this object
+ */
 export class AbstractNFocal {
   [isLensClass] = true;
 
+  /**
+   * @summary Abstract base class for multifocal (i.e. n-focal) optics
+   * @param {Array|Object} lenses  Lenses to be aggregated
+   *
+   * **NOTE:** The *lenses* argument is captured by the new AbstractNFocal-derived
+   * object, meaning later changes to the object passed as *lenses* propagate
+   * to the constructed AbstractNFocal.
+   */
   constructor(lenses) {
     this.lenses = lenses;
   }
-
+  
   [at_maybe](idx) {
     return index_maybe(this.lenses, idx);
   }
@@ -22,6 +33,9 @@ export class AbstractNFocal {
     return makeNFocal(lenses);
   }
 
+  /**
+   * @see {@link Lens#present}
+   */
   present(subject) {
     return _reduce(
       this.lenses,
@@ -29,13 +43,31 @@ export class AbstractNFocal {
       []
     );
   }
+  
+  /**
+   * @typedef {Array} AbstractNFocal.TransformSpec
+   * @property {*}        0 - lens index/key
+   * @property {Function} 1 - transform function to apply
+   *
+   * @description
+   * Indicates a transform Function and the index/key of the Lens identifying
+   * the slot over which to apply the transform.
+   */
 
   /**
-   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
-   * @param                                 subject     The input structured data
-   * @param {Iterable<[number, Function]>}  xformArray  Iterable of lens key and transform function pairs to apply
-   * @param {(Function|Object)}             opts        Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
-   * @return A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
+   * @template T
+   * @summary Apply transforms to selected slots within this multifocal while making a clone
+   * @param {T}                                        subject     The input structured data
+   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of lens key and transform function pairs to apply
+   * @param {(Function|Object)}                        [opts]      Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
+   * @return {T} A minimally changed clone of *subject* with the slots of this multifocal selected by *xformPairs* transformed according to the corresponding Function
+   *
+   * @description
+   * An element of *xformPairs* that targets a lens not existing in this object
+   * is a no-op.  Behavior for an *xformPairs* element targeting a non-existent
+   * slot in *subject* depends on *opts*.
+   *
+   * Transforms are applied in the order in which they occur in *xformPairs*.
    */
   xformInClone(subject, xformArray, opts = {}) {
     if (!isFunction(opts)) {
@@ -51,6 +83,23 @@ export class AbstractNFocal {
     );
   }
 
+  /**
+   * @template T
+   * @summary Apply transforms to selected slots (using a Maybe monad) within this multifocal while making a clone
+   * @param {T}                                        subject     The input structured data
+   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of lens key and transform function pairs to apply
+   * @returns {T} A minimally changed clone of *subject* with the slots of this multifocal selected by keys in *xformPairs* transformed according to the corresponding Function
+   *
+   * @description
+   * An element of *xformPairs* that targets a lens not existing in this object
+   * is a no-op.  Any transform function called will be called with the slot
+   * value in a Maybe monad and the result expected to provide the new value
+   * in a Maybe monad: the Nothing construction (`{}`) will be passed if the
+   * slot does not exist in *subject* and return of the Nothing construct
+   * will cause the clone to omit the targeted slot.
+   *
+   * Transforms are applied in the order in which they occur in *xformPairs*.
+   */
   xformInClone_maybe(subject, xformArray) {
     return _reduce(
       xformArray,
@@ -64,7 +113,14 @@ export class AbstractNFocal {
 }
 Object.assign(AbstractNFocal.prototype, BinderMixin);
 
+/**
+ * @extends AbstractNFocal
+ * @summary Multifocal (i.e. n-focal) building an Array
+ */
 export class ArrayNFocal extends AbstractNFocal {
+  /**
+   * @see {@link Lens#get}
+   */
   get(subject, ...tail) {
     const subjResult = this.get_maybe(subject).just;
     if (tail.length > 0) {
@@ -75,6 +131,9 @@ export class ArrayNFocal extends AbstractNFocal {
     return subjResult;
   }
 
+  /**
+   * @see {@link Lens#get_maybe}
+   */
   get_maybe(subject, ...tail) {
     const subjResult = new Array(this.lenses.length);
     for (var i = 0; i < this.lenses.length; i++) {
@@ -93,7 +152,14 @@ export class ArrayNFocal extends AbstractNFocal {
   }
 }
 
+/**
+ * @extends AbstractNFocal
+ * @summary Multifocal (i.e. n-focal) building an Object
+ */
 export class ObjectNFocal extends AbstractNFocal {
+  /**
+   * @see {@link Lens#get}
+   */
   get(subject, ...tail) {
     const subjResult = {};
     _each(this.lenses, (lens, prop) => {
@@ -110,6 +176,9 @@ export class ObjectNFocal extends AbstractNFocal {
     return subjResult;
   }
 
+  /**
+   * @see {@link Lens#get_maybe}
+   */
   get_maybe(subject, ...tail) {
     const subjResult = this.get(subject);
     if (tail.length > 0) {
