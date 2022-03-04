@@ -179,11 +179,24 @@ class Lens {
     }
   }
   
-  *ifFound(subject) {
-    const maybeVal = this.get_maybe(subject);
-    if ('just' in maybeVal) {
-      yield maybeVal.just;
-    }
+  /**
+   * @template T
+   * @summary Conditionally evaluate functions depending on presence of slot
+   * @param {*}              subject  The input structured data
+   * @param {Object}         dispatch
+   * @param {function(*): T} [dispatch.then]  Function evaluated if slot is present in *subject*
+   * @param {function(): T}  [dispatch.else]  Function evaluated if slot is absent from *subject*
+   * @returns {T} The value computed by *dispatch.then* or *dispatch.else*, or `undefined`
+   *
+   * @description
+   * The presence of the slot determines whether *dispatch.then* or *dispatch.else*
+   * is evaluated, with the result being returned from this method.  If the
+   * indicated property of *dispatch* is missing, then `undefined` is returned.
+   */
+  getting(subject, {then: thenDo, else: elseDo}) {
+    const maybeVal = this.get_maybe(subject),
+      handler = ('just' in maybeVal ? thenDo : elseDo) || (() => {});
+    return handler.call(undefined, maybeVal.just);
   }
 
   /**

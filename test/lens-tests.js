@@ -564,15 +564,38 @@ function testSequence(loaderName, subjects) {
         });
       });
       
-      describe('#ifFound', () => {
-        it('should iterate over exactly the target if present', () => {
-          const data = {answer: [2,3,5]};
-          assert.deepEqual(Array.from(lens('answer', 1).ifFound(data)), [3]);
+      describe('#getting', () => {
+        it('evaluates the "then" if the target is present', () => {
+          const data = {answer: [2,3,5]}, l = lens('answer', 1);
+          assert.strictEqual(
+            l.getting(data, {then(val) {return val + 10;}}),
+            l.get(data) + 10
+          );
         });
         
-        it('should iterate over nothing if the target is not present', () => {
-          const data = {answer: [2,3,5]};
-          assert.deepEqual(Array.from(lens('answer', 15).ifFound(data)), []);
+        it('evaluates to unknown if the target is present and "then" not given', () => {
+          const data = {answer: [2,3,5]}, l = lens('answer', 1);
+          const marker = Symbol('marker');
+          assert.isUndefined(
+            l.getting(data, {else() {return marker;}})
+          );
+        });
+        
+        it('evaluates the "else" if the taget is not present', () => {
+          const data = {answer: [2,3,5]}, l = lens('answer', 15);
+          const marker = Symbol('marker');
+          assert.strictEqual(
+            l.getting(data, {else() {return marker;}}),
+            marker
+          );
+        });
+        
+        it('evaluates to unknown if the target is absent and "else" not given', () => {
+          const data = {answer: [2,3,5]}, l = lens('answer', 15);
+          const marker = Symbol('marker');
+          assert.isUndefined(
+            l.getting(data, {then(val) {return val + 10;}})
+          );
         });
       });
 
