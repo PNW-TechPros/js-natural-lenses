@@ -11,3 +11,4 @@ export { default as JsContainerFactory, DEFAULT_FACTORY as jsContainers } from '
 export { default as nfocal } from './nfocal.mjs';
 export { polyfillImmutable } from './esm/immutable_support.js';
 export { default as Step } from './esm/custom_step.js';
+export * from './esm/errors.js';

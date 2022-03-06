@@ -17,6 +17,7 @@ import './stdlib_support/map.js';
 /**
  * @typedef {Object} Maybe
  * @property {*} [just]  The contained value
+ * @see Haskell's "Maybe" data type
  *
  * @description
  * The presence of `just` as a property indicates the "Just" construction of
@@ -201,10 +202,10 @@ class Lens {
 
   /**
    * @template T
-   * @summary Clone the input, setting the value of this slot within the clone
+   * @summary Clone *subject*, setting the value of this slot within the clone
    * @param {T} subject  The input structured data
    * @param {*} newVal   The new value to inject into the slot identified by this lens
-   * @return {T} A minimally changed clone of subject with newVal in this slot
+   * @return {T} A minimally changed clone of *subject* with *newVal* in this slot
    *
    * @description
    * "Minimally changed" means that reference-copies are used wherever possible
@@ -487,7 +488,11 @@ class Slot {
   }
 
   cloneTarget(opDesc /* {set, spliceOut} */ = {}) {
-    return this.target[cloneImpl](opDesc);
+    let target = this.target;
+    if (!target) {
+      target = (typeof key === 'number') ? [] : {};
+    }
+    return target[cloneImpl](opDesc);
   }
 }
 

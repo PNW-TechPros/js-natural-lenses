@@ -226,6 +226,13 @@ function testSequence(loaderName, subjects) {
           assert.notStrictEqual(result, data);
           assert.equal(result[4], 5);
         });
+        
+        it('should assign into a negative element of an Array', () => {
+          const data = [2, 3, 4];
+          const result = lens(-1).setInClone(data, 5);
+          assert.notStrictEqual(result, data);
+          assert.equal(result[2], 5);
+        });
 
         it('should assign into an existing property of an Object', () => {
           const data = {answer: 42};
@@ -614,8 +621,8 @@ function testSequence(loaderName, subjects) {
 
         it('joins the behavior of an N-focal to a Lens', () => {
           const arrayizedPerson = lensUtils.fuse(
+            lens('person'),
             lensUtils.nfocal([lens('name'), lens('email')]),
-            lens('person')
           );
           const data = {
             person: {name: 'Warren Barber', email: 'valahpu@inuzu.ac', birthdate: '1984-01-01'},
@@ -627,11 +634,11 @@ function testSequence(loaderName, subjects) {
 
         it('joins the behavior of a Lens to an N-focal', () => {
           const vehicleHome = lensUtils.fuse(
-            lens('streetAddress', 0),
             lensUtils.nfocal({
               streetAddress: lens('location', 'streetAddress'),
               vehicleMake: lens('vehicle', 'make')}
-            )
+            ),
+            lens('streetAddress', 0),
           );
           const data = {
             person: {name: 'Warren Barber', email: 'valahpu@inuzu.ac', birthdate: '1984-01-01'},
@@ -802,6 +809,30 @@ function testSequence(loaderName, subjects) {
         });
       });
       
+      describe("#setInClone()", () => {
+        // A stereoscopy error occurs when two parts of a multifocal reference
+        // the same slot and the call to #setInClone() calls for these
+        // references to be assigned non-strict-equal values.
+        it('detects stereoscopy errors', () => {
+          const L = lensUtils.nfocal([lens('name'), lens('name')]);
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          assert.throws(
+            () => L.setInClone(data, [newName, data.name]),
+            lensUtils.StereoscopyError
+          );
+        });
+        
+        it('allows consistent stereoscopic changes', () => {
+          const L = lensUtils.nfocal([lens('name'), lens('name')]);
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          const {name: resultName, ...resultOther} =
+            L.setInClone(data, [newName, newName]);
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+      });
+      
       describe("(as an Array-like collection of lenses)", () => {
         let L;
         before(async () => {
@@ -824,7 +855,7 @@ function testSequence(loaderName, subjects) {
     });
 
     describe('ObjectNFocal', () => {
-      describe('#get_maybe', () => {
+      describe('#get_maybe()', () => {
         it('pulls multiple values from structured data into an object', () => {
           const L = lensUtils.nfocal({name: lens('name'), mailTo: lens('school', 'address')});
           const data = {
@@ -858,6 +889,36 @@ function testSequence(loaderName, subjects) {
         });
       });
       
+      describe('#setInClone()', () => {
+        it('detects conflicting-change stereoscopy errors', () => {
+          const L = lensUtils.nfocal({name: lens('name'), displayName: lens('name')});
+          const data = {name: "Fred Flintstone"}, newName = "Freddy";
+          assert.throws(
+            () => L.setInClone(data, {name: data.name, displayName: newName}),
+            lensUtils.StereoscopyError
+          );
+        });
+        
+        it('detects omit/change stereoscopy errors', () => {
+          const L = lensUtils.nfocal({name: lens('name'), displayName: lens('name')});
+          const data = {name: "Fred Flintstone"}, newName = "Freddy";
+          assert.throws(
+            () => L.setInClone(data, {displayName: newName}),
+            lensUtils.StereoscopyError
+          );
+        });
+        
+        it('allows consistent stereoscopic changes', () => {
+          const L = lensUtils.nfocal({name: lens('name'), displayName: lens('name')});
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          const {name: resultName, ...resultOther} =
+            L.setInClone(data, {name: newName, displayName: newName});
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+      });
+      
       describe("(as an Object-like collection of lenses)", () => {
         let L;
         before(async () => {
@@ -881,13 +942,13 @@ function testSequence(loaderName, subjects) {
       
       describe('#present()', () => {
         it('returns truthy if target is present', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           const name = "Fred Flintstone";
           assert(fusedLens.present({name}), "name is present");
         });
         
         it('returns falsey if target is not present', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           assert(!fusedLens.present({}), "name is not present");
         });
         
@@ -899,42 +960,95 @@ function testSequence(loaderName, subjects) {
       
       describe('#get()', () => {
         it('retrieves the target value when target is present', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           const name = "Fred Flintstone";
           assert.strictEqual(fusedLens.get({name}), name);
         });
         
         it('returns undefined when intermediate lens is missing', () => {
-          const fusedLens = lensUtils.fuse(lens(7), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(7));
           const name = "Fred Flintstone";
           assert.isUndefined(fusedLens.get({name}));
         });
         
         it('returns undefined when target slot is missing', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           assert.isUndefined(fusedLens.get({}));
         });
       });
       
       describe('#get_maybe()', () => {
         it('returns a Just construct with the target value when target is present', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           const name = "Fred Flintstone";
           const result = fusedLens.get_maybe({ name });
           assert.deepEqual(result, {just: name});
         });
         
         it('returns a Nothing when intermediate lens is missing', () => {
-          const fusedLens = lensUtils.fuse(lens(7), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(7));
           const name = "Fred Flintstone";
           const result = fusedLens.get_maybe({ name });
           assert.notProperty(result, 'just');
         });
         
         it('returns a Nothing when the target slot is missing', () => {
-          const fusedLens = lensUtils.fuse(lens(0), mfl);
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
           const result = fusedLens.get_maybe({});
           assert.notProperty(result, 'just');
+        });
+      });
+      
+      describe('#xformInClone_maybe()', () => {
+        it('can make a trivial change', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          const {name: resultName, ...resultOther} =
+            fusedLens.xformInClone_maybe(data, () => ({just: newName}));
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+        
+        it('can remove the slot', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {name: "Fred Flintstone"};
+          const {name: inputName, ...inputOther} = data;
+          const result = fusedLens.xformInClone_maybe(data, () => ({}));
+          assert.deepEqual(result, inputOther);
+        });
+        
+        it('can add the slot', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const name = "Fred Flintstone";
+          const {name: resultName, ...resultOther} =
+            fusedLens.xformInClone_maybe({}, () => ({just: name}));
+          assert.deepEqual(resultOther, {});
+          assert.strictEqual(resultName, name);
+        });
+        
+        it('handles a missing slot in a "through" optic', () => {
+          const fusedLens = lensUtils.fuse(lens(0), mfl, lens(0));
+          const name = "Fred Flintstone";
+          const [{name: resultName, ...resultOtherProps}, ...resultOtherEntries] =
+            fusedLens.xformInClone_maybe([], () => ({just: name}));
+          assert.deepEqual(resultOtherProps, {});
+          assert.strictEqual(resultOtherEntries.length, 0);
+          assert.strictEqual(resultName, name);
+        });
+        
+        it('returns the original if the strict-equal-same value is the result of the transform callback', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {name: "Fred Flintstone"};
+          const result = fusedLens.xformInClone_maybe(data, v_m => v_m);
+          assert.strictEqual(result, data);
+        });
+        
+        it('returns the original if the transform does not inject data to a missing slot', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {address: {}};
+          const result = fusedLens.xformInClone_maybe(data, v_m => v_m);
+          assert.strictEqual(result, data);
         });
       });
     });

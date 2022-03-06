@@ -20,7 +20,9 @@ incorporateStdlibSupport(Array, [
   [cloneImpl, function({set, spliceOut}) {
     if (set) {
       const result = this.concat();
-      result[set[0]] = set[1];
+      let [key, value] = set;
+      if (typeof key === 'number' && key < 0) key = this.length + key;
+      result[key] = value;
       return result;
     } else if (typeof spliceOut === 'number') {
       const i = spliceOut < 0 ? this.length + spliceOut : spliceOut;

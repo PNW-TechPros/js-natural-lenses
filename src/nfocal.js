@@ -1,8 +1,9 @@
 import {
-  each as _each, identity, isArray, isFunction, map as _map, mapObject,
+  each as _each, every, identity, isArray, isFunction, map as _map, mapObject,
   reduce as _reduce, reduceRight
 } from 'underscore';
 import BinderMixin from './binder_mixin.js';
+import { StereoscopyError } from './errors.js';
 import { at_maybe, cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import { index_maybe, isLens, lensCap } from './utils.js';
 
@@ -16,6 +17,9 @@ export class AbstractNFocal {
    * @summary Abstract base class for multifocal (i.e. n-focal) optics
    * @param {Array|Object} lenses  Lenses to be aggregated
    *
+   * @property {Array|Object} lenses  Lenses of the aggregation
+   *
+   * @description
    * **NOTE:** The *lenses* argument is captured by the new AbstractNFocal-derived
    * object, meaning later changes to the object passed as *lenses* propagate
    * to the constructed AbstractNFocal.
@@ -110,6 +114,7 @@ export class AbstractNFocal {
       subject
     );
   }
+  
 }
 Object.assign(AbstractNFocal.prototype, BinderMixin);
 
@@ -150,6 +155,39 @@ export class ArrayNFocal extends AbstractNFocal {
       return {just: subjResult, multiFocal: true};
     }
   }
+  
+  /**
+   * @template T
+   * @summary Clone *subject*, setting all values corresponding to elements of this multifocal within the clone
+   * @see {@link Lens#setInClone}
+   * @param {T}         subject  The input structured data
+   * @param {Array.<*>} newVals  The new values corresponding to this multifocal's lenses
+   * @returns {T} A minimally changed clone of *subject* with *newVals* distributed via *this.lenses*
+   * @throws {StereoscopyError} If this object's view of *subject* cannot become *newVals*
+   *
+   * @description
+   * Similar in concept to {@link Lens#setInClone}, this method creates a modified
+   * clone of *subject* such that applying this optic to the new value produces
+   * a value deep-equal to *newVals*.  Due to the multifocal nature, it is possible
+   * that no such result can be created, which results in a {@link StereoscopyError}.
+   *
+   * It is possible to delete the target of one or more of *this.lenses* by
+   * passing *newVals* with *empty* elements or with fewer elements than
+   * in *this.lenses*.  The easiest way to accomplish this is to create the
+   * Array of new values, then use `delete` on the indexes whose corresponding
+   * slots should be removed from *subject*.
+   */
+  setInClone(subject, newVals) {
+    const valSource = newVals || [];
+    const result = this.xformInClone_maybe(
+      subject,
+      _map(this.lenses, (l, i) => 
+        [i, () => (i in valSource) ? {just: valSource[i]} : {}]
+      )
+    );
+    checkSet.call(this, result, newVals);
+    return result;
+  }
 }
 
 /**
@@ -188,8 +226,94 @@ export class ObjectNFocal extends AbstractNFocal {
     }
     return {just: subjResult, multiFocal: true};
   }
+  
+  /**
+   * @template T
+   * @summary Clone *subject*, setting all values corresponding to elements of this multifocal within the clone
+   * @see {@link Lens#setInClone}
+   * @param {T}                 subject  The input structured data
+   * @param {Object.<string,*>} newVals  The new values corresponding to this multifocal's lenses
+   * @returns {T} A minimally changed clone of *subject* with *newVals* distributed via *this.lenses*
+   * @throws {StereoscopyError} If this object's view of *subject* cannot become *newVals*
+   *
+   * @description
+   * Similar in concept to {@link Lens#setInClone}, this method creates a modified
+   * clone of *subject* such that applying this optic to the new value produces
+   * a value deep-equal to *newVals*.  Due to the multifocal nature, it is possible
+   * that no such result can be created, which results in a {@link StereoscopyError}.
+   *
+   * The slot corresponding to any constituent lens whose name is left out of
+   * *newVals* will be deleted from the clone of *subject*.
+   */
+  setInClone(subject, newVal) {
+    const valSource = newVal || {};
+    const result = this.xformInClone_maybe(
+      subject,
+      mapObject(this.lenses, (l, k) => 
+        [k, () => (k in valSource) ? {just: valSource[k]} : {}]
+      )
+    );
+    checkSet.call(this, result, newVal);
+    return result;
+  }
 }
 
 export function makeNFocal(lenses) {
   return new (isArray(lenses) ? ArrayNFocal : ObjectNFocal)(lenses);
+}
+
+/**
+ * @private
+ * @this AbstractNFocal
+ * @param {Object|Array} result
+ * @param {Object|Array} expectedVal
+ * @throws {StereoscopyError} Thrown if this object's view of *result* is inconsistent with *expectedVal*
+ * @description
+ * Many parts of this method are never expected to execute, but are in
+ * place in case of unexpected results from other operations.
+ */
+function checkSet(result, expectedVal) {
+  const checkVal_maybe = this.get_maybe(result);
+  /* istanbul ignore if */
+  if (!('just' in checkVal_maybe)) {
+    throw new StereoscopyError("Slot not present when it should be");
+  } else {
+    let sameValue = false;
+    switch (typeof expectedVal) {
+      /* istanbul ignore next */
+      case 'bigint':
+      /* istanbul ignore next */
+      case 'boolean':
+      /* istanbul ignore next */
+      case 'function':
+      /* istanbul ignore next */
+      case 'number':
+      /* istanbul ignore next */
+      case 'string':
+      /* istanbul ignore next */
+      case 'symbol':
+      /* istanbul ignore next */
+      case 'undefined':
+        sameValue = Object.is(expectedVal, checkVal_maybe.just);
+        break;
+      case 'object':
+        /* istanbul ignore if */
+        if (expectedVal === null) {
+          sameValue = (checkVal_maybe.just === null);
+        } else {
+          sameValue = every(expectedVal, (v, k) =>
+            Object.is(checkVal_maybe.just[k], v)
+          ) && every(Object.keys(checkVal_maybe.just), k => k in expectedVal);
+        }
+        break;
+      
+      /* istanbul ignore next */
+      default:
+        throw `Unrecognized value type '${typeof expectedVal}'`;
+    }
+    
+    if (!sameValue) {
+      throw new StereoscopyError("Altered slot in clone has unexpected value");
+    }
+  }
 }

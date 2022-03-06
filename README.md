@@ -57,7 +57,7 @@ The rationale behind this difference is that CommonJS is often deployed server-s
 
 ## Lens Composition
 
-Lenses can be composed through `lens.fuse`, which takes one or more lenses (or other optics) to fuse and creates either a new, fused lens that behaves as the composition of all the passed lenses (though this can only be done if _only_ lenses are passed) or an OpticArray that functions somewhat like a lens, at least for *getting*.
+Lenses can be composed through `lens.fuse`, which takes one or more lenses (or other optics) to fuse and creates either a new, fused lens that behaves as the composition of all the passed lenses (though this can only be done if _only_ lenses are passed) or an OpticArray which implements most Lens functionality.
 
 Lenses constructed through a `lens.Factory` can only be incorporated in an OpticArray, and not directly fused into a single lens.
 
@@ -109,16 +109,21 @@ for (let value of lens.eachFound(lens('phone').get_maybe(data))) {
 }
 ```
 
-However, this same functionality is more conveniently wrapped up in the `ifFound` method of the Lens:
+However, this same functionality is more conveniently wrapped up in the `getting` method of the Lens, with the added ability to take action or compute a value when the slot is absent:
 
 ```js
 const data = {name: "Fred Flintstone", phone: "+15077392058"};
-for (let value of lens('phone').ifFound(data)) {
-  // Do something with "value"
-}
+lens('phone').getting(data, {
+  then(value) {
+    // Do something with "value"
+  },
+  else() {
+    // Do something if not present
+  }
+});
 ```
 
-A third alternative allows computation based on whether the value is *Just* or *Nothing*:
+Another way to write the previous example is with the exported `maybeDo` function:
 
 ```js
 const data = {name: "Fred Flintstone", phone: "+15077392058"};
