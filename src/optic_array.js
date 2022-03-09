@@ -1,8 +1,11 @@
 import { isEmpty, isUndefined, reduce, reduceRight } from 'underscore';
-import BinderMixin from './binder_mixin.js';
+import Optic from './optic.js';
 import { isLens, lensCap } from './utils.js';
 
-class OpticArray {
+/**
+ * @extends Optic
+ */
+class OpticArray extends Optic {
   /**
    * @summary Aggregation of multiple lens applied in series
    *
@@ -10,11 +13,12 @@ class OpticArray {
    * Construct this using {@link module:natural-lenses.fuse}.
    */
   constructor(lenses) {
+    super();
     this.lenses = lenses;
   }
 
   /**
-   * @see {@link Lens#present}
+   * @inheritdoc
    */
   present(subject) {
     if (this.lenses.length === 0) return true;
@@ -28,7 +32,7 @@ class OpticArray {
   }
 
   /**
-   * @see {@link Lens#get}
+   * @inheritdoc
    */
   get(subject, ...tail) {
     const subjResult = reduce(
@@ -43,10 +47,10 @@ class OpticArray {
   }
 
   /**
-   * @see {@link Lens#get_maybe}
+   * @inheritdoc
    */
   get_maybe(subject, ...tail) {
-    const stepSubject = this._get_maybe_internal({just: subject});
+    const stepSubject = get_maybe_internal.call(this, {just: subject});
     const subjResult = stepSubject.just;
     if (tail.length > 0) {
       return isLens(subjResult) ? subjResult.get_maybe(...tail) : undefined;
@@ -55,7 +59,7 @@ class OpticArray {
   }
 
   /**
-   * @see {@link Lens#xformInClone_maybe}
+   * @inheritdoc
    */
   xformInClone_maybe(subject, fn) {
     var i;
@@ -88,39 +92,24 @@ class OpticArray {
     }
     return xformResults[0];
   }
-  
-  /**
-   * @see {@link Lens@xformInClone}
-   */
-  xformInClone(subject, fn, {addMissing = false} = {}) {
-    return this.xformInClone(subject, val_maybe => {
-      if (('just' in val_maybe) || addMissing) {
-        return {just: fn(val_maybe.just)};
-      } else {
-        return {};
-      }
-    });
-  }
-  
-  /**
-   * @see {@link Lens#setInClone}
-   */
-  setInClone(subject, newVal) {
-    return this.xformInClone(subject, () => newVal);
-  }
-
-  _get_maybe_internal(subject_maybe) {
-    let stepSubject = subject_maybe;
-    for (let i = 0; i < this.lenses.length; i++) {
-      const lens = this.lenses[i];
-      stepSubject = lens.get_maybe(stepSubject.just);
-      if (isEmpty(stepSubject.just)) {
-        return {};
-      }
-    }
-    return stepSubject;
-  }
 }
-Object.assign(OpticArray.prototype, BinderMixin);
 
 export default OpticArray;
+
+/**
+ * @private
+ * @this OpticArray
+ * @param {Maybe.<*>} subject_maybe
+ * @returns {Maybe.<*>}
+ */
+function get_maybe_internal(subject_maybe) {
+  let stepSubject = subject_maybe;
+  for (let i = 0; i < this.lenses.length; i++) {
+    const lens = this.lenses[i];
+    stepSubject = lens.get_maybe(stepSubject.just);
+    if (isEmpty(stepSubject.just)) {
+      return {};
+    }
+  }
+  return stepSubject;
+}

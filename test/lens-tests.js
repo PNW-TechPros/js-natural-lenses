@@ -377,8 +377,6 @@ function testSequence(loaderName, subjects) {
           assert.notProperty(result.answer, 0);
           assert.strictEqual(result.answer[1], 3);
           assert.strictEqual(result.answer.length, 2);
-          // assert.deepEqual(data, {question: 'What are the first four primes?', answer: [2,3,5]});
-          // assert.deepEqual(result, {question: 'What are the first four primes?', answer: [2,3,5,7]});
         });
 
         it('should delete an element from an array when no "just" is returned', () => {
@@ -484,6 +482,14 @@ function testSequence(loaderName, subjects) {
           assert.notProperty(data, 0);
           const result = lens(-10).xformInClone_maybe(data, () => ({}));
           assert.strictEqual(result, data);
+        });
+        
+        it('transforms the subject when the Lens is trivial', () => {
+          const data = {answer: 42};
+          const result = lens().xformInClone_maybe(data, v_m => 
+            v_m.just ? {just: {answer: v_m.just.answer * 10}} : v_m
+          );
+          assert.deepEqual(result, {answer: 420});
         });
       });
       

@@ -8,7 +8,7 @@ const { eachFound, maybeDo } = require('./cjs/utils');
  * @module natural-lenses
  * @summary Construct a Lens from the given indexing steps
  *
- * @param {...*} keys  The names or indexes to use in successive subscripting (i.e. square bracket) operations
+ * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
  * @returns {Lens}  The constructed lens
  *
  * @property {symbol}   at_maybe            Key for method implementing retrieval from a container
@@ -49,8 +49,8 @@ Object.defineProperties(makeLens, {
   /**
    * @function module:natural-lenses#fuse
    * @summary Fuse multiple optics into a single, sequential application
-   * @param {...*} optics
-   * @returns {Lens|OpticArray}
+   * @param {...Optic} optic  Optic object to fuse
+   * @returns {Lens|OpticArray}  A single {@link Optic} joining the *optics*
    *
    * @description
    * To understand the slot reference of the returned optic, consider the

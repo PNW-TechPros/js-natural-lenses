@@ -1,4 +1,4 @@
-import { isArray, isObject, isString, property } from 'underscore';
+import { isArray, isObject, isString, isUndefined, property } from 'underscore';
 import { isLensClass, at_maybe } from '../src-cjs/constants.js';
 
 export const isLens = property(isLensClass);
@@ -110,4 +110,14 @@ export function incorporateStdlibSupport(targetClass, methods) {
       });
     }
   });
+}
+
+export function handleNoniterableValue(excVal, maybeVal) {
+  if (isUndefined(excVal) || !('just' in maybeVal)) {
+    return;
+  }
+  if (isObject(excVal)) {
+    excVal.noniterableValue = maybeVal.just;
+  }
+  throw excVal;
 }

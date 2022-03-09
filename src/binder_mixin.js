@@ -7,7 +7,7 @@ import { isArray, range, reduce } from 'underscore';
 export default {
   /**
    * @function
-   * @name BinderMixin~$
+   * @name BinderMixin#$
    * @param {string} method  Name of method to bind
    * @returns {Function} Method named by *method* bound to the Object on which this method is called
    *

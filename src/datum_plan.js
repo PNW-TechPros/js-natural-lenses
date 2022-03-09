@@ -114,7 +114,7 @@ export function makeExports({fuse, isLens, lens}) {
          * @name IndexableMixin~mapInside
          * @summary Clone the subject with the target of this lens altered by mapping items
          * @param  {T} subject       The input structured data
-         * @param  {...*} manipulators  See description
+         * @param  {...*} manipulator  See description
          * @return {T}           A minimally changed clone of subject with the transformed value in this slot
          *
          * @description
@@ -298,7 +298,7 @@ export function makeExports({fuse, isLens, lens}) {
          * @name EntriesMixin~mapInside
          * @summary Clone the subject with the target of this lens altered by mapping property values
          * @param  subject       The input structured data
-         * @param  {...*} manipulators  See description
+         * @param  {...*} manipulator  See description
          * @return               A minimally changed clone of the subject with the transformed value in this slot
          *
          * @description
@@ -352,7 +352,7 @@ export function makeExports({fuse, isLens, lens}) {
          * @name EntriesMixin~mapAllInside
          * @summary Clone the subject with the target of this lens altered by mapping property values
          * @param  subject       The input structured data
-         * @param  {...*} manipulators  See description
+         * @param  {...*} manipulator  See description
          * @return               A minimally changed clone of the subject with the transformed value in this slot
          *
          * @description

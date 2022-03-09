@@ -1,4 +1,3 @@
-import BinderMixin from './binder_mixin.js';
 import CCCLens from './ccc_lens.js';
 
 class LensFactory {
@@ -22,7 +21,7 @@ class LensFactory {
   
   /**
    * Construct a lens through the factory
-   * @param {...*} keys  The keys of the customized lens type
+   * @param {...*} key  A key of the customized lens type
    * @returns {Lens}  A lens with customized container creation behavior
    */
   lens(...keys) {

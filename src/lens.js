@@ -1,8 +1,8 @@
-import { isFunction, isObject, isUndefined } from 'underscore';
-import BinderMixin from './binder_mixin.js';
+import { isFunction, isUndefined } from 'underscore';
 import { cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import CustomStep from './custom_step.js';
-import { getIterator, index_maybe, isLens } from './utils.js';
+import Optic from './optic.js';
+import { getIterator, handleNoniterableValue, index_maybe, isLens } from './utils.js';
 
 // Polyfill support for lenses to standard JavaScript types
 import './stdlib_support/object.js';
@@ -12,6 +12,11 @@ import './stdlib_support/map.js';
 /**
  * @typedef {Object} OptionalThrow
  * @property {*} [orThrow]  The value to `throw` in case of an error.
+ */
+
+/**
+ * @typedef {Object} FallbackBindingResult
+ * @property {Function} [or]  The function to return if the slot does not contain a function.
  */
 
 /**
@@ -25,12 +30,15 @@ import './stdlib_support/map.js';
  * without a `just` property is the "Nothing" construction.
  */
 
-class Lens {
-  [isLensClass] = true;
-
+/**
+ * @extends Optic
+ * @property {Array.<*>} keys  Indexing/subscripting values to be applied successively to subjects of this lens
+ */
+class Lens extends Optic {
   /**
    * @summary Class for operating immutably on a specific "slot" in complex data
-   * @param {...*} keys  Values to use in repeated applications of subscripting (i.e. square bracket operator)
+   * @extends Optic
+   * @param {...*} key  A value to use in an application of subscripting (i.e. square bracket operator)
    *
    * @description
    * A Lens constructed as `let l = new Lens('address', 'street', 0)` represents
@@ -52,7 +60,7 @@ class Lens {
    * structured value — they can create a minimally cloned value deeply equal
    * to the subject but for the slot targeted by the lens and strictly equal
    * but for the slot targeted by the lens and the nodes in the input subject
-   * above that slot in the subject's tree.
+   * traversed to reach that slot in the subject's tree.
    *
    * When constructing a modified clone, it is possible that some step of the
    * Lens will target a slot within a container-not-existing-in-subject.  In this
@@ -64,54 +72,16 @@ class Lens {
    * conventionally named `lens`.
    */
   constructor(...keys) {
+    super();
     this.keys = keys;
-  }
-
-  /**
-   * @summary Test for the presence of this slot in subject data
-   * @param {*}        subject The data to test
-   * @return {Boolean}         Whether this slot is present in *subject*
-   */
-  present(subject) {
-    let cur = subject;
-    for (let i = 0; i < this.keys.length; i++) {
-      const k = this.keys[i], next_maybe = index_maybe(cur, k);
-      if ('just' in next_maybe) {
-        cur = next_maybe.just;
-      } else {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * @summary Get the value of this slot within subject data
-   * @param {*}    subject  The data to query
-   * @param {...*} tail     Additional subjects for repeated application
-   * @return {*} The value of this slot, or `undefined` if this slot is not present in *subject*
-   *
-   * @description
-   * If *tail* is given, then `#get()` is called on the result of getting this
-   * slot from *subject*, passing the spread of *tail*.  This eliminates
-   * repeated use of `.get` in code.  The chaining fails, returning `undefined`,
-   * if this slot in *subject* is not a Lens (as indicated by a truthy
-   * `lens.isLens` property).
-   */
-  get(subject, ...tail) {
-    const subjResult = this.get_maybe(subject).just;
-    if (tail.length > 0) {
-      return isLens(subjResult) ? subjResult.get(...tail) : undefined;
-    }
-    return subjResult;
   }
 
   /**
    * @summary Get a combination of presence and value of this slot
    * @param {*} subject  The data to query
    * @param {...*} tail  Additional subject for repeated application
-   * @return {Maybe}  Empty Object if this slot is not present in *subject*,
-   *                  otherwise Object with `just` property containing value of this slot in *subject*
+   * @return {Maybe.<*>}  Empty Object if this slot is not present in *subject*,
+   *                      otherwise Object with `just` property containing value of this slot in *subject*
    *
    * @description
    * This implements the Maybe monad (familiar from Haskell), where Nothing is
@@ -144,60 +114,6 @@ class Lens {
       return isLens(cur) ? cur.get_maybe(...tail) : {};
     }
     return {just: cur};
-  }
-  
-  /**
-   * @summary Get the (iterable) value of this slot within some subject data
-   * @param {*} subject  The data to query
-   * @param {Object} [options]
-   * @param {*} [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
-   * @return {Iterable.<*>} An iterable of values from this slot (or an empty Array)
-   *
-   * @description
-   * If the slot does not exist within *subject*, this method returns an empty
-   * Array.  If the slot within *subject* contains a non-iterable value, this
-   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
-   * behavior is the same as if the slot did not exist: an empty Array is
-   * returned.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
-   * *orThrow* is an Object, its `noniterableValue` property will be set to the
-   * slot's value before being thrown. 
-   *
-   * This method differs from Lens#get in that the returned value will always
-   * be iterable; thus, the return value of this method may safely be passed
-   * into any function expecting an iterable value.  One example usage is
-   * constructing a `Seq` from the `immutable` package.
-   *
-   * Strings, though iterable, are considered scalar values; if the targeted
-   * slot contains a string, the slot will be treated as non-iterable.
-   */
-  getIterable(subject, {orThrow} = {}) {
-    const maybeVal = this.get_maybe(subject);
-    if (getIterator(maybeVal.just)) {
-      return maybeVal.just;
-    } else {
-      handleNoniterableValue(orThrow, maybeVal);
-      return [];
-    }
-  }
-  
-  /**
-   * @template T
-   * @summary Conditionally evaluate functions depending on presence of slot
-   * @param {*}              subject  The input structured data
-   * @param {Object}         dispatch
-   * @param {function(*): T} [dispatch.then]  Function evaluated if slot is present in *subject*
-   * @param {function(): T}  [dispatch.else]  Function evaluated if slot is absent from *subject*
-   * @returns {T} The value computed by *dispatch.then* or *dispatch.else*, or `undefined`
-   *
-   * @description
-   * The presence of the slot determines whether *dispatch.then* or *dispatch.else*
-   * is evaluated, with the result being returned from this method.  If the
-   * indicated property of *dispatch* is missing, then `undefined` is returned.
-   */
-  getting(subject, {then: thenDo, else: elseDo}) {
-    const maybeVal = this.get_maybe(subject),
-      handler = ('just' in maybeVal ? thenDo : elseDo) || (() => {});
-    return handler.call(undefined, maybeVal.just);
   }
 
   /**
@@ -325,116 +241,79 @@ class Lens {
         }
       }
     }
-    const prevVal = slots[slots.length - 1].get();
-    const maybe_val = fn(present ? {just: prevVal} : {});
-    const setting = 'just' in maybe_val;
-    if (present && !setting) {
-      cur = slots[slots.length - 1].cloneOmitting();
-      if (cur === slots[slots.length - 1].subject) {
+    if (slots.length) {
+      const prevVal = slots[slots.length - 1].get();
+      const maybe_val = fn(present ? {just: prevVal} : {});
+      const setting = 'just' in maybe_val;
+      if (present && !setting) {
+        cur = slots[slots.length - 1].cloneOmitting();
+        if (cur === slots[slots.length - 1].subject) {
+          return subject;
+        }
+        for (let i = slots.length - 2; i >= 0; i--) {
+          cur = slots[i].cloneAndSet(cur);
+        }
+      } else if (setting) {
+        if (present && prevVal === maybe_val.just) {
+          return subject;
+        }
+        cur = maybe_val.just;
+        for (let i = slots.length - 1; i >= 0; i--) {
+          cur = slots[i].cloneAndSet(cur);
+        }
+      } else {
         return subject;
-      }
-      for (let i = slots.length - 2; i >= 0; i--) {
-        cur = slots[i].cloneAndSet(cur);
-      }
-    } else if (setting) {
-      if (present && prevVal === maybe_val.just) {
-        return subject;
-      }
-      cur = maybe_val.just;
-      for (let i = slots.length - 1; i >= 0; i--) {
-        cur = slots[i].cloneAndSet(cur);
       }
     } else {
-      return subject;
+      cur = fn({just: subject}).just;
     }
     return cur;
-  }
-  
-  /**
-   * @template T
-   * @summary Clone the input, transforming the iterable value within this slot with a function
-   * @param {T}        subject  The input structured data
-   * @param {Function} fn       The function that transforms the (iterable) slot value
-   * @param {Object}   [options]
-   * @param {*}        [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
-   * @return {T} A minimally changed clone of subject with the transformed value in this slot
-   *
-   * @description
-   * If the slot does not exist within *subject*, *fn* is invoked on an empty
-   * Array.  If the slot within *subject* contains a non-iterable value, this
-   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
-   * behavior is the same as if the slot did not exist: an empty Array is
-   * passed to *fn*.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
-   * *orThrow* is an Object, its `noniterableValue` property will be set to the
-   * slot's value before being thrown.
-   *
-   * The primary differences between this method and {@link Lens#xformInClone} are that
-   * this method always passes an iterable value to *fn* and always calls *fn*
-   * even if the slot is missing or does not contain an iterable value (unless
-   * *orThrow* is given).
-   *
-   * Strings, though iterable, are considered scalar values; if the targeted
-   * slot contains a string, the slot will be treated as non-iterable.
-   *
-   * "Minimally changed" means that reference-copies are used wherever possible
-   * while leaving *subject* unchanged, and that setting the slot to the strict-
-   * equal value it already has results in returning *subject*.
-   */
-  xformIterableInClone(subject, fn, {orThrow} = {}) {
-    return this.xformInClone_maybe(subject, (maybeVal) => {
-      let input, result;
-      if (getIterator(maybeVal.just)) {
-        result = fn(input = maybeVal.just);
-      } else {
-        handleNoniterableValue(orThrow, maybeVal);
-        input = [];
-        if ('just' in maybeVal) {
-          input.noniterableValue = maybeVal.just;
-        }
-        result = fn(input);
-      }
-      if (!getIterator(result)) {
-        log({
-          level: 'warn',
-          message: "Noniterable result from fn of xformIterableInClone; substituting empty Array",
-          subject,
-          keys: this.keys,
-          input,
-          fn,
-          result,
-        });
-        return {just: []};
-      }
-      return {just: result};
-    });
   }
   
   /**
    * @summary DRYly bind a Function to the Object from which it was obtained
    * @param {*} subject  The input structured data
    * @param {Object} [options]
+   * @param {boolean} [options.bindNow=true]  Bind to the target of this lens with *subject* now rather than when the result function is invoked
    * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
-   * @param {*} [options.or]  A value to return if the slot referenced does not contain a Function
+   * @param {Function} [options.or]  {@link FallbackBindingResult}, a Function to return if the slot referenced does not contain a Function
    * @return {Function} A Function bound to the previous object in the chain used to access the Function
    *
    * @description
    * Use this to avoid the dreaded Javascript binding repetition of
    * `o.fn.bind(o)`.  Instead, use `lens('fn').bound(o)`.
    */
-  bound(subject, {orThrow, or} = {}) {
-    const lCopy = new Lens(...this.keys), mname = lCopy.keys.pop();
-    const mSubj = lCopy.get(subject), fn = (function() {
-      try {return mSubj[mname];} catch (e) {}
-    }());
-    if (isFunction(fn)) {
-      return fn.bind(mSubj);
+  bound(subject, {bindNow = true, orThrow, or} = {}) {
+    const lens = this;
+    function lookUpPlayers() {
+      const lCopy = new Lens(...lens.keys), mname = lCopy.keys.pop();
+      const mSubj = lCopy.get(subject), fn = (function() {
+        try {return mSubj[mname];} catch (e) {}
+      }());
+      return {mSubj, fn};
     }
-    if (orThrow) {
-      throw orThrow;
-    } else if (or) {
-      return or;
-    }
-    return function() {};
+    if (bindNow) {
+      const {mSubj, fn} = lookUpPlayers();
+      if (isFunction(fn)) {
+        return fn.bind(mSubj);
+      }
+      if (orThrow) {
+        throw orThrow;
+      } else if (!isUndefined(or)) {
+        return or;
+      }
+      return function() {};
+    } else return function (...args) {
+      const {mSubj, fn} = lookUpPlayers();
+      if (isFunction(fn)) {
+        return fn.apply(mSubj, ...args);
+      }
+      if (orThrow) {
+        throw orThrow;
+      } else if (!isUndefined(or)) {
+        return or.apply(undefined, ...args);
+      }
+    };
   }
 
   /**
@@ -461,7 +340,6 @@ class Lens {
     return (typeof key === 'number') ? [] : {};
   }
 }
-Object.assign(Lens.prototype, BinderMixin);
 
 class Slot {
   constructor(target, key) {
@@ -521,20 +399,6 @@ class CSSlot {
 
 function makeSlot(cur, k) {
   return new ((k instanceof CustomStep) ? CSSlot : Slot)(cur, k);
-}
-
-function log(info) {
-  console[info.level || 'info'](info);
-}
-
-function handleNoniterableValue(excVal, maybeVal) {
-  if (isUndefined(excVal) || !('just' in maybeVal)) {
-    return;
-  }
-  if (isObject(excVal)) {
-    excVal.noniterableValue = maybeVal.just;
-  }
-  throw excVal;
 }
 
 export default Lens;

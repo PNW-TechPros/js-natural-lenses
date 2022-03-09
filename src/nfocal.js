@@ -2,17 +2,16 @@ import {
   each as _each, every, identity, isArray, isFunction, map as _map, mapObject,
   reduce as _reduce, reduceRight
 } from 'underscore';
-import BinderMixin from './binder_mixin.js';
 import { StereoscopyError } from './errors.js';
-import { at_maybe, cloneImpl, isLensClass } from '../src-cjs/constants.js';
+import { at_maybe, cloneImpl } from '../src-cjs/constants.js';
+import Optic from './optic.js';
 import { index_maybe, isLens, lensCap } from './utils.js';
 
 /**
+ * @extends Optic
  * @property {Array | Object} lenses  [Lenses]{@link Lens} aggregated by this object
  */
-export class AbstractNFocal {
-  [isLensClass] = true;
-
+export class AbstractNFocal extends Optic {
   /**
    * @summary Abstract base class for multifocal (i.e. n-focal) optics
    * @param {Array|Object} lenses  Lenses to be aggregated
@@ -23,8 +22,12 @@ export class AbstractNFocal {
    * **NOTE:** The *lenses* argument is captured by the new AbstractNFocal-derived
    * object, meaning later changes to the object passed as *lenses* propagate
    * to the constructed AbstractNFocal.
+   *
+   * AbstractNFocal objects (including those of derived classes) are, themselves,
+   * lensable containers of their constituent lenses.
    */
   constructor(lenses) {
+    super();
     this.lenses = lenses;
   }
   
@@ -38,7 +41,17 @@ export class AbstractNFocal {
   }
 
   /**
-   * @see {@link Lens#present}
+   * @summary Test which constituent lenses are present in a subject
+   * @param {*} subject  The data to test
+   * @returns {Array.<number|string>}  Array of keys to *this.lenses* where the presence-test result corresponding to *this.lenses* by key/index
+   *
+   * @description
+   * AbstractNFocals never produce `undefined` from their implementation of `#get`;
+   * at very least they produce and empty Array or empty Object, both of which
+   * are truthy and Objects.  More helpfully, this method returns an Array of
+   * the keys/indexes in *this.lenses* where the slot of the corresponding lens
+   * is present in *subject*.  This result is also invariably truthy, just like
+   * the result of `#get` is invariable *not* `undefined`.
    */
   present(subject) {
     return _reduce(
@@ -116,7 +129,6 @@ export class AbstractNFocal {
   }
   
 }
-Object.assign(AbstractNFocal.prototype, BinderMixin);
 
 /**
  * @extends AbstractNFocal
@@ -124,7 +136,14 @@ Object.assign(AbstractNFocal.prototype, BinderMixin);
  */
 export class ArrayNFocal extends AbstractNFocal {
   /**
-   * @see {@link Lens#get}
+   * @summary Return the length of Array of constituent lenses (also the length of the result)
+   */
+  get length() {
+    return this.lenses.length;
+  }
+  
+  /**
+   * @inheritdoc
    */
   get(subject, ...tail) {
     const subjResult = this.get_maybe(subject).just;
@@ -137,7 +156,7 @@ export class ArrayNFocal extends AbstractNFocal {
   }
 
   /**
-   * @see {@link Lens#get_maybe}
+   * @inheritdoc
    */
   get_maybe(subject, ...tail) {
     const subjResult = new Array(this.lenses.length);
@@ -157,13 +176,26 @@ export class ArrayNFocal extends AbstractNFocal {
   }
   
   /**
+   * @summary Get the iterable value of this slot within some subject data
+   * @param {*} subject  The data to query
+   * @returns {Array.<*>} An Array of values obtained from *subject* via *this.lenses*
+   *
+   * @description
+   * In this class, this method is synonymous with a call to {@link #get} with
+   * a single parameter.
+   */
+  getIterable(subject) {
+    return this.get(subject);
+  }
+  
+  /**
    * @template T
    * @summary Clone *subject*, setting all values corresponding to elements of this multifocal within the clone
-   * @see {@link Lens#setInClone}
    * @param {T}         subject  The input structured data
    * @param {Array.<*>} newVals  The new values corresponding to this multifocal's lenses
    * @returns {T} A minimally changed clone of *subject* with *newVals* distributed via *this.lenses*
    * @throws {StereoscopyError} If this object's view of *subject* cannot become *newVals*
+   * @see {@link AbstractNFocal#xformInClone_maybe}
    *
    * @description
    * Similar in concept to {@link Lens#setInClone}, this method creates a modified
@@ -196,7 +228,7 @@ export class ArrayNFocal extends AbstractNFocal {
  */
 export class ObjectNFocal extends AbstractNFocal {
   /**
-   * @see {@link Lens#get}
+   * @inheritdoc
    */
   get(subject, ...tail) {
     const subjResult = {};
@@ -215,7 +247,7 @@ export class ObjectNFocal extends AbstractNFocal {
   }
 
   /**
-   * @see {@link Lens#get_maybe}
+   * @inheritdoc
    */
   get_maybe(subject, ...tail) {
     const subjResult = this.get(subject);
@@ -228,13 +260,27 @@ export class ObjectNFocal extends AbstractNFocal {
   }
   
   /**
+   * @summary Get an empty Array
+   * @returns {Array} An empty array
+   *
+   * @description
+   * Because an ObjectNFocal always gets an Object, there is no way to create
+   * an iterable value from the "virtual slot" it accesses.  Therefore, the
+   * result of the inherited implementation would always yield an empty Array
+   * and just returning that value is more efficient.
+   */
+  getIterable() {
+    return [];
+  }
+  
+  /**
    * @template T
    * @summary Clone *subject*, setting all values corresponding to elements of this multifocal within the clone
-   * @see {@link Lens#setInClone}
    * @param {T}                 subject  The input structured data
    * @param {Object.<string,*>} newVals  The new values corresponding to this multifocal's lenses
    * @returns {T} A minimally changed clone of *subject* with *newVals* distributed via *this.lenses*
    * @throws {StereoscopyError} If this object's view of *subject* cannot become *newVals*
+   * @see {@link AbstractNFocal#xformInClone_maybe}
    *
    * @description
    * Similar in concept to {@link Lens#setInClone}, this method creates a modified
