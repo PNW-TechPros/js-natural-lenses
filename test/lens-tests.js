@@ -1,7 +1,9 @@
 const lens = require('#this'), lensUtils = lens;
 const { lensFactory: immutableLensFactory } = require('../cjs/immutable');
 const {assert} = require('chai');
+const sinon = require('sinon');
 const immutable = require('immutable');
+const { range } = require('underscore');
 
 async function loadEsmSubjects() {
   const m = await import('#this');
@@ -26,6 +28,10 @@ function testSequence(loaderName, subjects) {
         return Promise.resolve(body());
       });
     };
+    
+    function nfocal(...args) {
+      return lensUtils.nfocal(...args);
+    }
     
     describe('Lens', () => {
       describe('#present()', () => {
@@ -93,7 +99,7 @@ function testSequence(loaderName, subjects) {
           assert.isUndefined(lens('address', 'street').get({address: null}));
         });
         
-        it('should chain "get" via tail', () => {
+        it('chains application via tail', () => {
           const lenses = [lens('answer')];
           const data = {answer: [2, 3, 5]};
           assert.strictEqual(lens(0).get(lenses, data), data.answer);
@@ -166,7 +172,7 @@ function testSequence(loaderName, subjects) {
           assert.notProperty(lens('somethingElse').get_maybe(data), 'just');
         })
         
-        it('should chain "get_maybe" via tail', () => {
+        it('chains application via tail', () => {
           const lenses = [lens('answer')];
           const data = {answer: [2, 3, 5]};
           const result = lens(0).get_maybe(lenses, data);
@@ -550,7 +556,76 @@ function testSequence(loaderName, subjects) {
         });
       });
       
-      describe('#bound', () => {
+      describe('#binding()', () => {
+        it('works when the target method is present', () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const sliceQuestion = lens('question').binding('slice', {on: data});
+          assert.strictEqual(sliceQuestion(0, 4), data.question.slice(0, 4));
+        });
+        
+        it('returns `undefined` from the call if the slot is not present', () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const sliceAnswer = lens('answer').binding('slice', {on: data});
+          assert.isUndefined(sliceAnswer(0, 4));
+        });
+        
+        it("can throw from the call if the slot is not present", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const error = new Error();
+          const sliceAnswer = lens('answer').binding('slice', {on: data, orThrow: error});
+          assert.throws(
+            () => sliceAnswer(0, 4),
+            error
+          );
+        });
+        
+        it("can evaluate a fallback in lieu of the call if the slot is not present", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const marker = Symbol('marker');
+          const sliceAnswer = lens('answer').binding('slice', {on: data, or: () => marker});
+          assert.strictEqual(sliceAnswer(0, 4), marker);
+        });
+        
+        it("lenses to the value at the time the bound function is called", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const sliceQuestion = lens('question').binding('slice', {on: data});
+          data.question = "One lump or two?";
+          assert.strictEqual(sliceQuestion(0, 3), data.question.slice(0, 3));
+        });
+        
+        it("lenses to the value at the time of binding if `bindNow` is specified", () => {
+          const origQuestion = 'What is the air speed of an unladen swallow?';
+          const data = {question: origQuestion};
+          const sliceQuestion = lens('question').binding('slice', {on: data, bindNow: true});
+          data.question = "One lump or two?";
+          assert.notStrictEqual(sliceQuestion(0, 3), data.question.slice(0, 3));
+          assert.strictEqual(sliceQuestion(0, 4), origQuestion.slice(0, 4));
+        });
+        
+        it("returns a trivial function if the slot is missing and `bindNow` is specified", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const sliceAnswer = lens('answer').binding('slice', {on: data, bindNow: true});
+          assert.isUndefined(sliceAnswer(17, null, 'foo'));
+        });
+        
+        it("can throw immediately if slot is missing and `bindNow` is specified", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const error = new Error();
+          assert.throws(
+            () => lens('answer').binding('slice', {on: data, orThrow: error, bindNow: true}),
+            error
+          );
+        });
+        
+        it("can evaluate a fallback in lieu of the call if the slot is not present", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const fallback = () => {};
+          const sliceAnswer = lens('answer').binding('slice', {on: data, or: fallback, bindNow: true});
+          assert.strictEqual(sliceAnswer, fallback);
+        });
+      });
+      
+      describe('#bound()', () => {
         it('should work when the target is present', () => {
           const data = {question: 'What is the air speed of an unladen swallow?'};
           const sliceQuestion = lens('question', 'slice').bound(data);
@@ -564,7 +639,7 @@ function testSequence(loaderName, subjects) {
           assert.strictEqual(data.question, 'What is the air speed of an unladen swallow?');
         });
         
-        it('should return the given default function when the target is not present', () => {
+        it('should return the given fallback function when the target is not present', () => {
           const data = {question: 'What is the air speed of an unladen swallow?'};
           const spliceQuestion = lens('question', 'splice').bound(data, {or: () => 'Who'});
           assert.strictEqual(spliceQuestion(0, 4, 'WAT'), 'Who');
@@ -575,9 +650,51 @@ function testSequence(loaderName, subjects) {
           const mnpError = new Error("Method not present");
           assert.throws(() => lens('question', 'splice').bound(data, {orThrow: mnpError}), mnpError);
         });
+        
+        it("binds immediately to the lens's target", () => {
+          const origQuestion = 'What is the air speed of an unladen swallow?';
+          const data = {question: origQuestion};
+          const sliceQuestion = lens('question', 'slice').bound(data);
+          data.question = "Who are you, then?";
+          assert.strictEqual(sliceQuestion(0, 4), origQuestion.slice(0, 4));
+        });
+        
+        it("can bind lazily to the lens's target", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const sliceQuestion = lens('question', 'slice').bound(data, {bindNow: false});
+          data.question = "Who are you, then?";
+          assert.strictEqual(sliceQuestion(0, 4), data.question.slice(0, 4));
+        });
+        
+        it("can bind the fallback function lazily", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const error = new Error('Target missing');
+          function fallback() {
+            throw error;
+          }
+          const sliceQuestion = lens('question', 'slice').bound(data, {
+            bindNow: false,
+            or: fallback,
+          });
+          assert.doesNotThrow(() => sliceQuestion(0, 4));
+          delete data.question;
+          assert.throws(() => sliceQuestion(0, 4), error);
+        });
+        
+        it("can lazily throw for a missing slot", () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const error = new Error('Target missing');
+          const sliceQuestion = lens('question', 'slice').bound(data, {
+            bindNow: false,
+            orThrow: error,
+          });
+          assert.doesNotThrow(() => sliceQuestion(0, 4));
+          delete data.question;
+          assert.throws(() => sliceQuestion(0, 4), error);
+        });
       });
       
-      describe('#getting', () => {
+      describe('#getting()', () => {
         it('evaluates the "then" if the target is present', () => {
           const data = {answer: [2,3,5]}, l = lens('answer', 1);
           assert.strictEqual(
@@ -728,6 +845,15 @@ function testSequence(loaderName, subjects) {
           };
           assert.deepEqual(L.get(data), [data.name, data.address.street[0]]);
         });
+        
+        it("chains application via tail", () => {
+          const lenses = [lens('question'), lens('answer')];
+          const data = {answer: [2, 3, 5]};
+          assert.deepEqual(
+            nfocal(range(3).map(n => lens(n))).get(lenses, data),
+            [, data.answer, ,]
+          );
+        });
       });
 
       describe('#get_maybe()', () => {
@@ -760,6 +886,16 @@ function testSequence(loaderName, subjects) {
           const result = L.get_maybe(data);
           assert.deepEqual(result, {just: [data.name, undefined], multiFocal: true});
           assert.containsAllKeys(result.just, [1]);
+        });
+        
+        it("chains application via tail", () => {
+          const lenses = [lens('question'), lens('answer')];
+          const data = {answer: [2, 3, 5]};
+          const lensLens = nfocal(range(3).map(n => lens(n)));
+          const result = lensLens.get_maybe(lenses, data);
+          assert(result.multiFocal, "Result is multifocal Maybe");
+          assert.property(result, 'just');
+          assert.deepEqual(result.just, [, data.answer, ,]);
         });
       });
       
@@ -794,6 +930,21 @@ function testSequence(loaderName, subjects) {
           );
           assert.deepEqual(result, {...data, name: "fred flintstone"});
         });
+        
+        it("skips invalid keys in xformPairs", () => {
+          const data = {
+            name: "Fred Flintstone",
+            address: {street: ['345 Cave Stone Rd']},
+          };
+          const result = L.xformInClone(
+            data,
+            [
+              [0, n => n.toLowerCase()],
+              [17, v => `### ${v} ###`],
+            ]
+          );
+          assert.deepEqual(result, {...data, name: "fred flintstone"});
+        });
       });
       
       describe("#xformInClone_maybe()", () => {
@@ -812,6 +963,20 @@ function testSequence(loaderName, subjects) {
             ]
           );
           assert.strictEqual(result.name, insertedName);
+        });
+        
+        it("skips invalid keys in xformPairs", () => {
+          const data = {
+            name: "Fred Flintstone",
+            address: {street: ['345 Cave Stone Rd']},
+          };
+          const xforms = [
+            [0, n_m => 'just' in n_m ? {just: n_m.just.toLowerCase()} : n_m],
+            [17, v_m => 'just' in v_m ? {just: `### ${v_m.just} ###`} : v_m],
+          ];
+          var result;
+          result = L.xformInClone_maybe(data, xforms);
+          assert.deepEqual(result, {...data, name: "fred flintstone"});
         });
       });
       
@@ -861,6 +1026,27 @@ function testSequence(loaderName, subjects) {
     });
 
     describe('ObjectNFocal', () => {
+      describe('#get()', () => {
+        it("chains application via tail", () => {
+          const lenses = nfocal({
+            name: lens('name'),
+            mailTo: lens('school', 'address'),
+            cell: false,
+          });
+          const data = {
+            name: 'Steve Jobs',
+          };
+          assert.deepEqual(
+            nfocal({
+              recipient: lens('name'),
+              address: lens('mailTo'),
+              phone: lens('cell'),
+            }).get(lenses, data),
+            {recipient: data.name}
+          );
+        });
+      });
+      
       describe('#get_maybe()', () => {
         it('pulls multiple values from structured data into an object', () => {
           const L = lensUtils.nfocal({name: lens('name'), mailTo: lens('school', 'address')});
@@ -892,6 +1078,25 @@ function testSequence(loaderName, subjects) {
           };
           const result = L.get_maybe(data);
           assert.deepEqual(result, {just: {name: 'Ferris Bueller', mailTo: undefined}, multiFocal: true});
+        });
+        
+        it("chains application via tail", () => {
+          const lenses = nfocal({
+            name: lens('name'),
+            mailTo: lens('school', 'address'),
+            cell: false,
+          });
+          const data = {
+            name: 'Steve Jobs',
+          };
+          const result = nfocal({
+            recipient: lens('name'),
+            address: lens('mailTo'),
+            phone: lens('cell'),
+          }).get_maybe(lenses, data);
+          assert(result.multiFocal, "Result is multifocal Maybe");
+          assert.property(result, 'just');
+          assert.deepEqual(result.just, {recipient: data.name});
         });
       });
       
@@ -981,6 +1186,20 @@ function testSequence(loaderName, subjects) {
           const fusedLens = lensUtils.fuse(mfl, lens(0));
           assert.isUndefined(fusedLens.get({}));
         });
+        
+        it("chains application via tail", () => {
+          const lensMapper = {name: lens('fullName')};
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const name = "Fred Flintstone";
+          assert.strictEqual(fusedLens.get(lensMapper, {fullName: name}), name);
+        });
+        
+        it("returns undefined if chaining application via tail hits a non-lens", () => {
+          const lensMapper = {name: "Minnie Mouse"};
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const name = "Fred Flintstone";
+          assert.isUndefined(fusedLens.get(lensMapper, {fullName: name}));
+        });
       });
       
       describe('#get_maybe()', () => {
@@ -1001,6 +1220,25 @@ function testSequence(loaderName, subjects) {
         it('returns a Nothing when the target slot is missing', () => {
           const fusedLens = lensUtils.fuse(mfl, lens(0));
           const result = fusedLens.get_maybe({});
+          assert.notProperty(result, 'just');
+        });
+        
+        it("chains application via tail", () => {
+          const lensMapper = {name: lens('fullName')};
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const name = "Fred Flintstone";
+          const result = fusedLens.get_maybe(lensMapper, {fullName: name});
+          assert(!result.multiFocal, "Result is not multifocal");
+          assert.property(result, 'just');
+          assert.strictEqual(result.just, name);
+        });
+        
+        it("returns Nothing if chaining application via tail hits a non-lens", () => {
+          const lensMapper = {name: "Minnie Mouse"};
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const name = "Fred Flintstone";
+          const result = fusedLens.get_maybe(lensMapper, {fullName: name});
+          assert(!result.multiFocal, "Result is not multifocal");
           assert.notProperty(result, 'just');
         });
       });
@@ -1057,6 +1295,100 @@ function testSequence(loaderName, subjects) {
           assert.strictEqual(result, data);
         });
       });
+      
+      describe('#xformInClone()', () => {
+        it('can make a trivial change', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          const {name: resultName, ...resultOther} =
+            fusedLens.xformInClone(data, () => newName);
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+        
+        it('does not call transform function when value missing', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {};
+          assert(!fusedLens.present(data), 'fusedLens not present in subject data');
+          const result = fusedLens.xformInClone(data, () => {
+            assert.fail("should not be called");
+          });
+          assert.strictEqual(result, data);
+        });
+        
+        it('can optionally add a missing value', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          assert(!fusedLens.present(data), 'fusedLens not present in subject data');
+          const {name: resultName, ...resultOther} =
+            fusedLens.xformInClone(data, (existing) => {
+              assert.isUndefined(existing);
+              return newName;
+            }, {addMissing: true});
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+      });
+      
+      describe('#setInClone()', () => {
+        it('can make a trivial change', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0));
+          const data = {name: "Fred Flintstone"}, newName = "Barney Rubble";
+          const {name: inputName, ...inputOther} = data;
+          const {name: resultName, ...resultOther} =
+          fusedLens.setInClone(data, newName);
+          assert.deepEqual(resultOther, inputOther);
+          assert.strictEqual(resultName, newName);
+        });
+      });
+    });
+    
+    describe('Factory', () => {
+      before(async () => {
+        await loadSubjects();
+      });
+      
+      it('can be constructed without arguments', () => {
+        new lensUtils.Factory();
+      });
+    });
+    
+    describe('JsContainerFactory', () => {
+      before(async () => {
+        await loadSubjects();
+      });
+      
+      it('allows reading its container types', () => {
+        const f = new lensUtils.JsContainerFactory();
+        assert.property(f.containerTypes, 'Array');
+        assert.property(f.containerTypes, 'Map');
+      });
+      
+      it('can construct an Array', () => {
+        const f = new lensUtils.JsContainerFactory();
+        const result = f.construct(['foo', 0]);
+        assert.instanceOf(result, Array);
+      });
+      
+      it('constructs an Array for a number key even if Array was blocked in the constructor', () => {
+        const f = new lensUtils.JsContainerFactory({});
+        const result = f.construct(['foo', 0]);
+        assert.instanceOf(result, Array);
+      });
+      
+      it('can construct a Map', () => {
+        const f = new lensUtils.JsContainerFactory();
+        const result = f.construct([0, 'foo']);
+        assert.instanceOf(result, Map);
+      });
+      
+      it('constructs a Map for a non-number key even if Map was blocked in the constructor', () => {
+        const f = new lensUtils.JsContainerFactory({});
+        const result = f.construct([0, 'foo']);
+        assert.instanceOf(result, Map);
+      });
     });
 
     describe('eachFound', () => {
@@ -1104,6 +1436,34 @@ function testSequence(loaderName, subjects) {
         assert.strictEqual(unwound.length, 2);
         assert.deepInclude(unwound, [data.name, 'nameView']);
         assert.deepInclude(unwound, [data.phone, 'phoneView']);
+      });
+    });
+    
+    describe('maybeDo', () => {
+      it('executes the "then" branch if the input Maybe is a Just construction', () => {
+        const thenBranch = sinon.fake();
+        lensUtils.maybeDo({just: true}, thenBranch);
+        assert(thenBranch.called, "'then' branch is called");
+      });
+      
+      it('returns the value returned from the "then" branch for a Just construction', () => {
+        const marker = Symbol('marker');
+        assert.strictEqual(lensUtils.maybeDo({just: true}, () => marker), marker);
+      });
+      
+      it('executes the "orElse" branch if the input Maybe is a Nothing construction', () => {
+        const elseBranch = sinon.fake();
+        lensUtils.maybeDo({}, null, elseBranch);
+        assert(elseBranch.called, "'orElse' branch is called");
+      });
+      
+      it('returns the value returned from the "orElse" branch for a Nothing construction', () => {
+        const marker = Symbol('marker');
+        assert.strictEqual(lensUtils.maybeDo({}, null, () => marker), marker);
+      });
+      
+      it('returns undefined for a Nothing if no "orElse" is given', () => {
+        assert.isUndefined(lensUtils.maybeDo({}, null));
       });
     });
 

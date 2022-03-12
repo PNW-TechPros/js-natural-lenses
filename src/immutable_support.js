@@ -1,12 +1,13 @@
 import { forEach } from 'underscore';
 import { at_maybe, cloneImpl } from '../src-cjs/constants.js';
 
-function ImmutableMixin({spliceOutWithDelete = false}) {
+function ImmutableMixin({spliceOutWithDelete}) {
   return {
     [at_maybe]: function (key) {
       return this.has(key) ? {just: this.get(key)} : {};
     },
     [cloneImpl]: function ({pop, set, spliceOut}) {
+      /* istanbul ignore next: unsupported */
       if (pop) {
         return this.pop();
       }
@@ -16,6 +17,7 @@ function ImmutableMixin({spliceOutWithDelete = false}) {
       if (spliceOut) {
         return spliceOutWithDelete ? this.delete(spliceOut) : this.set(spliceOut, undefined);
       }
+      /* istanbul ignore next: no change requested */
       return this;
     },
   };

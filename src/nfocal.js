@@ -168,13 +168,14 @@ export class ArrayNFocal extends AbstractNFocal {
     }
     if (tail.length > 0) {
       return new ArrayNFocal(
-        _map(subjResult, r => isLens(r.just) ? r.just : lensCap)
+        _map(subjResult, l => isLens(l) ? l : lensCap)
       ).get_maybe(...tail);
     } else {
       return {just: subjResult, multiFocal: true};
     }
   }
   
+  /* istanbul ignore next */
   /**
    * @summary Get the iterable value of this slot within some subject data
    * @param {*} subject  The data to query
@@ -253,12 +254,13 @@ export class ObjectNFocal extends AbstractNFocal {
     const subjResult = this.get(subject);
     if (tail.length > 0) {
       return new ObjectNFocal(
-        mapObject(subjResult, r => isLens(r.just) ? r.just : lensCap)
+        mapObject(subjResult, l => isLens(l) ? l : lensCap)
       ).get_maybe(...tail);
     }
     return {just: subjResult, multiFocal: true};
   }
   
+  /* istanbul ignore next */
   /**
    * @summary Get an empty Array
    * @returns {Array} An empty array

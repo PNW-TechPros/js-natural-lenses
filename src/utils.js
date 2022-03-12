@@ -15,16 +15,22 @@ export function getIterator(val) {
 }
 
 /**
+ * @typedef {Array} FoundPair
+ * @property {*} 0  Value of found item
+ * @property {number|string} [1]  Index or key of found item
+ */
+
+/**
  * @generator
  * @function module:natural-lenses#eachFound
  * @summary Iterate over Maybe monad contained value(s)
  * @param {Maybe.<*>} maybe_val  Maybe monad of value or iterable value
- * @yeilds {{0: *, 1: string|number}}  Pairs of *value* and *key*
+ * @yields {FoundPair}  Pairs of value and key
  * @see {@link module:natural-lenses#maybeDo}
  *
  * @description
- * When called on the result of [getting a multifocal into a Maybe monad]{@link ArrayNFocal#get_maybe},
- * this function iterates found values (and only the found values), yeilding the
+ * When called on the result of [getting a multifocal into a Maybe monad]{@link AbstractNFocal#get_maybe},
+ * this function iterates found values (and only the found values), yielding the
  * pair of the value and index for each, like the arguments to the callback of
  * Array.prototype.forEach if it used "rest" syntax, e.g.
  * ```js
@@ -60,7 +66,7 @@ export function* eachFound(maybe_val) {
         yield [val[i], i];
       }
     }
-  } else if (isObject(val)) {
+  } else /* istanbul ignore else: unsupported case */ if (isObject(val)) {
     for (const key in val) {
       if (val.hasOwnProperty(key)) {
         yield [val[key], key];
@@ -77,7 +83,7 @@ export function* eachFound(maybe_val) {
  * @summary Conditionally execute a function based on the construction of a {@link Maybe}
  * @param {Maybe.<T>} maybe  The input value determining which of the following arguments is invoked
  * @param {function(T): U} then  The function executed with the `just` value of *maybe*, if present
- * @param {function(): U} orElse  The function executed if *maybe* contains no `just` property
+ * @param {function(): U} [orElse]  The function executed if *maybe* contains no `just` property
  * @returns {U} The result type of the invoked function
  *
  * @description

@@ -53,7 +53,7 @@ class OpticArray extends Optic {
     const stepSubject = get_maybe_internal.call(this, {just: subject});
     const subjResult = stepSubject.just;
     if (tail.length > 0) {
-      return isLens(subjResult) ? subjResult.get_maybe(...tail) : undefined;
+      return isLens(subjResult) ? subjResult.get_maybe(...tail) : {};
     }
     return stepSubject;
   }
@@ -83,8 +83,6 @@ class OpticArray extends Optic {
       if (xformResults[i] === xformInput_maybe.just) {
         return subject;
       }
-    } else if (isUndefined(xformResults[i])) {
-      return subject;
     }
     for (i = leadingLensCount - 1; i >= 0; i--) {
       let lensSubject = lensSubjects[i] || {};

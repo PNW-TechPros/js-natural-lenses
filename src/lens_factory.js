@@ -1,4 +1,5 @@
 import CCCLens from './ccc_lens.js';
+import { DEFAULT_FACTORY as jsContainers } from './js_container_factory.js';
 
 class LensFactory {
   /**

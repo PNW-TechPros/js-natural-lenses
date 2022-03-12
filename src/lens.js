@@ -306,12 +306,12 @@ class Lens extends Optic {
     } else return function (...args) {
       const {mSubj, fn} = lookUpPlayers();
       if (isFunction(fn)) {
-        return fn.apply(mSubj, ...args);
+        return fn.apply(mSubj, args);
       }
       if (orThrow) {
         throw orThrow;
       } else if (!isUndefined(or)) {
-        return or.apply(undefined, ...args);
+        return or.apply(undefined, args);
       }
     };
   }

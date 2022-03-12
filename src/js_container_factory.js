@@ -33,7 +33,8 @@ class JsContainerFactory {
   get containerTypes() {
     return {
       Map, Array,
-      ...(instanceContainerTypes.get(this) || {})
+      ...(instanceContainerTypes.get(this) ||
+        /* istanbul ignore next: this shouldn't be possible */ {})
     };
   }
   

@@ -12,6 +12,7 @@ class Optic {
    */
   constructor() {}
   
+  /* istanbul ignore next */
   /**
    * @abstract
    * @summary Get a combination of present and value of this slot
@@ -25,7 +26,6 @@ class Optic {
    * is called on that lens, passing the spread of *tail*.  If the value of
    * this slot is *not* a lens, the result is an empty Object.
    */
-  /* istanbul ignore next */
   get_maybe() { abstractMethod(); }
   
   /**
@@ -112,6 +112,7 @@ class Optic {
     return 'just' in this.get_maybe(subject);
   }
   
+  /* istanbul ignore next */
   /**
    * @template T
    * @summary Clone the input, transforming or deleting the Maybe value of this slot with a function
@@ -134,7 +135,6 @@ class Optic {
    * while leaving subject unchanged, and that setting the slot to the strict-
    * equal value it already has results in returning *subject*.
    */
-  /* istanbul ignore next */
   xformInClone_maybe() { abstractMethod(); }
   
   /**
@@ -312,7 +312,7 @@ class Optic {
       if (orThrow) {
         throw orThrow;
       } else if (!isUndefined(or)) {
-        return or.apply(undefined, ...args);
+        return or.apply(undefined, args);
       }
     };
   }
