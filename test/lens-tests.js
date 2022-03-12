@@ -497,6 +497,22 @@ function testSequence(loaderName, subjects) {
           );
           assert.deepEqual(result, {answer: 420});
         });
+        
+        it('can remove a non-numeric property from an Array', () => {
+          const TEST_PROP = 'ownership';
+          class TestArray extends Array {
+            constructor() {
+              super();
+              this[TEST_PROP] = 'mine';
+            }
+          }
+          
+          const source = new TestArray();
+          assert.property(source, TEST_PROP);
+          const result = lens(TEST_PROP).xformInClone_maybe(source, () => ({}));
+          assert.notProperty(result, TEST_PROP);
+          assert.instanceOf(result, TestArray);
+        });
       });
       
       describe('#xformIterableInClone()', () => {
@@ -1464,6 +1480,44 @@ function testSequence(loaderName, subjects) {
       
       it('returns undefined for a Nothing if no "orElse" is given', () => {
         assert.isUndefined(lensUtils.maybeDo({}, null));
+      });
+    });
+    
+    describe('Standard library support', () => {
+      function assertIsClone(subject, reference) {
+        assert.notStrictEqual(subject, reference);
+        assert.deepEqual(subject, reference);
+      }
+      
+      describe('Array', () => {
+        it('implements clone-without-change', () => {
+          const data = [2,3,5];
+          const result = data[lensUtils.clone]();
+          assertIsClone(result, data);
+        });
+        
+        it('clones without change if the spliced-out index is beyond the end', () => {
+          const data = [2,3,5];
+          const result = data[lensUtils.clone]({spliceOut: 17});
+          assertIsClone(result, data);
+        });
+      });
+      
+      describe('Object', () => {
+        it('implements clone-without-change', () => {
+          const data = {name: "Fred Flintstone"};
+          const result = data[lensUtils.clone]();
+          assertIsClone(result, data);
+        });
+      });
+      
+      describe('Map', () => {
+        it('implements clone-without-change', () => {
+          const data = new Map([['name', 'Fred Flintstone']]);
+          const result = data[lensUtils.clone]();
+          assert.notStrictEqual(result, data);
+          assert.deepEqual(Array.from(result.entries()), Array.from(data.entries()));
+        });
       });
     });
 

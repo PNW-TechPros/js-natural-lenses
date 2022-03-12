@@ -17,7 +17,7 @@ incorporateStdlibSupport(Array, [
   }],
   
   // Define how an Array clones with an element set to a given value or spliced out
-  [cloneImpl, function({set, spliceOut}) {
+  [cloneImpl, function({set, spliceOut} = {}) {
     if (set) {
       const result = this.concat();
       let [key, value] = set;
@@ -27,7 +27,7 @@ incorporateStdlibSupport(Array, [
     } else if (typeof spliceOut === 'number') {
       const i = spliceOut < 0 ? this.length + spliceOut : spliceOut;
       if (i < 0 || i >= this.length || !(i in this)) {
-        return this;
+        return this.concat();
       }
       if (i === this.length - 1) {
         return this.slice(0, i);

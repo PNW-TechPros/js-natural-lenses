@@ -9,7 +9,7 @@ incorporateStdlibSupport(Object, [
   }],
   
   // Define how an Object clones with a property set to a given value or deleted
-  [cloneImpl, function({set, spliceOut}) {
+  [cloneImpl, function({set, spliceOut} = {}) {
     if (spliceOut && !this.hasOwnProperty(spliceOut)) {
       return this;
     }

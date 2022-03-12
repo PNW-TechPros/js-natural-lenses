@@ -9,11 +9,8 @@ incorporateStdlibSupport(Map, [
   }],
   
   // Define how a Map clones with a for a key set to a given value or deleted
-  [cloneImpl, function(opDesc) {
+  [cloneImpl, function(opDesc = {}) {
     const {set, spliceOut} = opDesc, givenSpliceOut = 'spliceOut' in opDesc;
-    if (givenSpliceOut && !this.has(spliceOut)) {
-      return this;
-    }
     const Species = this.constructor[Symbol.species];
     const result = new Species(this);
     if (set) {
