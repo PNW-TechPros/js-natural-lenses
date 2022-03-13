@@ -9,3 +9,16 @@ exports.source = {
 exports.opts = {
   template: 'node_modules/docdash',
 };
+
+exports.docdash = {
+  sectionOrder: [
+    "Modules",
+    "Namespaces",
+    "Interfaces",
+    "Classes",
+    "Mixins",
+    "Events",
+    "Externals",
+    "Tutorials",
+  ],
+};
