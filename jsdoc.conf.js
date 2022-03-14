@@ -21,4 +21,24 @@ exports.docdash = {
     "Externals",
     "Tutorials",
   ],
+  scripts: [
+    'styles/pkg-custom.css',
+  ],
+  menu: {
+    "select version": {
+      href: "../versions.html",
+      class: "menu-item version-select",
+      id: "other_versions",
+    },
+  },
+};
+
+exports.templates = {
+  default: {
+    staticFiles: {
+      include: [
+        'scripts/docs/content',
+      ],
+    },
+  },
 };

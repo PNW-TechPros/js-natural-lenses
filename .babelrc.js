@@ -18,8 +18,11 @@ module.exports = {
         ["@babel/plugin-transform-runtime", {
           
         }],
-        ["istanbul"],
       ],
     },
   }
+};
+
+if (process.env.NODE_ENV === 'test') {
+  module.exports.env.cjs.plugins.push(["istanbul"]);
 }

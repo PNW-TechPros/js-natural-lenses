@@ -3,3 +3,9 @@ src/
 coverage/
 .nyc_output
 .babelrc*
+.git
+doc/
+test/
+jsdoc.conf.js
+.gitignore
+scripts/docs
