@@ -10,7 +10,7 @@ class OpticArray extends Optic {
    * @summary Aggregation of multiple lens applied in series
    *
    * @description
-   * Construct this using {@link module:natural-lenses.fuse}.
+   * Construct this using {@link module:natural-lenses#fuse}.
    */
   constructor(lenses) {
     super();

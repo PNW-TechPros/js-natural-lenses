@@ -65,7 +65,8 @@ class Lens extends Optic {
    * When constructing a modified clone, it is possible that some step of the
    * Lens will target a slot within a container-not-existing-in-subject.  In this
    * case, the container to be created is intuited from the key that would
-   * access it: an Array if the key is a number, otherwise an Object.
+   * access it: an Array if the key is a number, otherwise an Object.  Alternative
+   * container construction can be specified via {@link Factory} or {@link Step}.
    *
    * Typically, instances are constructed by calling the Function exported
    * from `natural-lenses` (if `require`d) or its default export (if `import`ed),
@@ -281,7 +282,7 @@ class Lens extends Optic {
    *
    * @description
    * Use this to avoid the dreaded Javascript binding repetition of
-   * `o.fn.bind(o)`.  Instead, use `lens('fn').bound(o)`.
+   * `x.y.z.fn.bind(x.y.z)`.  Instead, use `lens('y', 'z', 'fn').bound(x)`.
    */
   bound(subject, {bindNow = true, orThrow, or} = {}) {
     const lens = this;

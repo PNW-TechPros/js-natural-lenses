@@ -1,0 +1,36 @@
+{
+  "background": {
+    "title": "Background"
+  },
+  "commencing": {
+    "title": "Getting Started"
+  },
+  "maybe-monad": {
+    "title": "The Maybe Monad"
+  },
+  "datum-plans": {
+    "title": "Datum Plans"
+  },
+  "non-pod": {
+    "title": "Non-POD Containers",
+    "children": [
+      "custom-lens-steps",
+      "lens-factories"
+    ]
+  },
+  "custom-lens-steps": {
+    "title": "Custom Lens Steps"
+  },
+  "lens-factories": {
+    "title": "Lens Factories"
+  },
+  "multifocal-lensing": {
+    "title": "Multifocal Lensing"
+  },
+  "immutable-support": {
+    "title": "Support for Immutable"
+  },
+  "utilities": {
+    "title": "Utilities"
+  }
+}

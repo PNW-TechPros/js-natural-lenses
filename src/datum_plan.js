@@ -466,8 +466,8 @@ export function makeExports({fuse, isLens, lens}) {
    * The resulting datum plan will be structured vaguely like *spec* and
    * constructed to access a value of similar shape to *spec*.
    *
-   * @see module:natural-lenses/datum-plan~DslCallback
-   * @see the [README](./index.html)
+   * @see DatumPlan_Dsl
+   * @see {@tutorial datum-plans} tutorial
    */
   function makeDatumPlan(rawPlan) {
     if (isFunction(rawPlan)) {

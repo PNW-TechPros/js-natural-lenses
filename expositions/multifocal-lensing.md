@@ -1,0 +1,7 @@
+Where a {@link Lens} can retrieve the value from a single slot within the data, often multiple, dispersed values will need to be extracted; multifocal lensing addresses this problem.
+
+A multifocal lens can be built from either an Array of optics or an Object whose own properties contain optics.  The result of *getting* through a multifocal lens is the same type as passed for constructing the multifocal.
+
+While it is possible to [`xformInClone`]{@link AbstractNFocal#xformInClone} on a multifocal lens, the operation behaves differently than for [lenses]{@link Lens#xformInClone}: the transformations are passed as an iterable of index/transform or key/transform pairs (i.e. 2-element Arrays) instead of passing a single transformation function.  For each transformation element in order as presented by the iterable, the constituent {@link Optic} associated with the index or key is looked up from the multifocal lens and the transform function is passed to `xformInClone` of that object; if the index or key is not found in the multifocal's [member optic container]{@link AbstractNFocal#lenses}, no change to the result occurs for that transformation element.
+
+While this difference of call interface might seem to indicate a different name would be better, by using the same `xformInClone` name, the transforms can be chained if a selected member optic of the multifocal is itself a multifocal.

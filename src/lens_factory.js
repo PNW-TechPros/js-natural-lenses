@@ -1,12 +1,24 @@
 import CCCLens from './ccc_lens.js';
 import { DEFAULT_FACTORY as jsContainers } from './js_container_factory.js';
 
+/**
+ * @interface ContainerFactory
+ * @see Factory
+ */
+
+/**
+ * @function ContainerFactory#construct
+ * @summary Construct a missing container
+ * @param {Array} keys  The keys up to and including the one indexing into the missing container
+ * @returns {*} The missing container
+ */
+
 class LensFactory {
   /**
    * @constructs Factory
    * @summary A factory for Lens-derived objects with customized container construction
    * @param {Object} spec
-   * @param {JsContainerFactory} spec.containerFactory  Factory for containers created with [Lenses]{@link Lens} created by this Factory
+   * @param {ContainerFactory} spec.containerFactory  Factory for containers, used by [Lenses]{@link Lens} created by this Factory, invoked when modify-cloning missing containers in subject data
    * 
    * @description
    * When POD container types (Object and Array) are not the desired types to 

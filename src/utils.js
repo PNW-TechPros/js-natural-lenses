@@ -32,22 +32,22 @@ export function getIterator(val) {
  * When called on the result of [getting a multifocal into a Maybe monad]{@link AbstractNFocal#get_maybe},
  * this function iterates found values (and only the found values), yielding the
  * pair of the value and index for each, like the arguments to the callback of
- * Array.prototype.forEach if it used "rest" syntax, e.g.
+ * `Array.prototype.forEach` if it used "rest" syntax, e.g.
  * ```js
  * values.forEach((...pair) => {
  *   const [value, index] = pair;
  *   // do something with index and value
  * });
  * ```
- * In the case of an {@link ArrayNFocal}, the index 1 value of each yielded
- * Array will be an integer index; in the case of an {@link ObjectNFocal}, the index 1
- * value of each yeilded Array will be a string key.
+ * When called on the `get_maybe`-result of an {@link ArrayNFocal}, the index 1
+ * value of each yielded Array will be an integer index; with an {@link ObjectNFocal},
+ * the index 1 value of each yeilded Array will be a string key.
  *
  * This function can also be applied to a {@link Maybe} monad value obtained from
  * a monofocal optic (e.g. a {@link Lens}), in which case it yields either a
  * single element array containing the value if the input holds a `just` property
  * and does not yield, otherwise.  It is more flexible to apply
- * [maybeDo]{@link module:natural-lenses#maybeDo} or {@link Lens#getting}, as
+ * [maybeDo]{@link module:natural-lenses#maybeDo} or {@link Optic#getting}, as
  * these allow separate handling of the *Nothing* case.
  */
 export function* eachFound(maybe_val) {
@@ -85,6 +85,7 @@ export function* eachFound(maybe_val) {
  * @param {function(T): U} then  The function executed with the `just` value of *maybe*, if present
  * @param {function(): U} [orElse]  The function executed if *maybe* contains no `just` property
  * @returns {U} The result type of the invoked function
+ * @see Optic#getting
  *
  * @description
  * This function resembles an `if` statement around the "*Just*-ness" of a {@link Maybe}

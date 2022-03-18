@@ -9,3 +9,4 @@ test/
 jsdoc.conf.js
 .gitignore
 scripts/docs
+expositions/

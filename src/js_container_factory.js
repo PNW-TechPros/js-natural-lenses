@@ -2,6 +2,7 @@ const instanceContainerTypes = new WeakMap();
 /**
  * @class
  * @summary A class to construct alternative sequential/mapping typings based on key type
+ * @implements {ContainerFactory}
  * 
  * @description
  * Use containers with the interfaces of the Array and ES6 Map classes as the

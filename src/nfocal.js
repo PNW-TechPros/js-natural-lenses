@@ -9,14 +9,12 @@ import { index_maybe, isLens, lensCap } from './utils.js';
 
 /**
  * @extends Optic
- * @property {Array | Object} lenses  [Lenses]{@link Lens} aggregated by this object
+ * @hideconstructor
  */
 export class AbstractNFocal extends Optic {
   /**
    * @summary Abstract base class for multifocal (i.e. n-focal) optics
-   * @param {Array|Object} lenses  Lenses to be aggregated
-   *
-   * @property {Array|Object} lenses  Lenses of the aggregation
+   * @param {Array.<Optic> | Object.<string,Optic>} lenses  Optics to be aggregated
    *
    * @description
    * **NOTE:** The *lenses* argument is captured by the new AbstractNFocal-derived
@@ -31,6 +29,11 @@ export class AbstractNFocal extends Optic {
     this.lenses = lenses;
   }
   
+  /**
+   * @member {Array.<Optic> | Object.<string,Optic>} AbstractNFocal#lenses
+   * @summary [Optics]{@link Optic} aggregated by this object
+   */
+  
   [at_maybe](idx) {
     return index_maybe(this.lenses, idx);
   }
@@ -43,7 +46,7 @@ export class AbstractNFocal extends Optic {
   /**
    * @summary Test which constituent lenses are present in a subject
    * @param {*} subject  The data to test
-   * @returns {Array.<number|string>}  Array of keys to *this.lenses* where the presence-test result corresponding to *this.lenses* by key/index
+   * @returns {Array.<number|string>}  Array of keys to *this.lenses* where the presence-test result corresponds to *this.lenses* by key/index
    *
    * @description
    * AbstractNFocals never produce `undefined` from their implementation of `#get`;
@@ -51,7 +54,7 @@ export class AbstractNFocal extends Optic {
    * are truthy and Objects.  More helpfully, this method returns an Array of
    * the keys/indexes in *this.lenses* where the slot of the corresponding lens
    * is present in *subject*.  This result is also invariably truthy, just like
-   * the result of `#get` is invariable *not* `undefined`.
+   * the result of `#get` is invariably *not* `undefined`.
    */
   present(subject) {
     return _reduce(
@@ -75,8 +78,8 @@ export class AbstractNFocal extends Optic {
    * @template T
    * @summary Apply transforms to selected slots within this multifocal while making a clone
    * @param {T}                                        subject     The input structured data
-   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of lens key and transform function pairs to apply
-   * @param {(Function|Object)}                        [opts]      Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
+   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of constituent lens key and transform function pairs to apply
+   * @param {(Function|Object)}                        [opts]      Options for the constituent optic's `xformInClone` or a function taking the slot key and returning the options
    * @return {T} A minimally changed clone of *subject* with the slots of this multifocal selected by *xformPairs* transformed according to the corresponding Function
    *
    * @description
@@ -104,14 +107,14 @@ export class AbstractNFocal extends Optic {
    * @template T
    * @summary Apply transforms to selected slots (using a Maybe monad) within this multifocal while making a clone
    * @param {T}                                        subject     The input structured data
-   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of lens key and transform function pairs to apply
+   * @param {Iterable.<AbstractNFocal.TransformSpec>}  xformPairs  Iterable of constituent lens key and transform function pairs to apply
    * @returns {T} A minimally changed clone of *subject* with the slots of this multifocal selected by keys in *xformPairs* transformed according to the corresponding Function
    *
    * @description
    * An element of *xformPairs* that targets a lens not existing in this object
    * is a no-op.  Any transform function called will be called with the slot
-   * value in a Maybe monad and the result expected to provide the new value
-   * in a Maybe monad: the Nothing construction (`{}`) will be passed if the
+   * value in a {@link Maybe} monad and the result expected to provide the new value
+   * in a {@link Maybe} monad: the Nothing construction (`{}`) will be passed if the
    * slot does not exist in *subject* and return of the Nothing construct
    * will cause the clone to omit the targeted slot.
    *
@@ -133,6 +136,7 @@ export class AbstractNFocal extends Optic {
 /**
  * @extends AbstractNFocal
  * @summary Multifocal (i.e. n-focal) building an Array
+ * @hideconstructor
  */
 export class ArrayNFocal extends AbstractNFocal {
   /**
@@ -182,7 +186,7 @@ export class ArrayNFocal extends AbstractNFocal {
    * @returns {Array.<*>} An Array of values obtained from *subject* via *this.lenses*
    *
    * @description
-   * In this class, this method is synonymous with a call to {@link #get} with
+   * In this class, this method is synonymous with a call to [get]{@link ArrayNFocal#get} with
    * a single parameter.
    */
   getIterable(subject) {

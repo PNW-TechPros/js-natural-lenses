@@ -62,7 +62,7 @@ Object.defineProperties(makeLens, {
    *
    * If all *optics* are [Lenses]{@link Lens}, the result will be a Lens.  This
    * does not apply for Lens-derived objects (e.g. from [Factories]{@link Factory}) —
-   * if given, the result will always be an OpticArray.
+   * if such are passed, the result will always be an OpticArray.
    */
   fuse: {enumerable: true, get: () => (...lenses) => {
     for (let i = 0, step = null; (step = 1) && i < lenses.length - 1; i += step) {
@@ -79,7 +79,7 @@ Object.defineProperties(makeLens, {
   /**
    * @function module:natural-lenses#nfocal
    * @summary Construct a multifocal lens
-   * @param {Array | Object} lenses  Collection of [Lenses]{@link Lens} to combine
+   * @param {Array.<Optic> | Object.<string,Optic>} lenses  Collection of [Lenses]{@link Lens} to combine
    * @returns {ArrayNFocal|ObjectNFocal}
    *
    * @description
@@ -126,7 +126,7 @@ Object.defineProperties(makeLens, {
  *
  * @description
  * This constant is a key used for querying a method from container objects of
- * type `function(*): Maybe.<*>`.  The value passed to this method will be
+ * type `function(*): {@link Maybe}.<*>`.  The value passed to this method will be
  * a *key* from a Lens -- the kind of value that should be passed for a
  * conceptual "indexing" of the container.  For Object, this is a string property
  * name.  For Array, this is an integer index, where negative values count
@@ -149,20 +149,21 @@ Object.defineProperties(makeLens, {
  * If the operation description passed contains a `set` property,
  * the value of that property should be an Array where element 0 is a key or
  * index into the container and element 1 is the value to set (cf. arguments
- * to Map.prototype.set).
+ * to `Map.prototype.set`).
  *
  * If the operation description passed contains a `spliceOut` property,
  * the value of that property should be a key or index to delete from the
  * container.  Where possible, the result should be to leave the container
  * in a state where `container[at_maybe](key)` returns `{}` (a *Nothing*).
- * This is specifically a problem for Immutable's List, which offers only a
- * dense presentation of elements: every non-negative index less than `size`
- * is a valid and "contained" entry.  The implementation provided by this
- * library for implementing this method on Immutable's List sets the value
- * of the entry in the clone to `undefined`.
+ * This is specifically a problem for [immutable.List]{@link external:immutable.List},
+ * which offers only a dense presentation of elements: every non-negative index
+ * less than `size` is a valid and "contained" entry.  The implementation provided
+ * by this library for implementing this method on
+ * [immutable.List]{@link external:immutable.List} sets the value of the entry
+ * in the clone to `undefined`.
  *
- * For Array, negative indexes are interpreted counting backward from the end
- * of the Array.
+ * In the provided implemenation for Array, negative indexes are interpreted
+ * counting backward from the end of the Array, as with `Array.prototype.slice`.
  *
  * `Symbol.species` is honored for determining the constructor used for the
  * clone; Object is a special case that defaults to Object if `Symbol.species`

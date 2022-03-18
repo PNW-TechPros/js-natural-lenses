@@ -8,6 +8,7 @@ exports.source = {
 
 exports.opts = {
   template: 'node_modules/docdash',
+  tutorials: 'expositions',
 };
 
 exports.docdash = {

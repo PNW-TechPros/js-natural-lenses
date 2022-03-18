@@ -1,25 +1,21 @@
-
 class CustomStep {
   /**
-   * @summary Defines a custom step in a Lens
    * @constructs Step
+   * @classdesc A step within a {@link Lens} with fully customizable behavior
    * @param {Step~Get_Maybe} get_maybe
+   *    Returns a {@link Maybe} value for the slot within the container it is
+   *    passed.
    * @param {Step~UpdatedClone} updatedClone
+   *    Takes the current container and a {@link Maybe} of this step's slot
+   *    value, returning a minimally modified clone of the container such that
+   *    *get_maybe* will return the *value_maybe* passed to this function.
    * @param {Step~Construct} construct
+   *    Instantiate an empty container of the type this step navigates.
    *
    * @description
    * If standard logic for accessing data deeper in the conceptual structure
    * is not adequate, an instance of this class may be passed as a step in a
    * Lens, which will allow the Lens to have custom behavior.
-   *
-   * To construct this object, pass three Functions:
-   * 
-   * 1. A Function that returns a Maybe value for the slot within the container
-   *    it is passed ({@link Step~Get_Maybe}).
-   * 2. A Function taking the current value of the container and applying a `set`
-   *    or `spliceOut` operation, returning a modified clone ({@link Step~UpdatedClone}).
-   * 3. A Function to construct a pristine instance of the container this step
-   *    navigates ({@link Step~Construct}).
    *
    * Passing `null` for any of these functions will limit the functionality of
    * the lens: skipping either `construct` or `updatedClone` will prevent the lens
@@ -36,8 +32,8 @@ export default CustomStep;
 
 /**
  * @callback Step~Get_Maybe
- * @param container
- * @returns {{just: *}} A Maybe monad value for the represented slot within *container*
+ * @param {*} container
+ * @returns {Maybe.<*>} A Maybe monad value for the represented slot within *container*
  *
  * @description
  * Gets the value of this slot within the passed *container*, returning `{}` if
@@ -46,10 +42,9 @@ export default CustomStep;
  
  /**
   * @callback Step~UpdatedClone
-  * @param container
-  * @param {Object} opDesc
-  * @param {Array} [opDesc.set]  An Array with two elements: a key/index and a value
-  * @param [opDesc.spliceOut]  A key or index to splice out or delete from *container*
+  * @param {*} container
+  * @param {Maybe.<*>} value_maybe
+  * @param {*} [value_maybe.just]  The value to assign into the target slot in the clone
   * @returns The minimally modified clone of *container*
   */
 

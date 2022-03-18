@@ -241,8 +241,8 @@ class Optic {
    * returning a Maybe of the slot value.
    *
    * "Minimally changed" means that reference-copies are used wherever possible
-   * while leaving subject unchanged, and that setting the slot to the strict-
-   * equal value it already has results in returning subject.
+   * while leaving *subject* unchanged, and that setting the slot to the strict-equal
+   * value it already has results in returning *subject*.
    */
   setInClone(subject, newVal) {
     return this.xformInClone_maybe(subject, () => ({just: newVal}));
