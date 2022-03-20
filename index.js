@@ -64,16 +64,8 @@ Object.defineProperties(makeLens, {
    * does not apply for Lens-derived objects (e.g. from [Factories]{@link Factory}) —
    * if such are passed, the result will always be an OpticArray.
    */
-  fuse: {enumerable: true, get: () => (...lenses) => {
-    for (let i = 0, step = null; (step = 1) && i < lenses.length - 1; i += step) {
-      const [a, b] = lenses.slice(i, i + 2);
-      if (a.constructor === Lens && b.constructor === Lens) {
-        lenses.splice(i, 2, Lens.fuse(a, b)); step = 0;
-      }
-    }
-    if (lenses.length === 1) return lenses[0];
-    const OpticArray = require('./cjs/optic_array').default;
-    return new OpticArray(lenses);
+  fuse: {enumerable: true, get: () => (...optics) => {
+    return require('./cjs/fusion').default(...optics);
   }},
   
   /**
