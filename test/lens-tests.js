@@ -802,6 +802,14 @@ function testSequence(loaderName, subjects) {
           );
         });
       });
+      
+      describe('#thence()', () => {
+        it("works", () => {
+          const data = [2,3,5].map(n => ({value: n}));
+          const L = lens(1);
+          assert.equal(L.thence('value').get(data), data[1].value);
+        });
+      });
     });
 
     describe('CustomStep', () => {
@@ -1358,6 +1366,14 @@ function testSequence(loaderName, subjects) {
           assert.deepEqual(resultOther, inputOther);
           assert.strictEqual(resultName, newName);
         });
+      });
+      
+      describe('#thence()', () => {
+        it('can fuse on a newly built Lens', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0)).thence('first');
+          const name = {first: "Fred", last: "Flintstone"};
+          assert.strictEqual(fusedLens.get({name}), name.first);
+        })
       });
     });
     
