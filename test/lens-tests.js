@@ -802,6 +802,14 @@ function testSequence(loaderName, subjects) {
           );
         });
       });
+      
+      describe('#thence()', () => {
+        it("works", () => {
+          const data = [2,3,5].map(n => ({value: n}));
+          const L = lens(1);
+          assert.equal(L.thence('value').get(data), data[1].value);
+        });
+      });
     });
 
     describe('CustomStep', () => {
