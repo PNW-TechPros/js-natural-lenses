@@ -1,7 +1,9 @@
 import { isFunction, isUndefined } from 'underscore';
 import { cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import CustomStep from './custom_step.js';
+import fusion from './fusion.js';
 import Optic from './optic.js';
+import OpticArray from './optic_array.js';
 import { getIterator, handleNoniterableValue, index_maybe, isLens } from './utils.js';
 
 // Polyfill support for lenses to standard JavaScript types
@@ -75,6 +77,13 @@ class Lens extends Optic {
   constructor(...keys) {
     super();
     this.keys = keys;
+  }
+  
+  /**
+   * @inheritdoc
+   */
+  thence(...keys) {
+    return new Lens(...this.keys, ...keys);
   }
 
   /**
@@ -396,6 +405,24 @@ class CSSlot {
   cloneOmitting() {
     return this.customStep.updatedClone(this.target, {});
   }
+}
+
+// Monkey-patch Optic here with `thence` to avoid cyclic dependency in optic.js
+let fuse = null;
+/**
+ * @function Optic#thence
+ * @summary Build a "deeper" lens/optic
+ * @param {...*} key  A value to use in an application of subscripting (i.e. square bracket operator)
+ * @returns {Lens|OpticArray}  An Optic that fuses this optic with a Lens looking at finer detail
+ *
+ * @description
+ * This method creates a new Optic that looks at finer detail than the Optic
+ * on which it was called.  It either actually or effectively fuses a new
+ * {@link Lens} to the right of this optic, as with [fuse]{@link module:natural-lenses#fuse}.
+ */
+Optic.prototype.thence = function(...keys) {
+  fuse = fuse || fusion({ Lens, OpticArray});
+  return fuse(this, new Lens(...keys));
 }
 
 function makeSlot(cur, k) {

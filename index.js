@@ -1,8 +1,11 @@
 const { mapObject } = require('underscore');
 const { at_maybe, cloneImpl, isLensClass } = require('./src-cjs/constants');
 const Errors = require('./cjs/errors');
+const fusion = require('./cjs/fusion').default;
 const Lens = require('./cjs/lens').default;
 const { eachFound, maybeDo } = require('./cjs/utils');
+
+let fuse = null;
 
 /**
  * @module natural-lenses
@@ -64,8 +67,10 @@ Object.defineProperties(makeLens, {
    * does not apply for Lens-derived objects (e.g. from [Factories]{@link Factory}) —
    * if such are passed, the result will always be an OpticArray.
    */
-  fuse: {enumerable: true, get: () => (...optics) => {
-    return require('./cjs/fusion').default(...optics);
+  fuse: {enumerable: true, get: () => {
+    const OpticArray = require('./cjs/optic_array.js').default;
+    fuse = fuse || fusion({ Lens, OpticArray });
+    return fuse;
   }},
   
   /**

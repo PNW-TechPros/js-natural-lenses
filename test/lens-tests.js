@@ -1359,6 +1359,14 @@ function testSequence(loaderName, subjects) {
           assert.strictEqual(resultName, newName);
         });
       });
+      
+      describe('#thence()', () => {
+        it('can fuse on a newly built Lens', () => {
+          const fusedLens = lensUtils.fuse(mfl, lens(0)).thence('first');
+          const name = {first: "Fred", last: "Flintstone"};
+          assert.strictEqual(fusedLens.get({name}), name.first);
+        })
+      });
     });
     
     describe('Factory', () => {
