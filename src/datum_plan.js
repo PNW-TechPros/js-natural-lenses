@@ -1,6 +1,4 @@
 import { isArray, isFunction, isObject } from 'underscore';
-import Lens from './lens.js';
-import { isLensClass as isLens } from '../src-cjs/constants.js';
 
 export function makeExports({fuse, isLens, lens}) {
   const value = '$', others = '((others))';
@@ -15,7 +13,7 @@ export function makeExports({fuse, isLens, lens}) {
     
     buildPlan(rawPlan) {
       if (isArray(rawPlan)) {
-        const result = lens(...this.keys);
+        const result = this.makeLens(...this.keys);
         if (rawPlan.length > 1) {
           throw new Error("Multiple plans for Array items");
         } else if (rawPlan.length) {
@@ -24,7 +22,7 @@ export function makeExports({fuse, isLens, lens}) {
         }
         return result;
       } else if (rawPlan.constructor === Object) {
-        const result = this.keys.length ? lens(...this.keys) : lens();
+        const result = this.keys.length ? this.makeLens(...this.keys) : this.makeLens();
         const theseKeys = this.keys;
         try {
           for (let key of Object.keys(rawPlan)) {
@@ -46,7 +44,7 @@ export function makeExports({fuse, isLens, lens}) {
         }
         return result;
       } else if (rawPlan === value) {
-        return lens(...this.keys);
+        return this.makeLens(...this.keys);
       } else {
         throw new Error("Invalid item in plan");
       }
@@ -98,7 +96,7 @@ export function makeExports({fuse, isLens, lens}) {
          */
         at: function (index, pickLens) {
           // pickLens is given itemPlan to return a lens to fuse with the lens for the item at index
-          const itemLens = lens(...this.keys, index);
+          const itemLens = this.thence(index);
           if (pickLens && pickLens[isLens]) {
             return fuse(itemLens, pickLens);
           } else if (typeof pickLens === 'function') {
@@ -283,7 +281,7 @@ export function makeExports({fuse, isLens, lens}) {
          * lens-like object) rather than a function that returns one.
          */
         at: function (key, pickLens) {
-          const itemLens = lens(...this.keys, key);
+          const itemLens = this.thence(key);
           if (pickLens && pickLens[isLens]) {
             return fuse(itemLens, pickLens);
           } else if (typeof pickLens === 'function') {
@@ -398,6 +396,10 @@ export function makeExports({fuse, isLens, lens}) {
           }));
         },
       };
+    }
+    
+    makeLens(...keys) {
+      return lens(...keys);
     }
   }
 
