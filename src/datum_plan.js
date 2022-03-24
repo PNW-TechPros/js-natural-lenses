@@ -1,14 +1,25 @@
 import { isArray, isFunction, isObject } from 'underscore';
+import { UndefinedPropertyError } from './errors.js';
 
 export function makeExports({fuse, isLens, lens}) {
   const value = '$', others = '((others))';
+  const guardedGroups = new Set(
+    (process.env.DATUM_PLAN_GUARDS || '').split(',')
+  );
 
   const lengthProp = lens('length');
+  
+  const GuardedLensHandlers = {};
 
   class PlanBuilder {
-    constructor(keys = []) {
+    constructor(keys = [], options = {}) {
       this.keys = keys;
       this.parent = null;
+      this.options = {...options};
+    }
+    
+    get proxyGuarded() {
+      return this.options.planGroup && guardedGroups.has(this.options.planGroup);
     }
     
     buildPlan(rawPlan) {
@@ -17,12 +28,12 @@ export function makeExports({fuse, isLens, lens}) {
         if (rawPlan.length > 1) {
           throw new Error("Multiple plans for Array items");
         } else if (rawPlan.length) {
-          result.$item = new PlanBuilder().buildPlan(rawPlan[0]);
+          result.$item = new PlanBuilder([], this.options).buildPlan(rawPlan[0]);
           Object.assign(result, this.indexableMixin(result.$item));
         }
         return result;
       } else if (rawPlan.constructor === Object) {
-        const result = this.keys.length ? this.makeLens(...this.keys) : this.makeLens();
+        const result = this.makeLens(...this.keys);
         const theseKeys = this.keys;
         try {
           for (let key of Object.keys(rawPlan)) {
@@ -39,7 +50,7 @@ export function makeExports({fuse, isLens, lens}) {
           this.keys = theseKeys;
         }
         if (others in rawPlan) {
-          result.$entryValue = new PlanBuilder().buildPlan(rawPlan[others]);
+          result.$entryValue = new PlanBuilder([], this.options).buildPlan(rawPlan[others]);
           Object.assign(result, this.entriesMixin(result.$entryValue, Object.keys(rawPlan)));
         }
         return result;
@@ -399,7 +410,11 @@ export function makeExports({fuse, isLens, lens}) {
     }
     
     makeLens(...keys) {
-      return lens(...keys);
+      let resultLens = lens(...keys);
+      if (this.proxyGuarded) {
+        resultLens = new Proxy(resultLens, GuardedLensHandlers);
+      }
+      return resultLens;
     }
   }
 
@@ -428,11 +443,31 @@ export function makeExports({fuse, isLens, lens}) {
    * the named values and Functions passed in the *DSL* parameter.
    */
   
+  GuardedLensHandlers.get = function (target, prop, receiver) {
+    if (prop in target) {
+      return target[prop];
+    }
+    
+    // Return the exploding monkey
+    const error = (function() {
+      try {
+        throw new UndefinedPropertyError(prop, target.keys, Object.keys(target));
+      } catch (e) {
+        return e;
+      }
+    }());
+    return new Proxy({}, {
+      get() { throw error; },
+    });
+  };
+  
   /**
    * @module natural-lenses/datum-plan
    * @summary Construct a structure of [Lenses]{@link Lens} for accessing a structure by example
    *
    * @param {Array|Object|string|DatumPlan_DslCallback} spec  An object specifying the datum plan to be generated, or a {@link DatumPlan_DslCallback} to return such an object
+   * @param {Object} [opts]
+   * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    *
    * @property {string} value   Used as a "tip" indicator for where generation of nested [Lenses]{@link Lens} ends
@@ -471,7 +506,7 @@ export function makeExports({fuse, isLens, lens}) {
    * @see DatumPlan_Dsl
    * @see {@tutorial datum-plans} tutorial
    */
-  function makeDatumPlan(rawPlan) {
+  function makeDatumPlan(rawPlan, { planGroup } = {}) {
     if (isFunction(rawPlan)) {
       rawPlan = rawPlan.call(undefined, {
         VALUE: value,
@@ -481,11 +516,14 @@ export function makeExports({fuse, isLens, lens}) {
         ),
       });
     }
-    return new PlanBuilder().buildPlan(rawPlan);
+    return new PlanBuilder([], { planGroup }).buildPlan(rawPlan);
   }
   Object.assign(makeDatumPlan, {
     value,
     others,
+  });
+  Object.defineProperties(makeDatumPlan, {
+    guardedGroups: {value: guardedGroups},
   });
   
   return makeDatumPlan;
