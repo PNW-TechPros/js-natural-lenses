@@ -1,8 +1,8 @@
-import { isArray, isFunction, isObject } from 'underscore';
+import { forEach, isArray, isFunction, isObject } from 'underscore';
 import { UndefinedPropertyError } from './errors.js';
 
 export function makeExports({fuse, isLens, lens}) {
-  const value = '$', others = '((others))';
+  const value = '$', others = '((others))', raw = '((raw))';
   const guardedGroups = new Set(
     (process.env.DATUM_PLAN_GUARDS || '').split(',')
   );
@@ -36,22 +36,41 @@ export function makeExports({fuse, isLens, lens}) {
         const result = this.makeLens(...this.keys);
         const theseKeys = this.keys;
         try {
+          if (others in rawPlan) {
+            result.$entryValue = new PlanBuilder([], this.options).buildPlan(rawPlan[others]);
+            Object.assign(result, this.entriesMixin(result.$entryValue, Object.keys(rawPlan)));
+          }
+          const conflictedChildren = {};
           for (let key of Object.keys(rawPlan)) {
-            if (key === others) continue;
+            if (/\(\([a-z]+\)\)/.test(key)) continue;
             this.keys = theseKeys.concat([key]);
             try {
               this.parent = result;
-              result[key] = this.buildPlan(rawPlan[key]);
+              (key in result ? conflictedChildren : result)[key] =
+                this.buildPlan(rawPlan[key]);
             } finally {
               this.parent = null;
             }
           }
+          for (let key of (raw in rawPlan) ? Object.keys(rawPlan[raw]) : []) {
+            this.keys = theseKeys.concat([key]);
+            try {
+              this.parent = result;
+              (key in result ? conflictedChildren : result)[key] =
+                this.buildPlan(rawPlan[raw][key]);
+            } finally {
+              this.parent = null;
+            }
+          }
+          forEach(conflictedChildren, (lensTree, key) => {
+            let planKey = key;
+            while (planKey in result) {
+              planKey = '_' + planKey;
+            }
+            result[planKey] = lensTree;
+          });
         } finally {
           this.keys = theseKeys;
-        }
-        if (others in rawPlan) {
-          result.$entryValue = new PlanBuilder([], this.options).buildPlan(rawPlan[others]);
-          Object.assign(result, this.entriesMixin(result.$entryValue, Object.keys(rawPlan)));
         }
         return result;
       } else if (rawPlan === value) {
@@ -516,6 +535,7 @@ export function makeExports({fuse, isLens, lens}) {
     if (isFunction(rawPlan)) {
       rawPlan = rawPlan.call(undefined, {
         VALUE: value,
+        RAW: raw,
         NAMED_VALUES: Object.assign(
           (spec) => ({[others]: spec}),
           {[others]: value}
@@ -527,6 +547,7 @@ export function makeExports({fuse, isLens, lens}) {
   Object.assign(makeDatumPlan, {
     value,
     others,
+    raw,
   });
   Object.defineProperties(makeDatumPlan, {
     guardedGroups: {value: guardedGroups},
