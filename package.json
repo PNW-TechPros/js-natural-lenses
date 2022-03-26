@@ -33,7 +33,7 @@
     "build:cjs": "cross-env BABEL_ENV=cjs babel src -d cjs --source-maps --compact --minified --no-comments",
     "build:esm": "cross-env BABEL_ENV=esm babel src -d esm",
     "build": "npm-run-all -l clean -p build:cjs build:esm",
-    "clean": "rm -f {cjs,esm}/{,**}*.js",
+    "clean": "node scripts/clean.js",
     "console": "node --experimental-repl-await --async-stack-traces",
     "prepare": "npm run build",
     "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
