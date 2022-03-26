@@ -792,6 +792,27 @@ function testSequence(loaderName, subjects) {
             assert(caughtException, "Exception expected");
           });
         });
+        
+        it("shows defined properties through a Lens", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.strictEqual(lens('name').get(plan), plan.name);
+          });
+        });
+        
+        it("shows undefined properties as 'undefined' through a Lens", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.isUndefined(lens('address').get(plan));
+          });
+        });
+        
+        it("shows undefined properties as Nothing via Lens#get_maybe", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.notProperty(lens('address').get_maybe(plan), 'just');
+          });
+        });
       });
     });
   });
