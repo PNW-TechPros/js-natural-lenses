@@ -5,18 +5,18 @@ const _ = require('underscore');
 
 async function loadEsmSubjects() {
   const { default: datumPlan } = await import('#this/datum-plan');
-  const { default: lens } = await import('#this');
-  return { datumPlan, lens };
+  const { default: lens, UndefinedPropertyError } = await import('#this');
+  return { datumPlan, lens, UndefinedPropertyError };
 }
 
 function testSequence(loaderName, subjects) {
   const origIt = it;
   describe(loaderName, () => {
     subjects = Promise.resolve(subjects);
-    let datumPlan, lens;
+    let datumPlan, lens, UndefinedPropertyError;
     
     async function loadSubjects() {
-      ({ datumPlan, lens } = await subjects);
+      ({ datumPlan, lens, UndefinedPropertyError } = await subjects);
     }
     
     let it = (name, body) => {
@@ -706,9 +706,127 @@ function testSequence(loaderName, subjects) {
           assert.deepInclude(result.preferredLanguages, {lang: 'en-us', factor: 1});
         });
       });
+      
+      describe("when Proxy-guarded", () => {
+        const planGroup = '28c85e0f9fdedba40e60e5a909132ef9cc80f882';
+        
+        function proxyGuardsEnabled(body) {
+          const oldVals = Array.from(datumPlan.guardedGroups);
+          datumPlan.guardedGroups.clear();
+          datumPlan.guardedGroups.add(planGroup);
+          try {
+            return body();
+          } finally {
+            datumPlan.guardedGroups.clear();
+            oldVals.forEach((item) => {
+              datumPlan.guardedGroups.add(item);
+            });
+          }
+        }
+        
+        it("activates without error", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+          });
+        });
+        
+        it("lenses like normal for defined properties", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            const name = "Fred Flintstone";
+            assert.strictEqual(plan.name.get({name}), name);
+          });
+        });
+        
+        it("allows testing for presence with 'in' without error", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.isNotOk('address' in plan);
+          });
+        });
+        
+        it("throws the expected error type when non-properties are accessed", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.throws(
+              () => plan.address.get,
+              UndefinedPropertyError
+            );
+          });
+        });
+        
+        it("throws an error indicating where the bad property access occurred", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            function f16d64e0352ebbc376fa3c5fc216f544ab5ab446() {
+              return plan.address;
+            }
+            assert.doesNotThrow(f16d64e0352ebbc376fa3c5fc216f544ab5ab446);
+            const badAccess = f16d64e0352ebbc376fa3c5fc216f544ab5ab446();
+            try {
+              badAccess.get;
+            } catch (ex) {
+              assert.instanceOf(ex, UndefinedPropertyError);
+              assert.include(ex.stack, 'f16d64e0352ebbc376fa3c5fc216f544ab5ab446', "Stack includes source of error");
+            }
+          });
+        });
+        
+        it("reports the keys leading to the incorrect property access", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({
+              name: {
+                first: datumPlan.value,
+                last: datumPlan.value,
+              },
+            }, { planGroup });
+            
+            let caughtException = false;
+            try {
+              plan.name.middle.get;
+            } catch (ex) {
+              caughtException = true;
+              assert.instanceOf(ex, UndefinedPropertyError);
+              assert.include(ex.message, 'name');
+            }
+            assert(caughtException, "Exception expected");
+          });
+        });
+        
+        it("shows defined properties through a Lens", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.strictEqual(lens('name').get(plan), plan.name);
+          });
+        });
+        
+        it("shows undefined properties as 'undefined' through a Lens", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.isUndefined(lens('address').get(plan));
+          });
+        });
+        
+        it("shows undefined properties as Nothing via Lens#get_maybe", () => {
+          proxyGuardsEnabled(() => {
+            const plan = datumPlan({name: datumPlan.value}, { planGroup });
+            assert.notProperty(lens('address').get_maybe(plan), 'just');
+          });
+        });
+      });
     });
   });
 }
 
-testSequence('CommonJS', { datumPlan, lens });
+testSequence('CommonJS', { datumPlan, lens, UndefinedPropertyError: lens.UndefinedPropertyError });
 testSequence('ESM', loadEsmSubjects());
+
+function withEnv(envvar, value, body) {
+  const oldVal = process.env[envvar];
+  process.env[envvar] = value;
+  try {
+    return body();
+  } finally {
+    process.env[envvar] = oldVal;
+  }
+}

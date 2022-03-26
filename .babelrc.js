@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const sharedPresets = [];
 const shared = {
   presets: sharedPresets,
