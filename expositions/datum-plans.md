@@ -41,7 +41,7 @@ const $npmPackage = datumPlan(({ VALUE, NAMED_VALUES }) => ({
       require: VALUE,
     }),
   },
-}));
+}), { planGroup: "package.json" });
 
 const thePackage = JSON.parse(require('fs').readFileSync(...));
 ```
@@ -60,9 +60,9 @@ Get the length of the `contributors` array with `$npmPackage.contributors.length
 
 #### [`at`]{@link IndexableMixin~at}
 
-Use this lens extension to retrieve something from within the targeted Array.  The simplest usage in this case would be `$npmPackage.contributors.at(0)` to retrieve the first element of the contributors.  (Here's a fun note: since `contributors` in a `package.json` may contain elements that are either string or Object, it's convenient that this expression would return whatever value happens to be in the first element of `contributors`, even if it is a string that does not match the plan spec!)
+Use this lens extension to retrieve something from within the targeted Array.  The simplest usage in this case would be `$npmPackage.contributors.at(0)` to retrieve the first element of the contributors.  (Here's a fun note: since `contributors` in a `package.json` may contain elements that are either string or Object, it's convenient that this expression builds a {@link Lens} to access whatever value happens to be in the first element of `contributors`, even if it is a string that does not match the plan spec!)
 
-`at` can also dig deeper into the elements of an Array through it's second argument, which can fuse another lens to the one accessing the Array.  The second argument can take two forms: it can be a lens or it can be a Function returning a lens.  If it is a Function and the spec provided a sub-spec for the Array's elements, the Function will receive as it's only argument.  We can, therefore, get the name of the first `contributor` element with `$npmPackage.contributors.at(0, ctbtr => ctbtr.name)`.  It would also work to do this with `$npmPackage.contributors.at(0, lens('name'))`.
+`at` can also construct lenses that dig deeper into the elements of an Array through it's second argument, which can fuse another lens to the one accessing the Array.  The second argument can take two forms: it can be an {@link Optic} or it can be a Function returning an {@link Optic}.  If it is a Function and the spec provided a sub-spec for the Array's elements, the Function will receive the item plan built from the sub-spec as it's only argument.  We can, therefore, build a lens to the name of the first `contributor` element with `$npmPackage.contributors.at(0, ctbtr => ctbtr.name)`.  It would also work to do this with `$npmPackage.contributors.at(0, lens('name'))`.
 
 If `at` is given a negative index, the returned lens references an element counted from the end of the subject Array it is given, with `-1` indexing the last element of the Array.
 
@@ -166,3 +166,47 @@ This method is mostly equivalent to the `mapInside` method added to lenses spec'
 #### [`mapAllInside`]{@link EntriesMixin~mapAllInside}
 
 This method is just like `mapInside`, except it iterates *all* own-properties without regard for whether they were spec'ed explicitly.
+
+### Troubleshooting
+
+*This feature only works in interpreters providing the ES6 `Proxy` class.*
+
+Datum plans, like other complex JavaScript values, suffer from JavaScript's lenient approach to access of undefined properties.  The `undefined` value can creep in at some point and not be detected until much later when it is difficult to determine which access failed unexpectedly.  To combat this, a `planGroup` option naming the plan group may be specified when the datum plan is constructed and this same group name specified as one of the comma-separated group names in the `DATUM_PLAN_GUARDS` environment variable.  Alternatively, the plan group name can be programmatically added to the guarded groups *prior* to constructing the datum plan:
+
+```js
+datumPlan.guardedGroups.add('SimpleRecord');
+const plan = datumPlan(({ VALUE }) => ({
+  name: VALUE,
+}), { planGroup: 'SimpleRecord' });
+
+plan.address; // This will not raise any errors
+plan.address.get; // This will raise UndefinedPropertyError: No such property 'address' on trivial Lens among properties "keys", "name"
+```
+
+One of the nicest aspects about the error reporting is that the code location where the undefined property is accessed is captured and is the location reported when any property of the "tripwire" value is accessed.  In the example above it does not matter, but if it were instead:
+
+```js
+function getBadLens() {
+  return plan.address;
+}
+
+getBadLens().get({});
+```
+
+the error would reference the line `return plan.address;`, not `getBadLens().get({});`.  The latter line doesn't really help understand where the error occurred, but the former points out directly where the non-existent property of the plan was accessed.  Here is some sample output from an interactive `node` session:
+
+```plain
+UndefinedPropertyError: No such property 'address' on trivial Lens among properties "keys", "name"
+    at .../natural-lenses/cjs/datum_plan.js:1:38361
+    at Object.GuardedLensHandlers.get (.../natural-lenses/cjs/datum_plan.js:1:38478)
+    at getBadLens (REPL32:2:13) {
+  lensKeys: [],
+  missingProperty: 'address'
+}
+```
+
+The availability of this troubleshooting feature comes with some recommended practices when using datum plan lenses:
+
+- Prefer `'prop' in obj` to `obj.prop === undefined` or `typeof obj.prop === 'undefined'`; the latter two expressions change from `true` to `false` when guard proxies are activated.
+- If getting `undefined` for a missing property on a datum plan lens is desirable, use `lens('prop').get(obj)`: lens _does_ an `in` test and returns `undefined` if it fails, producing the intuitive result.
+- `Lens#get_maybe` works on guarded datum plan lenses, if a {@link Maybe} context for the Lens's property is desired.

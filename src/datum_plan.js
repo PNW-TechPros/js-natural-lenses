@@ -503,6 +503,12 @@ export function makeExports({fuse, isLens, lens}) {
    * The resulting datum plan will be structured vaguely like *spec* and
    * constructed to access a value of similar shape to *spec*.
    *
+   * If *options.planGroup* is given, the constructed datum plan can be instrumented
+   * with JavaScript proxies to detect and report cases where undefined properties
+   * of lenses within the datum plan are accessed.  This is done by including
+   * the *options.planGroup* value within the comma-separated value in the
+   * `DATUM_PLAN_GUARDS` environment variable.
+   *
    * @see DatumPlan_Dsl
    * @see {@tutorial datum-plans} tutorial
    */
