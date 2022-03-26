@@ -50,9 +50,25 @@ const thePackage = JSON.parse(require('fs').readFileSync(...));
 
 With the code from above, `$npmPackage.name.get(thePackage)` will retrieve the name of `thePackage` from the JSON we've loaded.
 
+### Spec'ing Special Properties
+
+If there is some reason to create a datum plan where the spec'd property name happens to be a special-case property name for datum plan construction (any string consisting of doubled parentheses with one or more lowercase letters between, like `((others))`), such a property can be included in the datum plan via `datumPlan.raw` or `RAW` in the DSL.  The value of this key is an Object with names that are never treated as special-case but otherwise treated as part of the spec Object containing the `datumPlan.raw`/`RAW` key.
+
+```js
+const plan = datumPlan(({ VALUE, RAW }) => ({
+  [RAW]: {
+    "((zyx))": {
+      name: VALUE,
+    },
+  },
+}));
+```
+
+This feature should not typically be needed.
+
 ### Accessing an Array
 
-When an Array is present in the spec — as with `contributors` — the lens which would `get` the Array receives additional methods from {@link IndexableMixin}: `length(...)`, `at(...)`, `mapInside(...)`, and `flatMapInside(...)`.
+When an Array is present in the spec — as with `contributors` — the lens which would `get` the Array receives additional methods from {@link IndexableMixin}: `length(...)`, `at(...)`, `mapInside(...)`, and `flatMapInside(...)`.  Additionally, if an item spec was given for the Array (that is, a sub-spec as the single element of the Array in the spec), the datum plan for the item is stored on the generated {@link Lens}'s property `$item`.
 
 #### [`length`]{@link IndexableMixin~length}
 
@@ -120,7 +136,7 @@ const noAContribPackage = $npmPackage.contributors.flatMapInside(thePackage,
 
 ### Accessing a Dictionary-like Object
 
-An Object in the datum plan spec can specify a key of `datumPlan.others` (or use `...NAMED_VALUES` or `...NAMED_VALUES(plan)` when passing a spec Function) to indicate dictionary-like or partially dictionary-like behavior.  In this case, the lens targeting the corresponding slot in the subject data receives the additional methods `at(...)`, `mapInside(...)`, and `mapAllInside(...)` from {@link EntriesMixin}.
+An Object in the datum plan spec can specify a key of `datumPlan.others` (or use `...NAMED_VALUES` or `...NAMED_VALUES(spec)` when passing a spec Function) to indicate dictionary-like or partially dictionary-like behavior.  In this case, the lens targeting the corresponding slot in the subject data receives the additional methods `at(...)`, `mapInside(...)`, and `mapAllInside(...)` from {@link EntriesMixin}.  If a spec was given for the named entries, the datum plan generated from that sub-spec is assigned to the `$entryValue` property of the resulting {@link Lens}.
 
 #### [`at`]{@link EntriesMixin~at}
 
@@ -166,6 +182,25 @@ This method is mostly equivalent to the `mapInside` method added to lenses spec'
 #### [`mapAllInside`]{@link EntriesMixin~mapAllInside}
 
 This method is just like `mapInside`, except it iterates *all* own-properties without regard for whether they were spec'ed explicitly.
+
+### Name Deconfliction
+
+The data modeled with a datum plan may have property names that conflict with the properties and/or methods critical to the operation of the {@link Lens}.  Any such spec'd properties will have underscores added as a prefix until the resulting property name does not conflict with existing names on the {@link Lens}.  Non-conflicting properties always have top priority.  Any spec'd property name defined in both plain form and in `datumPlan.raw`/`RAW` will use the definition in `datumPlan.raw`.  Let's consider this plan:
+
+```js
+const plan = datumPlan(({ VALUE, RAW }) => ({
+  name: VALUE,
+  keys: [],
+  _keys: [],
+  [RAW]: {
+    name: {first: VALUE, last: VALUE},
+  },
+}));
+```
+
+* `plan.name` will use the definition under `RAW`, with `first` and `last` properties.
+* `plan._keys` is a {@link Lens} with keys `['_keys']` (i.e. the definition spec'd for `_keys` is used).  Because it does not conflict with any normal {@link Lens} property, it has priority for the `_keys` property.
+* `plan.__keys` is a {@link Lens} with keys `['keys']`.  `keys` is a critical property for all [Lenses]{@link Lens} and `_keys` was already claimed by a non-conflicting property.
 
 ### Troubleshooting
 

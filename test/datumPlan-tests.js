@@ -138,6 +138,32 @@ function testSequence(loaderName, subjects) {
             body: VALUE,
           }));
         });
+        
+        it("accepts a spec defining 'keys'", () => {
+          const plan = datumPlan(({ VALUE }) => ({
+            account: {
+              tag: VALUE,
+              keys: [VALUE],
+            },
+          }));
+          
+          const data1 = {account: {tag: 'Fred'}};
+          assert.strictEqual(plan.account.get(data1), data1.account);
+          const data2 = {account: {keys: [7,8,9]}};
+          assert.strictEqual(plan.account.get(data2, data2.account));
+          assert.strictEqual(plan.account._keys.get(data2), data2.account.keys);
+        });
+        
+        it("can define special keys using `datumPlan.raw`", () => {
+          const plan = datumPlan(({ VALUE, RAW }) => ({
+            [RAW]: {
+              [datumPlan.others]: VALUE,
+            },
+          }));
+          
+          const data = {[datumPlan.others]: "friends"};
+          assert.strictEqual(plan[datumPlan.others].get(data), data[datumPlan.others]);
+        });
       });
       
       describe("#at()", () => {
