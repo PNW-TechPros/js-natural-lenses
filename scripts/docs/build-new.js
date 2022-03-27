@@ -181,5 +181,6 @@ Object.assign(exports, {
 if (require.main === module) {
   main().catch(err => {
     console.error(err);
+    process.exitCode = 1;
   });
 }

@@ -8,5 +8,6 @@ doc/
 test/
 jsdoc.conf.js
 .gitignore
-scripts/docs
+scripts/
 expositions/
+package-lock.json
