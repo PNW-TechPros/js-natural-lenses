@@ -20,7 +20,7 @@ class SignalError extends Error {
 }
 
 const gitMutex = new Mutex();
-async function git(args, { captureOutput: false } = {}) {
+async function git(args, { captureOutput = false } = {}) {
   return gitMutex.runExclusive(() => new Promise(function(resolve, reject) {
     const gitProg = progName('git'), subcmd = args.find(a => !a.startsWith('-'));
     const gitProc = spawn(gitProg, args, {
@@ -81,9 +81,9 @@ async function main() {
   );
   let wasPublished = false;
   if (mainRepoVerification) {
-    const localTagResolution = await gitOutput(
+    const localTagResolution = (await gitOutput(
       ['rev-parse', `refs/tags/${tagname}`]
-    ).trim();
+    )).trim();
     wasPublished = mainRepoVerification.split('\t') === localTagResolution;
   }
   if (wasPublished) {
