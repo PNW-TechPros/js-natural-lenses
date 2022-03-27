@@ -1,6 +1,6 @@
 # JavaScript-Native Lenses
 
-![Automated tests status](https://github.com/PNW-TechPros/js-natural-lenses/actions/workflows/ci-tests.yml/badge.svg)
+![Automated tests status](https://github.com/PNW-TechPros/js-natural-lenses/actions/workflows/ci-tests.yml/badge.svg?branch=version/2.x)
 
 * Safely retrieve values from deep in JSON data or complex JavaScript data structures
 * Produce an altered clone of JSON or other data, reusing every unchanged branch of the subject tree
