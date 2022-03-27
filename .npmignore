@@ -10,3 +10,4 @@ jsdoc.conf.js
 .gitignore
 scripts/
 expositions/
+package-lock.json
