@@ -27,7 +27,7 @@ async function gitOutput(args) {
       stdio: ['ignore', 'pipe', 'inherit'],
     });
     function reportError(errType, detail) {
-      throw new errType(`${gitProg} ${subcmd}`, detail);
+      reject(new errType(`${gitProg} ${subcmd}`, detail));
     }
     
     let output = '';

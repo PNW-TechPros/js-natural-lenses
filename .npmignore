@@ -8,5 +8,5 @@ doc/
 test/
 jsdoc.conf.js
 .gitignore
-scripts/docs
+scripts/
 expositions/
