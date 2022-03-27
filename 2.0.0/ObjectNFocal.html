@@ -1,0 +1,2848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>ObjectNFocal - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li></ul><h3>Interfaces</h3><ul><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ObjectNFocal</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        ObjectNFocal
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="ObjectNFocal"><span class="type-signature"></span>new ObjectNFocal<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary usertext"><p>Multifocal (i.e. n-focal) building an Object</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line234">line 234</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="AbstractNFocal.html">AbstractNFocal</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="lenses"><span class="type-signature"></span>lenses<span class="type-signature"> :Array.&lt;<a href="Optic.html">Optic</a>>|Object.&lt;string, <a href="Optic.html">Optic</a>></span></h4>
+
+
+<p class="summary"><p><a href="Optic.html">Optics</a> aggregated by this object</p></p>
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#lenses">AbstractNFocal#lenses</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="Optic.html">Optic</a>></span>
+|
+
+<span class="param-type">Object.&lt;string, <a href="Optic.html">Optic</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="binding"><span class="type-signature"></span>binding<span class="signature">(methodName, options)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+    <p class="summary usertext"><p>DRYly bind a Function to the Object from which it was obtained</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line287">line 287</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Optic.html#binding">Optic#binding</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Lens.html#bound">Lens#bound</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This method is a way to avoid duplicating code referencing an object within
+<em>options.on</em> when 1) obtaining the reference to the method's function,
+and 2) binding that method to the object from which it was accessed.</p>
+<p>By default, the binding is lazy — the target of the lens within <em>on</em> is
+evaluated when the resulting Function is invoked (though <em>on</em> itself is
+bound in this call).  To bind the resulting Function to its target
+immediately when this method is called, set <em>options.bindNow</em> to <code>true</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>const data = {question: "What is the ultimate answer?"};
+const qStarts = lens('question').binding('startsWith', {on: data});
+qStarts('What') // => true
+data.question = "Why is a raven like a writing desk?";
+qStarts('What') // => false
+qStarts('Why') // => true</code></pre>
+
+    <pre class="prettyprint"><code>const data = {question: "What is the ultimate answer?"};
+const qStarts = lens('question').binding('startsWith', {on: data, bindNow: true});
+qStarts('What') // => true
+data.question = "Why is a raven like a writing desk?";
+qStarts('What') // => true (because qStarts bound to the target of the lens when `binding` was called)</code></pre>
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>methodName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">symbol</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>on</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The subject of the Function binding; becomes <em>this</em> for the result</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bindNow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Bind to the Optic's target within <em>on</em> rather than binding to <em>on</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the slot referenced does not contain a Function; has precedence over <em>or</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>or</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#FallbackBindingResult">FallbackBindingResult</a>, a Function to return if the slot referenced does not contain a Function</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Function binding the <em>methodName</em> of the target of this optic to the target of this optic</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(subject, &hellip;tail)</span><span class="type-signature"> &rarr; {*}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get the value of this slot within subject data</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#get">AbstractNFocal#get</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If <em>tail</em> is given, then <code>#get()</code> is called on the result of getting this
+slot from <em>subject</em>, passing the spread of <em>tail</em>.  This eliminates
+repeated use of <code>.get</code> in code.  The chaining fails, returning <code>undefined</code>,
+if this slot in <em>subject</em> is not a lens-like object (as indicated by a truthy
+<code>lens.isLens</code> property).</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The data to query</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Additional subjects for repeated application</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The value of this slot, or <code>undefined</code> if this slot is not present in <em>subject</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get_maybe"><span class="type-signature"></span>get_maybe<span class="signature">(subject, &hellip;tail)</span><span class="type-signature"> &rarr; {<a href="global.html#Maybe">Maybe</a>.&lt;*>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get a combination of present and value of this slot</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#get_maybe">AbstractNFocal#get_maybe</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If <em>tail</em> is given and getting this slot from from <em>subject</em> yields a
+lens-like object (as indicated by a truthy <code>lens.isLens</code> property), then <code>#get_maybe()</code>
+is called on that lens, passing the spread of <em>tail</em>.  If the value of
+this slot is <em>not</em> a lens, the result is an empty Object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The data to query</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Additional subject for repeated application</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The value of the slot in a Maybe moand (<em>Nothing</em> if the slot is missing in <em>subject</em>)</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#Maybe">Maybe</a>.&lt;*></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getIterable"><span class="type-signature"></span>getIterable<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get an empty Array</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line278">line 278</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#getIterable">AbstractNFocal#getIterable</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Because an ObjectNFocal always gets an Object, there is no way to create
+an iterable value from the &quot;virtual slot&quot; it accesses.  Therefore, the
+result of the inherited implementation would always yield an empty Array
+and just returning that value is more efficient.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An empty array</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getting"><span class="type-signature"></span>getting<span class="signature">(subject, branches)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Conditionally evaluate functions depending on presence of slot</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line100">line 100</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Optic.html#getting">Optic#getting</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>The presence of the slot determines whether <em>branches.then</em> or <em>branches.else</em>
+is evaluated, with the result being returned from this method.  If the
+indicated property of <em>branches</em> is missing, then <code>undefined</code> is returned.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>branches</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>then</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function evaluated if slot is present in <em>subject</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>else</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function evaluated if slot is absent from <em>subject</em></p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The value computed by <em>branches.then</em> or <em>branches.else</em>, or <code>undefined</code></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="present"><span class="type-signature"></span>present<span class="signature">(subject)</span><span class="type-signature"> &rarr; {Array.&lt;(number|string)>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Test which constituent lenses are present in a subject</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#present">AbstractNFocal#present</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>AbstractNFocals never produce <code>undefined</code> from their implementation of <code>#get</code>;
+at very least they produce and empty Array or empty Object, both of which
+are truthy and Objects.  More helpfully, this method returns an Array of
+the keys/indexes in <em>this.lenses</em> where the slot of the corresponding lens
+is present in <em>subject</em>.  This result is also invariably truthy, just like
+the result of <code>#get</code> is invariably <em>not</em> <code>undefined</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The data to test</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Array of keys to <em>this.lenses</em> where the presence-test result corresponds to <em>this.lenses</em> by key/index</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;(number|string)></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setInClone"><span class="type-signature"></span>setInClone<span class="signature">(subject, newVals)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone <em>subject</em>, setting all values corresponding to elements of this multifocal within the clone</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#setInClone">AbstractNFocal#setInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="AbstractNFocal.html#xformInClone_maybe">AbstractNFocal#xformInClone_maybe</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Similar in concept to <a href="Lens.html#setInClone">Lens#setInClone</a>, this method creates a modified
+clone of <em>subject</em> such that applying this optic to the new value produces
+a value deep-equal to <em>newVals</em>.  Due to the multifocal nature, it is possible
+that no such result can be created, which results in a <a href="StereoscopyError.html">StereoscopyError</a>.</p>
+<p>The slot corresponding to any constituent lens whose name is left out of
+<em>newVals</em> will be deleted from the clone of <em>subject</em>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>newVals</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, *></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The new values corresponding to this multifocal's lenses</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc usertext">
+        <p>If this object's view of <em>subject</em> cannot become <em>newVals</em></p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl class="param-type">
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type"><a href="StereoscopyError.html">StereoscopyError</a></span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with <em>newVals</em> distributed via <em>this.lenses</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="thence"><span class="type-signature"></span>thence<span class="signature">(&hellip;key)</span><span class="type-signature"> &rarr; {<a href="Lens.html">Lens</a>|<a href="OpticArray.html">OpticArray</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Build a &quot;deeper&quot; lens/optic</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line412">line 412</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Optic.html#thence">Optic#thence</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This method creates a new Optic that looks at finer detail than the Optic
+on which it was called.  It either actually or effectively fuses a new
+<a href="Lens.html">Lens</a> to the right of this optic, as with <a href="module-natural-lenses.html#fuse">fuse</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A value to use in an application of subscripting (i.e. square bracket operator)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An Optic that fuses this optic with a Lens looking at finer detail</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Lens.html">Lens</a></span>
+|
+
+<span class="param-type"><a href="OpticArray.html">OpticArray</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformInClone"><span class="type-signature"></span>xformInClone<span class="signature">(subject, xformPairs, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Apply transforms to selected slots within this multifocal while making a clone</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#xformInClone">AbstractNFocal#xformInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>An element of <em>xformPairs</em> that targets a lens not existing in this object
+is a no-op.  Behavior for an <em>xformPairs</em> element targeting a non-existent
+slot in <em>subject</em> depends on <em>opts</em>.</p>
+<p>Transforms are applied in the order in which they occur in <em>xformPairs</em>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xformPairs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Iterable.&lt;<a href="AbstractNFocal.html#.TransformSpec">AbstractNFocal.TransformSpec</a>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Iterable of constituent lens key and transform function pairs to apply</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options for the constituent optic's <code>xformInClone</code> or a function taking the slot key and returning the options</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with the slots of this multifocal selected by <em>xformPairs</em> transformed according to the corresponding Function</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformInClone_maybe"><span class="type-signature"></span>xformInClone_maybe<span class="signature">(subject, xformPairs)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Apply transforms to selected slots (using a Maybe monad) within this multifocal while making a clone</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_nfocal.js.html">src/nfocal.js</a>, <a href="src_nfocal.js.html#line123">line 123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="AbstractNFocal.html#xformInClone_maybe">AbstractNFocal#xformInClone_maybe</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>An element of <em>xformPairs</em> that targets a lens not existing in this object
+is a no-op.  Any transform function called will be called with the slot
+value in a <a href="global.html#Maybe">Maybe</a> monad and the result expected to provide the new value
+in a <a href="global.html#Maybe">Maybe</a> monad: the Nothing construction (<code>{}</code>) will be passed if the
+slot does not exist in <em>subject</em> and return of the Nothing construct
+will cause the clone to omit the targeted slot.</p>
+<p>Transforms are applied in the order in which they occur in <em>xformPairs</em>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xformPairs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Iterable.&lt;<a href="AbstractNFocal.html#.TransformSpec">AbstractNFocal.TransformSpec</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Iterable of constituent lens key and transform function pairs to apply</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with the slots of this multifocal selected by keys in <em>xformPairs</em> transformed according to the corresponding Function</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformIterableInClone"><span class="type-signature"></span>xformIterableInClone<span class="signature">(subject, fn, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone the input, transforming the iterable value within this slot with a function</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line197">line 197</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Optic.html#xformIterableInClone">Optic#xformIterableInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If the slot does not exist within <em>subject</em>, <em>fn</em> is invoked on an empty
+Array.  If the slot within <em>subject</em> contains a non-iterable value, this
+method's behavior depends on <em>orThrow</em>.  If <em>orThrow</em> is <code>undefined</code>, the
+behavior is the same as if the slot did not exist: an empty Array is
+passed to <em>fn</em>.  If <em>orThrow</em> is not <code>undefined</code>, <em>orThrow</em> is thrown; if
+<em>orThrow</em> is an Object, its <code>noniterableValue</code> property will be set to the
+slot's value before being thrown.</p>
+<p>The primary differences between this method and <a href="Lens.html#xformInClone">Lens#xformInClone</a> are that
+this method always passes an iterable value to <em>fn</em> and always calls <em>fn</em>
+even if the slot is missing or does not contain an iterable value (unless
+<em>orThrow</em> is given).</p>
+<p>Strings, though iterable, are considered scalar values; if the targeted
+slot contains a string, the slot will be treated as non-iterable.</p>
+<p>&quot;Minimally changed&quot; means that reference-copies are used wherever possible
+while leaving <em>subject</em> unchanged, and that setting the slot to the strict-
+equal value it already has results in returning <em>subject</em>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function that transforms the (iterable) slot value</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the value of the slot exists but is not iterable</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of subject with the transformed value in this slot</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Sat Mar 26 2022 23:15:24 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>

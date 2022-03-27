@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Module: lens</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: lens</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>A Lens is a way to safely apply the indexing (i.e. square-bracket) operator
+repeatedly, and to clone-with-changes a complex value to assist programming
+in an immutable-data style.</p></div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nfocal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Construct a multifocal lens</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Factory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="Factory.html">Class</a> for customized lens creation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>JsContainerFactory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="JsContainerFactory.html">Class</a> for customized container creation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>jsContainers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="JsContainerFactory.html">JsContainerFactory</a> for standard JavaScript containers (Map and Array)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>polyfillImmutable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="global.html#polyfillImmutable">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Step</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="Step.html">Class</a> for customized Lens steps</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line5">line 5</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="~nfocal"><span class="type-signature">(inner) </span>nfocal<span class="type-signature"></span></h4>
+
+
+<p class="summary"><p>Construct a multifocal lens</p></p>
+
+
+
+<div class="description">
+    <p>Where a standard lens looks at a single <em>slot</em> within a JSONic object, a
+multifocal lens consists of multiple lenses (standard or multifocal) whose
+results are aggregated into a single value, which can be a dictionary-like
+Object or an Array.</p>
+<p>Pass an Array of lenses to create a multifocal lens that outputs an Array,
+where the position of each lens in the input Array corresponds to the
+output position of the data (when <em>getting</em> with the multifocal lens).  When
+<em>getting</em> in a Maybe context (<code>#get_maybe</code>), the result will always be an
+Object with a <code>just</code> property, though some elements of the Array may be
+empty.</p>
+<p>Pass an Object with lens values to create a multifocal lens outputting an
+Object, which will bear the same properties as the input Object and whose
+values are the values in the data referenced by the corresponding lens (when
+<em>getting</em> using this multifocal lens).</p>
+<p>Be aware that the <code>xformInClone</code> method on these kinds of multifocal lenses
+works differently on Object-based and Array-based multifocals, and both are
+different from a basic Lens.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lens.html">lens</a></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a></li><li><a href="ArrayNFocal.html">ArrayNFocal</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a></li><li><a href="Lens.html">Lens</a></li><li><a href="ObjectNFocal.html">ObjectNFocal</a></li><li><a href="Step.html">Step</a></li></ul><h3>Mixins</h3><ul><li><a href="EntriesMixin.html">EntriesMixin</a></li><li><a href="IndexableMixin.html">IndexableMixin</a></li></ul><h3>Global</h3><ul><li><a href="global.html#polyfillImmutable">polyfillImmutable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sun Feb 27 2022 16:00:22 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

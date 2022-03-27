@@ -1,0 +1,3520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Lens - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li></ul><h3>Interfaces</h3><ul><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Lens</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Lens
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="Lens"><span class="type-signature"></span>new Lens<span class="signature">(&hellip;key)</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary usertext"><p>Class for operating immutably on a specific &quot;slot&quot; in complex data</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>keys</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;*></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indexing/subscripting values to be applied successively to subjects of this lens</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>A Lens constructed as <code>let l = new Lens('address', 'street', 0)</code> represents
+a certain slot within a complex subject value.  If we had a record</p>
+<pre class="prettyprint source lang-js"><code>const record = {
+  address: {
+    street: [&quot;123 Somewhere Ln.&quot;, &quot;Apt. 42&quot;]
+  }
+};
+</code></pre>
+<p>then applying our lens with <code>l.get(record)</code> would evaluate to &quot;123 Somewhere Ln.&quot;.</p>
+<p><strong>NOTE:</strong> If a <em>key</em> of a Lens is a negative number and
+the container accessed at that level is an Array, the negtive index works
+like <code>Array.prototype.slice</code>, counting from the end of the Array.</p>
+<p>But Lenses offer more functionality than retrieval of values from a deeply
+structured value — they can create a minimally cloned value deeply equal
+to the subject but for the slot targeted by the lens and strictly equal
+but for the slot targeted by the lens and the nodes in the input subject
+traversed to reach that slot in the subject's tree.</p>
+<p>When constructing a modified clone, it is possible that some step of the
+Lens will target a slot within a container-not-existing-in-subject.  In this
+case, the container to be created is intuited from the key that would
+access it: an Array if the key is a number, otherwise an Object.  Alternative
+container construction can be specified via <a href="Factory.html">Factory</a> or <a href="Step.html">Step</a>.</p>
+<p>Typically, instances are constructed by calling the Function exported
+from <code>natural-lenses</code> (if <code>require</code>d) or its default export (if <code>import</code>ed),
+conventionally named <code>lens</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A value to use in an application of subscripting (i.e. square bracket operator)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="Optic.html">Optic</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".fuse"><span class="type-signature">(static) </span>fuse<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line334">line 334</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Combine the effects of multiple Lenses</p>
+<p>It is preferred to use <a href="module-natural-lenses.html#fuse">module:natural-lenses#fuse</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="binding"><span class="type-signature"></span>binding<span class="signature">(methodName, options)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+    <p class="summary usertext"><p>DRYly bind a Function to the Object from which it was obtained</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line287">line 287</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#binding">Optic#binding</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Lens.html#bound">Lens#bound</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This method is a way to avoid duplicating code referencing an object within
+<em>options.on</em> when 1) obtaining the reference to the method's function,
+and 2) binding that method to the object from which it was accessed.</p>
+<p>By default, the binding is lazy — the target of the lens within <em>on</em> is
+evaluated when the resulting Function is invoked (though <em>on</em> itself is
+bound in this call).  To bind the resulting Function to its target
+immediately when this method is called, set <em>options.bindNow</em> to <code>true</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>const data = {question: "What is the ultimate answer?"};
+const qStarts = lens('question').binding('startsWith', {on: data});
+qStarts('What') // => true
+data.question = "Why is a raven like a writing desk?";
+qStarts('What') // => false
+qStarts('Why') // => true</code></pre>
+
+    <pre class="prettyprint"><code>const data = {question: "What is the ultimate answer?"};
+const qStarts = lens('question').binding('startsWith', {on: data, bindNow: true});
+qStarts('What') // => true
+data.question = "Why is a raven like a writing desk?";
+qStarts('What') // => true (because qStarts bound to the target of the lens when `binding` was called)</code></pre>
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>methodName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">symbol</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>on</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The subject of the Function binding; becomes <em>this</em> for the result</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bindNow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Bind to the Optic's target within <em>on</em> rather than binding to <em>on</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the slot referenced does not contain a Function; has precedence over <em>or</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>or</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#FallbackBindingResult">FallbackBindingResult</a>, a Function to return if the slot referenced does not contain a Function</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Function binding the <em>methodName</em> of the target of this optic to the target of this optic</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="bound"><span class="type-signature"></span>bound<span class="signature">(subject, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {function}</span></h4>
+
+    
+    <p class="summary usertext"><p>DRYly bind a Function to the Object from which it was obtained</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line296">line 296</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Use this to avoid the dreaded Javascript binding repetition of
+<code>x.y.z.fn.bind(x.y.z)</code>.  Instead, use <code>lens('y', 'z', 'fn').bound(x)</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bindNow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Bind to the target of this lens with <em>subject</em> now rather than when the result function is invoked</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the slot referenced does not contain a Function; has precedence over <em>or</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>or</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="global.html#FallbackBindingResult">FallbackBindingResult</a>, a Function to return if the slot referenced does not contain a Function</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Function bound to the previous object in the chain used to access the Function</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(subject, &hellip;tail)</span><span class="type-signature"> &rarr; {*}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get the value of this slot within subject data</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#get">Optic#get</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If <em>tail</em> is given, then <code>#get()</code> is called on the result of getting this
+slot from <em>subject</em>, passing the spread of <em>tail</em>.  This eliminates
+repeated use of <code>.get</code> in code.  The chaining fails, returning <code>undefined</code>,
+if this slot in <em>subject</em> is not a lens-like object (as indicated by a truthy
+<code>lens.isLens</code> property).</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The data to query</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Additional subjects for repeated application</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The value of this slot, or <code>undefined</code> if this slot is not present in <em>subject</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get_maybe"><span class="type-signature"></span>get_maybe<span class="signature">(subject, &hellip;tail)</span><span class="type-signature"> &rarr; {<a href="global.html#Maybe">Maybe</a>.&lt;*>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get a combination of presence and value of this slot</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line106">line 106</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#get_maybe">Optic#get_maybe</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This implements the Maybe monad (familiar from Haskell), where Nothing is
+represented as an empty Object and Just is represented as an Object with a
+<code>just</code> property containing the value in the slot.</p>
+<p>If <em>tail</em> is given and getting this slot from from <em>subject</em> yields a
+Lens (as indicated by a truthy <code>lens.isLens</code> property), then <code>#get_maybe()</code>
+is called on that Lens, passing the spread of <em>tail</em>.  If the value of
+this slot is <em>not</em> a Lens, the result is an empty Object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The data to query</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Additional subject for repeated application</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Empty Object if this slot is not present in <em>subject</em>,
+otherwise Object with <code>just</code> property containing value of this slot in <em>subject</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#Maybe">Maybe</a>.&lt;*></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getIterable"><span class="type-signature"></span>getIterable<span class="signature">(subject, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Iterable.&lt;*>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Get the (iterable) value of this slot within some subject data</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line76">line 76</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#getIterable">Optic#getIterable</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If the slot does not exist within <em>subject</em>, this method returns an empty
+Array.  If the slot within <em>subject</em> contains a non-iterable value, this
+method's behavior depends on <em>orThrow</em>.  If <em>orThrow</em> is <code>undefined</code>, the
+behavior is the same as if the slot did not exist: an empty Array is
+returned.  If <em>orThrow</em> is not <code>undefined</code>, <em>orThrow</em> is thrown; if
+<em>orThrow</em> is an Object, its <code>noniterableValue</code> property will be set to the
+slot's value before being thrown.</p>
+<p>This method differs from <a href="Optic.html#get">Optic#get</a> in that the returned value will always
+be iterable; thus, the return value of this method may safely be passed
+into any function expecting an iterable value.  One example usage is
+constructing a <code>Seq</code> from the <code>immutable</code> package.</p>
+<p>Strings, though iterable, are considered scalar values; if the targeted
+slot contains a string, the slot will be treated as non-iterable.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The data to query</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the value of the slot exists but is not iterable</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An iterable of values from this slot (or an empty Array)</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Iterable.&lt;*></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getting"><span class="type-signature"></span>getting<span class="signature">(subject, branches)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Conditionally evaluate functions depending on presence of slot</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line100">line 100</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#getting">Optic#getting</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>The presence of the slot determines whether <em>branches.then</em> or <em>branches.else</em>
+is evaluated, with the result being returned from this method.  If the
+indicated property of <em>branches</em> is missing, then <code>undefined</code> is returned.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>branches</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>then</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function evaluated if slot is present in <em>subject</em></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>else</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function evaluated if slot is absent from <em>subject</em></p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The value computed by <em>branches.then</em> or <em>branches.else</em>, or <code>undefined</code></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="present"><span class="type-signature"></span>present<span class="signature">(subject)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+    <p class="summary usertext"><p>Test for the presence of this slot in subject data</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line111">line 111</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#present">Optic#present</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The data to test</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Whether this slot is present in <em>subject</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setInClone"><span class="type-signature"></span>setInClone<span class="signature">(subject, newVal)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone <em>subject</em>, setting the value of this slot within the clone</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#setInClone">Optic#setInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>&quot;Minimally changed&quot; means that reference-copies are used wherever possible
+while leaving subject unchanged, and that setting the slot to the strict-
+equal value it already has results in returning subject.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>newVal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The new value to inject into the slot identified by this lens</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with <em>newVal</em> in this slot</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="thence"><span class="type-signature"></span>thence<span class="signature">(&hellip;key)</span><span class="type-signature"> &rarr; {<a href="Lens.html">Lens</a>|<a href="OpticArray.html">OpticArray</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Build a &quot;deeper&quot; lens/optic</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line412">line 412</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#thence">Optic#thence</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This method creates a new Optic that looks at finer detail than the Optic
+on which it was called.  It either actually or effectively fuses a new
+<a href="Lens.html">Lens</a> to the right of this optic, as with <a href="module-natural-lenses.html#fuse">fuse</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A value to use in an application of subscripting (i.e. square bracket operator)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An Optic that fuses this optic with a Lens looking at finer detail</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Lens.html">Lens</a></span>
+|
+
+<span class="param-type"><a href="OpticArray.html">OpticArray</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformInClone"><span class="type-signature"></span>xformInClone<span class="signature">(subject, fn, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone the input, transforming the value within this slot with a function</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line181">line 181</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#xformInClone">Optic#xformInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If this slot is missing in subject, fn will not be called unless <em>addMissing</em>
+is true, in which case fn will be called with undefined.</p>
+<p>&quot;Minimally changed&quot; means that reference-copies are used wherever possible
+while leaving subject unchanged, and that setting the slot to the strict-
+equal value it already has results in returning subject.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function that transforms the slot value</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>addMissinng</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to add the slot if missing in subject</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with <em>fn</em> applied to the value in this slot</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformInClone_maybe"><span class="type-signature"></span>xformInClone_maybe<span class="signature">(subject, fn)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone the input, transforming or deleting the Maybe value of this slot with a function</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_lens.js.html">src/lens.js</a>, <a href="src_lens.js.html#line238">line 238</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#xformInClone_maybe">Optic#xformInClone_maybe</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>The value given to <em>fn</em> will be the result of <a href="Lens.html#get_maybe">Lens#get_maybe</a>, which
+indicates absence of this slot in <em>subject</em> by omitting the <code>just</code> property,
+which otherwise contains the value of this slot in <em>subject</em>.  The value
+returned by <em>fn</em> is the result that should be returned by calling
+<a href="Lens.html#get_maybe">Lens#get_maybe</a> of this slot on the modified clone: if no <code>just</code>
+property is returned by <em>fn</em>, the slot is deleted from the clone, and
+the value of the <code>just</code> property is otherwise set for this slot in the
+clone.</p>
+<p>This implements what would, in Haskell, be described as:</p>
+<p>Json -&gt; (Maybe Json -&gt; Maybe Json) -&gt; Json</p>
+<p>&quot;Minimally changed&quot; means that reference-copies are used wherever possible
+while leaving subject unchanged, and that setting the slot to the strict-
+equal value it already has results in returning subject.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The function transforming the <a href="global.html#Maybe">Maybe</a> value of the slot</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of <em>subject</em> with this slot transformed per <em>fn</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="xformIterableInClone"><span class="type-signature"></span>xformIterableInClone<span class="signature">(subject, fn, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Clone the input, transforming the iterable value within this slot with a function</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_optic.js.html">src/optic.js</a>, <a href="src_optic.js.html#line197">line 197</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Optic.html#xformIterableInClone">Optic#xformIterableInClone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>If the slot does not exist within <em>subject</em>, <em>fn</em> is invoked on an empty
+Array.  If the slot within <em>subject</em> contains a non-iterable value, this
+method's behavior depends on <em>orThrow</em>.  If <em>orThrow</em> is <code>undefined</code>, the
+behavior is the same as if the slot did not exist: an empty Array is
+passed to <em>fn</em>.  If <em>orThrow</em> is not <code>undefined</code>, <em>orThrow</em> is thrown; if
+<em>orThrow</em> is an Object, its <code>noniterableValue</code> property will be set to the
+slot's value before being thrown.</p>
+<p>The primary differences between this method and <a href="Lens.html#xformInClone">Lens#xformInClone</a> are that
+this method always passes an iterable value to <em>fn</em> and always calls <em>fn</em>
+even if the slot is missing or does not contain an iterable value (unless
+<em>orThrow</em> is given).</p>
+<p>Strings, though iterable, are considered scalar values; if the targeted
+slot contains a string, the slot will be treated as non-iterable.</p>
+<p>&quot;Minimally changed&quot; means that reference-copies are used wherever possible
+while leaving <em>subject</em> unchanged, and that setting the slot to the strict-
+equal value it already has results in returning <em>subject</em>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">T</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input structured data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function that transforms the (iterable) slot value</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>orThrow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p><a href="global.html#OptionalThrow">OptionalThrow</a> if the value of the slot exists but is not iterable</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A minimally changed clone of subject with the transformed value in this slot</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Sat Mar 26 2022 23:15:24 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: nfocal.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: nfocal.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  each as _each, identity, isArray, isFunction, map as _map, mapObject,
+  reduce as _reduce, reduceRight
+} from 'underscore';
+import BinderMixin from './binder_mixin.js';
+import { at_maybe, cloneImpl, isLensClass } from '../src-cjs/constants.js';
+import { index_maybe, isLens, lensCap } from './utils.js';
+
+/**
+ * @summary Abstract base class for multifocal (i.e. n-focal) optics
+ */
+export class AbstractNFocal {
+  [isLensClass] = true;
+
+  constructor(lenses) {
+    this.lenses = lenses;
+  }
+
+  [at_maybe](idx) {
+    return index_maybe(this.lenses, idx);
+  }
+  
+  [cloneImpl](alteration) {
+    const lenses = this.lenses[cloneImpl](alteration);
+    return makeNFocal(lenses);
+  }
+
+  present(subject) {
+    return _reduce(
+      this.lenses,
+      (found, lens, idx) => lens.present(subject) ? found.concat(idx) : found,
+      []
+    );
+  }
+  
+  /**
+   * @typedef {Array} AbstractNFocal.TransformSpec
+   * @property            0 - lens index/key
+   * @property {Function} 1 - transform function to apply
+   *
+   * @description
+   * Indicates a transform Function and the index/key of the Lens identifying
+   * the slot over which to apply the transform.
+   */
+
+  /**
+   * @summary Apply a different transform to each slot selected by this multifocal while making a clone
+   * @param                                           subject     The input structured data
+   * @param {Iterable&lt;AbstractNFocal.TransformSpec>}  xformArray  Iterable of lens key and transform function pairs to apply
+   * @param {(Function|Object)}                       opts        Options for {@link Lens#xformInClone} or a function taking the slot key and returning the options
+   * @return A minimally changed clone of *subject* with the slots selected by this multifocal transformed according to the corresponding element of *fns*
+   */
+  xformInClone(subject, xformArray, opts = {}) {
+    if (!isFunction(opts)) {
+      opts = identity.bind(null, opts);
+    }
+    return _reduce(
+      xformArray,
+      (cur, [key, xform]) => {
+        const lens = this.lenses[key];
+        return lens ? lens.xformInClone(cur, xform, opts(key)) : cur;
+      },
+      subject
+    );
+  }
+
+  xformInClone_maybe(subject, xformArray) {
+    return _reduce(
+      xformArray,
+      (cur, [key, xform]) => {
+        const lens = this.lenses[key];
+        return lens ? lens.xformInClone_maybe(cur, xform) : cur;
+      },
+      subject
+    );
+  }
+}
+Object.assign(AbstractNFocal.prototype, BinderMixin);
+
+/**
+ * @summary Multifocal (i.e. n-focal) building an Array
+ */
+export class ArrayNFocal extends AbstractNFocal {
+  get(subject, ...tail) {
+    const subjResult = this.get_maybe(subject).just;
+    if (tail.length > 0) {
+      return new ArrayNFocal(
+        _map(subjResult, l => isLens(l) ? l : lensCap)
+      ).get(...tail);
+    }
+    return subjResult;
+  }
+
+  get_maybe(subject, ...tail) {
+    const subjResult = new Array(this.lenses.length);
+    for (var i = 0; i &lt; this.lenses.length; i++) {
+      const iVal_maybe = this.lenses[i].get_maybe(subject);
+      if ('just' in iVal_maybe) {
+        subjResult[i] = iVal_maybe.just;
+      }
+    }
+    if (tail.length > 0) {
+      return new ArrayNFocal(
+        _map(subjResult, r => isLens(r.just) ? r.just : lensCap)
+      ).get_maybe(...tail);
+    } else {
+      return {just: subjResult, multiFocal: true};
+    }
+  }
+}
+
+/**
+ * @summary Multifocal (i.e. n-focal) building an Object
+ */
+export class ObjectNFocal extends AbstractNFocal {
+  get(subject, ...tail) {
+    const subjResult = {};
+    _each(this.lenses, (lens, prop) => {
+      const propVal_maybe = lens.get_maybe(subject);
+      if ('just' in propVal_maybe) {
+        subjResult[prop] = propVal_maybe.just;
+      }
+    });
+    if (tail.length > 0) {
+      return new ObjectNFocal(
+        mapObject(subjResult, l => isLens(l) ? l : lensCap)
+      ).get(...tail);
+    }
+    return subjResult;
+  }
+
+  get_maybe(subject, ...tail) {
+    const subjResult = this.get(subject);
+    if (tail.length > 0) {
+      return new ObjectNFocal(
+        mapObject(subjResult, r => isLens(r.just) ? r.just : lensCap)
+      ).get_maybe(...tail);
+    }
+    return {just: subjResult, multiFocal: true};
+  }
+}
+
+export function makeNFocal(lenses) {
+  return new (isArray(lenses) ? ArrayNFocal : ObjectNFocal)(lenses);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a></li><li><a href="ArrayNFocal.html">ArrayNFocal</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a></li><li><a href="Lens.html">Lens</a></li><li><a href="ObjectNFocal.html">ObjectNFocal</a></li><li><a href="Step.html">Step</a></li></ul><h3>Mixins</h3><ul><li><a href="EntriesMixin.html">EntriesMixin</a></li><li><a href="IndexableMixin.html">IndexableMixin</a></li></ul><h3>Global</h3><ul><li><a href="global.html#polyfillImmutable">polyfillImmutable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sun Feb 27 2022 15:59:36 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
