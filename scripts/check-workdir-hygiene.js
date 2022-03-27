@@ -72,12 +72,29 @@ async function isLocal() {
 const branchOfCurrentVersion = (function() {
   const version = process.env.npm_package_version;
   const branch = 'version/' + version.replace(/\..*/, '.x');
-  return `origin/${branch}`;
+  return branch;
 }());
 
 async function isOffVersionBranch() {
+  let { repository } = require('../package.json');
+  if (repository.type !== 'git') {
+    return true; // This function is very broken if git is not the VCS for this library
+  }
+  if (repository.url.startsWith('git+')) {
+    repository = {
+      ...repository,
+      url: repository.url.slice(4),
+    };
+  }
+  const remoteRef = (await gitOutput(
+    ['ls-remote', repository.url, `refs/heads/${branchOfCurrentVersion}`]
+  )).trim();
+  if (!remoteRef) {
+    return true;
+  }
+  const [ remoteVerBranchHash ] = remoteRef.split('\t');
   const logOutput = await gitOutput(
-    ['log', '-n1', '--oneline', `${branchOfCurrentVersion}..HEAD`]
+    ['log', '-n1', '--oneline', `${remoteVerBranchHash}..HEAD`]
   );
   return !!logOutput;
 }
@@ -98,7 +115,7 @@ async function main() {
     check(isDirty, "Working tree has local modifications or untracked files."),
     // check(isLocal, "HEAD commit has not been published to a remote."),
     check(isOffVersionBranch,
-      `HEAD (version ${pkgVer}) is not in '${branchOfCurrentVersion}'.`),
+      `HEAD (version ${pkgVer}) is not in '${branchOfCurrentVersion}' of project repository.`),
   ];
   await Promise.all(tasks);
   process.exitCode = (errors > 0) ? 1 : 0;
