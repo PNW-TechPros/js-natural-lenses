@@ -1,5 +1,9 @@
 const { spawn } = require('child_process');
 const { Mutex } = require('async-mutex');
+const fse = require('fs-extra');
+
+const CI_HOST = 'github.com';
+const CI_WORKFLOW = 'ci-tests.yml';
 
 function progName(base) {
   return (process.platform === 'win32') ? `${base}.exe` : base;
@@ -75,16 +79,24 @@ const branchOfCurrentVersion = (function() {
   return branch;
 }());
 
-async function isOffVersionBranch() {
+function getRepositoryInfo() {
   let { repository } = require('../package.json');
   if (repository.type !== 'git') {
-    return true; // This function is very broken if git is not the VCS for this library
+    return { type: repository.type };
   }
   if (repository.url.startsWith('git+')) {
     repository = {
       ...repository,
       url: repository.url.slice(4),
     };
+  }
+  return repository;
+}
+
+async function isOffVersionBranch() {
+  const repository = getRepositoryInfo();
+  if (repository.type !== 'git') {
+    return true; // This function is very broken if git is not the VCS for this library
   }
   const remoteRef = (await gitOutput(
     ['ls-remote', repository.url, `refs/heads/${branchOfCurrentVersion}`]
@@ -97,6 +109,38 @@ async function isOffVersionBranch() {
     ['log', '-n1', '--oneline', `${remoteVerBranchHash}..HEAD`]
   );
   return !!logOutput;
+}
+
+const urlPattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&/=]*[-a-zA-Z0-9(@:%_\+.~#?&/=])?/;
+
+function ensureGlobalFlag(flags) {
+  return flags.includes('g') ? flags : flags + 'g';
+}
+
+async function isWrongCIBadge() {
+  const readme = await fse.readFile('README.md', 'utf8'),
+    repository = getRepositoryInfo();
+  if (!repository.url) {
+    return true;
+  }
+  const repoMatch = /^(?:git\+)?https:\/\/github.com\/([a-zA-Z0-9.-]+\/[a-zA-Z0-9.-]+)$/.exec(repository.url);
+  if (!repoMatch) {
+    return true;
+  }
+  const accountAndRepo = (function() {
+    const captured = repoMatch[1];
+    return captured.endsWith('.git') ? captured.slice(0, -4) : captured;
+  }());
+  const readmeUrls = readme.match(
+    new RegExp(urlPattern.source, ensureGlobalFlag(urlPattern.flags))
+  );
+  return !readmeUrls.some(url => {
+    url = new URL(url);
+    if (url.host !== CI_HOST) return false;
+    if (url.pathname !== `/${accountAndRepo}/actions/workflows/${CI_WORKFLOW}/badge.svg`) return false;
+    if (url.searchParams.get('branch') !== branchOfCurrentVersion) return false;
+    return true;
+  })
 }
 
 async function main() {
@@ -116,6 +160,7 @@ async function main() {
     // check(isLocal, "HEAD commit has not been published to a remote."),
     check(isOffVersionBranch,
       `HEAD (version ${pkgVer}) is not in '${branchOfCurrentVersion}' of project repository.`),
+    check(isWrongCIBadge, `README.md uses the wrong branch for the CI badge.`),
   ];
   await Promise.all(tasks);
   process.exitCode = (errors > 0) ? 1 : 0;
