@@ -26,7 +26,7 @@ export function makeExports({fuse, isLens, lens}) {
       if (isArray(rawPlan)) {
         const result = this.makeLens(...this.keys);
         if (rawPlan.length > 1) {
-          throw new Error("Multiple plans for Array items");
+          throw new Error(`Multiple plans for Array items at ${keyDesc(this.keys)}`);
         } else if (rawPlan.length) {
           result.$item = new PlanBuilder([], this.options).buildPlan(rawPlan[0]);
           Object.assign(result, this.indexableMixin(result.$item));
@@ -76,7 +76,7 @@ export function makeExports({fuse, isLens, lens}) {
       } else if (rawPlan === value) {
         return this.makeLens(...this.keys);
       } else {
-        throw new Error("Invalid item in plan");
+        throw new Error(`Invalid item in plan at ${keyDesc(this.keys)}`)
       }
     }
     
@@ -593,4 +593,18 @@ function entryValueXform({ valueModifier, explicitKeys }) {
     }
     return sameValues ? container : result;
   };
+}
+
+function keyDesc(keys) {
+  const items = keys.map(k => {
+    switch (typeof k) {
+      case 'string':
+      case 'number':
+        return JSON.stringify(k);
+      case 'object':
+        return `[object ${k.constructor.name}]`;
+    }
+    return '' + k;
+  });
+  return `[${items.join(', ')}]`;
 }

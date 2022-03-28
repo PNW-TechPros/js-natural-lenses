@@ -139,6 +139,12 @@ function testSequence(loaderName, subjects) {
           }));
         });
         
+        it("can be constructed with the bare NAMED_VALUES (not called)", () => {
+          datumPlan(({ NAMED_VALUES }) => ({
+            plugins: NAMED_VALUES,
+          }));
+        });
+        
         it("accepts a spec defining 'keys'", () => {
           const plan = datumPlan(({ VALUE }) => ({
             account: {
