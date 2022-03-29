@@ -139,6 +139,15 @@ function testSequence(loaderName, subjects) {
           }));
         });
         
+        it("can be constructed with the bare NAMED_VALUES (not called)", () => {
+          const plan = datumPlan(({ NAMED_VALUES }) => ({
+            plugins: NAMED_VALUES,
+            explicit: {[datumPlan.others]: datumPlan.value},
+          }));
+          
+          assert.sameMembers(Object.keys(plan.plugins), Object.keys(plan.explicit));
+        });
+        
         it("accepts a spec defining 'keys'", () => {
           const plan = datumPlan(({ VALUE }) => ({
             account: {
