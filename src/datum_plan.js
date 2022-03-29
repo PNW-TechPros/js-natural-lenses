@@ -11,6 +11,11 @@ export function makeExports({fuse, isLens, lens}) {
   
   const GuardedLensHandlers = {};
 
+  const NAMED_VALUES = Object.assign(
+    (spec) => ({[others]: spec}),
+    {[others]: value}
+  );
+  
   class PlanBuilder {
     constructor(keys = [], options = {}) {
       this.keys = keys;
@@ -32,7 +37,7 @@ export function makeExports({fuse, isLens, lens}) {
           Object.assign(result, this.indexableMixin(result.$item));
         }
         return result;
-      } else if (rawPlan.constructor === Object) {
+      } else if (rawPlan.constructor === Object || rawPlan === NAMED_VALUES) {
         const result = this.makeLens(...this.keys);
         const theseKeys = this.keys;
         try {
@@ -536,10 +541,7 @@ export function makeExports({fuse, isLens, lens}) {
       rawPlan = rawPlan.call(undefined, {
         VALUE: value,
         RAW: raw,
-        NAMED_VALUES: Object.assign(
-          (spec) => ({[others]: spec}),
-          {[others]: value}
-        ),
+        NAMED_VALUES,
       });
     }
     return new PlanBuilder([], { planGroup }).buildPlan(rawPlan);
