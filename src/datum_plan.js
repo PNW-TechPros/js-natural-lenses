@@ -27,6 +27,10 @@ export function makeExports({fuse, isLens, lens}) {
       return this.options.planGroup && guardedGroups.has(this.options.planGroup);
     }
     
+    get podInput() {
+      return this.options.podInput;
+    }
+    
     buildPlan(rawPlan) {
       if (isArray(rawPlan)) {
         const result = this.makeLens(...this.keys);
@@ -78,7 +82,7 @@ export function makeExports({fuse, isLens, lens}) {
           this.keys = theseKeys;
         }
         return result;
-      } else if (rawPlan === value) {
+      } else if (rawPlan === value || this.podInput) {
         return this.makeLens(...this.keys);
       } else {
         throw new Error(`Invalid item in plan at ${keyDesc(this.keys)}`)
@@ -485,6 +489,14 @@ export function makeExports({fuse, isLens, lens}) {
     });
   };
   
+  function makeDatumPlanDSL() {
+    return {
+      VALUE: value,
+      RAW: raw,
+      NAMED_VALUES,
+    }
+  }
+  
   /**
    * @module natural-lenses/datum-plan
    * @summary Construct a structure of [Lenses]{@link Lens} for accessing a structure by example
@@ -538,22 +550,57 @@ export function makeExports({fuse, isLens, lens}) {
    */
   function makeDatumPlan(rawPlan, { planGroup } = {}) {
     if (isFunction(rawPlan)) {
-      rawPlan = rawPlan.call(undefined, {
-        VALUE: value,
-        RAW: raw,
-        NAMED_VALUES,
-      });
+      rawPlan = rawPlan.call(undefined, makeDatumPlanDSL());
     }
     return new PlanBuilder([], { planGroup }).buildPlan(rawPlan);
   }
   Object.assign(makeDatumPlan, {
-    value,
+    fromPOD,
     others,
     raw,
+    value,
   });
   Object.defineProperties(makeDatumPlan, {
     guardedGroups: {value: guardedGroups},
   });
+  
+  function fromPOD(rawPlan, { tweaks = [], planGroup } = {}) {
+    if (isFunction(tweaks)) {
+      tweaks = tweaks.call(undefined, {
+        ...makeDatumPlanDSL(),
+        lens,
+        access: {
+          VALUE(...keys) {
+            const base = plan => lens(...keys).setInClone(plan, value);
+            base.plan = valuePlan => plan => lens(...keys).setInClone(plan, valuePlan);
+            return base;
+          },
+          
+          ITEMS(...keys) {
+            const base = plan => lens(...keys).setInClone(plan, []);
+            base.plan = itemPlan => plan => lens(...keys).setInClone(plan, [itemPlan]);
+            return base;
+          },
+          
+          NAMED_ENTRIES(...keys) {
+            const base = plan => lens(...keys).setInClone(plan, {[others]: value});
+            base.plan = itemPlan => plan => lens(...keys).setInClone(plan, {[others]: itemPlan});
+            return base;
+          },
+          
+          NAMED_ENTRIES_ALSO(...keys) {
+            const base = plan => lens(...keys, others).setInClone(plan, value);
+            base.plan = itemPlan => plan => lens(...keys, others).setInClone(plan, itemPlan);
+            return base;
+          },
+        },
+      });
+    }
+    for (const tweak of tweaks) {
+      rawPlan = tweak.call(undefined, rawPlan);
+    }
+    return new PlanBuilder([], { planGroup, podInput: true }).buildPlan(rawPlan);
+  }
   
   return makeDatumPlan;
 }
