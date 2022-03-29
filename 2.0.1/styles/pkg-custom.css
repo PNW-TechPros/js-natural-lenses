@@ -1,0 +1,8 @@
+nav h2 a.version-select {
+  padding-left: 20px;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-left-color: rgb(216, 220, 223);
+  font-size: 12px;
+  color: rgb(152, 153, 154) !important;
+}

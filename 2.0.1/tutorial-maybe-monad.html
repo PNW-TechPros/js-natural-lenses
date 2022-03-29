@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Tutorial: The Maybe Monad - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li></ul><h3>Interfaces</h3><ul><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Tutorial: The Maybe Monad</h1>
+    
+
+    <section>
+
+<header>
+    
+
+    <h2>The Maybe Monad</h2>
+</header>
+
+<article>
+    <p>Code using lenses may want to vary actions depending on whether a given slot is present in the input JSON, using the value of the slot if it is present.  This condition of &quot;presence plus the value present&quot; or &quot;no value present&quot; is an instance of the <em>Maybe monad</em>.</p>
+<p>While JavaScript provides the <code>undefined</code> value as a way to indicate lack-of-value in much the way the Maybe monad's Nothing does, the former lacks the ability to nest the indication.  Often, the results of &quot;the location in which I was instructed to look for a value didn't exist&quot; and &quot;the value <code>undefined</code> was stored in the location I found&quot; are both indistinguishably <code>undefined</code>.  <a href="global.html#Maybe">Maybe</a> solves this problem by being nestable.</p>
+<p>This package always represents a value of the Maybe monad as an Object.  The <em>Just</em> construction is an Object with a <code>just</code> property (test with <code>'just' in maybeVal</code>) associated with the contained value, where <em>Nothing</em> is just an empty Object.  Methods in this package which represent slot values within subject data embedded in a <a href="global.html#Maybe">Maybe</a> have names suffixed with <code>_maybe</code>.</p>
+<p>There is one wrinkle here that shows up with Array multifocal lenses: Array multifocals <em>definitely</em> return an Array when <em>getting</em>, so in a <a href="global.html#Maybe">Maybe</a> monad, they always return <code>{just: [...]}</code>; missing elements are represented as <em>empty</em> cells of the Array (i.e. <code>n in maybe_result.just</code> returns <code>false</code> for index <code>n</code> of the element that would be <em>Nothing</em>).  Care must be used when iterating such an Array, as ES6 <code>for...of</code> and some libraries treat all indexes from 0 to <code>maybe_result.just.length - 1</code> as present.  <a href="module-natural-lenses.html#eachFound"><code>lens.eachFound</code></a> is available for iteration of this kind of sparse Array, where the iterator yields a two-element Array of each found value and the index for the lens which found it in the sparse array.</p>
+<pre class="prettyprint source lang-js"><code>const lens = require('natural-lenses');
+const data = {name: &quot;Fred Flintstone&quot;, phone: &quot;+15077392058&quot;};
+
+const arrayNfocal = lens.nfocal([lens('name'), lens('phone')]);
+for (let [value, index] of lens.eachFound(arrayNfocal.get_maybe(data))) {
+  console.log({[index]: value});
+  // Will log:
+  //   {'0': 'Fred Flintstone'}
+  //   {'1': '+15077392058'}
+}
+
+const objectNfocal = lens.nfocal({nombre: lens('name'), &quot;teléfono&quot;: lens('phone')});
+for (let [value, key] of lens.eachFound(objectNfocal.get_maybe(data))) {
+  console.log({[key]: value});
+  // Will log (though order may differ):
+  //   {'nombre': 'Fred Flintstone'}
+  //   {'teléfono': '+15077392058'}
+}
+</code></pre>
+<p><a href="module-natural-lenses.html#eachFound"><code>lens.eachFound</code></a> also has the effect — on <a href="global.html#Maybe">Maybe</a> values not arising from multifocals — of converting to a JavaScript iterable: yielding no items for <em>Nothing</em> or the single value of the <em>Just</em>, which simplifies coding &quot;do something if the value is present&quot; logic:</p>
+<pre class="prettyprint source lang-js"><code>const data = {name: &quot;Fred Flintstone&quot;, phone: &quot;+15077392058&quot;};
+for (let value of lens.eachFound(lens('phone').get_maybe(data))) {
+  // Do something with &quot;value&quot;
+}
+</code></pre>
+<p>However, this same functionality is more conveniently wrapped up in <a href="Optic.html#getting">Optic#getting</a>, with the added ability to take action or compute a value when the slot is absent:</p>
+<pre class="prettyprint source lang-js"><code>const data = {name: &quot;Fred Flintstone&quot;, phone: &quot;+15077392058&quot;};
+lens('phone').getting(data, {
+  then: value => {
+    // Do something with &quot;value&quot;
+  },
+  else: () => {
+    // Do something if not present
+  }
+});
+</code></pre>
+<p>Another way to write the previous example is with the exported <a href="module-natural-lenses.html#maybeDo"><code>lens.maybeDo</code></a> function:</p>
+<pre class="prettyprint source lang-js"><code>const data = {name: &quot;Fred Flintstone&quot;, phone: &quot;+15077392058&quot;};
+const result = lens.maybeDo(
+  lens('phone').get_maybe(data),
+  localeFormattedPhoneNumber,
+  () => &quot;&lt;none given>&quot; // Optional to pass, default produces undefined
+);
+</code></pre>
+</article>
+
+</section>
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Mon Mar 28 2022 21:25:49 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>
