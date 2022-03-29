@@ -1,7 +1,7 @@
 const git = require('./git.js');
 
 async function main() {
-  await git(['push', 'origin', 'docs-next:docs']);
+  console.log(await git(['push', 'origin', 'docs-next:docs']));
 }
 
 Object.assign(exports, {

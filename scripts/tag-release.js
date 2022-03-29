@@ -84,7 +84,7 @@ async function main() {
     const localTagResolution = (await gitOutput(
       ['rev-parse', `refs/tags/${tagname}`]
     )).trim();
-    wasPublished = mainRepoVerification.split('\t') === localTagResolution;
+    wasPublished = mainRepoVerification.split('\t')[0] === localTagResolution;
   }
   if (wasPublished) {
     console.log(`Tag '${tagname}' published.`)
