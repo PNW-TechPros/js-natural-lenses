@@ -850,6 +850,59 @@ function testSequence(loaderName, subjects) {
         });
       });
     });
+    
+    describe('lens.DatumPlan.fromPOD', () => {
+      const data = {
+        "name": "natural-lenses",
+        "version": "2.0.0",
+        "description": "A JavaScript-native lens (and ancillary optics) system loosely based on Kmett-style lenses.",
+        "type": "commonjs",
+        "main": "./index",
+        "module": "index.mjs",
+        "exports": {
+          ".": {
+            "import": "./index.mjs",
+            "require": "./index.js"
+          },
+          "./*": {
+            "import": "./*.mjs",
+            "require": "./*.js"
+          }
+        },
+        "sideEffects": [
+          "./src/stdlib_support/*.js",
+          "./src/immutable.js"
+        ],
+      };
+      
+      const tweaks = ({ access, VALUE }) => [
+        access.NAMED_ENTRIES('exports').plan({
+          import: VALUE,
+          require: VALUE,
+        }),
+        access.ITEMS('sideEffects'),
+      ];
+      
+      const entriesMixinMethods = ['at', 'mapInside', 'mapAllInside'];
+      
+      it('constructs', () => {
+        const plan = datumPlan.fromPOD(data, { tweaks });
+        assert.containsAllKeys(plan.exports, entriesMixinMethods);
+      });
+      
+      it('throws if an array has more than one entry', () => {
+        assert.throws(() => datumPlan.fromPOD(data, {
+            tweaks: (DSL) => tweaks(DSL).slice(0, -1),
+        }));
+      });
+      
+      it('constructs Lens without EntriesMixin unless specified', () => {
+        const plan = datumPlan.fromPOD(data, {
+          tweaks: (DSL) => tweaks(DSL).slice(1),
+        });
+        assert.doesNotHaveAnyKeys(plan.exports, entriesMixinMethods);
+      });
+    });
   });
 }
 
