@@ -902,6 +902,65 @@ function testSequence(loaderName, subjects) {
         });
         assert.doesNotHaveAnyKeys(plan.exports, entriesMixinMethods);
       });
+      
+      // Coverage tests
+      describe('tweaks', () => {
+        function tweaksPlus(fn) {
+          return (DSL) => tweaks(DSL).concat([fn(DSL)]);
+        }
+        
+        it('access.VALUE()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            // tweaks: (DSL) => {
+            //   const { access } = DSL;
+            //   return tweaks(DSL).concat([
+            //     access.VALUE('name'),
+            //   ]);
+            // },
+            tweaks: tweaksPlus(({ access }) => access.VALUE('name')),
+          });
+        });
+        
+        it('access.VALUE().plan()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            tweaks: tweaksPlus(({ access, VALUE }) => access.VALUE('name').plan({
+              first: VALUE, last: VALUE
+            })),
+          });
+        });
+        
+        it('access.ITEMS().plan()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            tweaks: tweaksPlus(({ access, VALUE }) => access.ITEMS('sideEffects').plan({
+              base: VALUE,
+              ref: VALUE,
+            })),
+          });
+        });
+        
+        it('access.NAMED_ENTRIES()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            tweaks: tweaksPlus(({ access, VALUE }) => access.NAMED_ENTRIES('exports')),
+          })
+        });
+        
+        it('access.NAMED_ENTRIES_ALSO()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            tweaks: tweaksPlus(({ access, VALUE }) => access.NAMED_ENTRIES_ALSO()),
+          });
+        });
+        
+        it('access.NAMED_ENTRIES_ALSO().plan()', () => {
+          const plan = datumPlan.fromPOD(data, {
+            tweaks: tweaksPlus(({ access, VALUE }) =>
+              access.NAMED_ENTRIES_ALSO().plan({
+                tag: VALUE,
+                value: VALUE,
+              })
+            ),
+          });
+        });
+      });
     });
   });
 }
