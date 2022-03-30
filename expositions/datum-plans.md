@@ -16,7 +16,7 @@ The JSONizable value passed to the datum plan construction function has a few qu
 * Objects intended to be used (at least partially) as a dictionary-like collection have a special property name to specify, which is given by `datumPlan.others`.
 * When the plan gets to a "leaf node" (the position within the target documents of an item whose structure is not of interest to the datum plan), use `datumPlan.value` to indicate the tip of the access pathway.
 
-The construction function (`datumPlan`) can also accept a Function that returns the POD spec described above.  If such a function is given, it is passed a [DSL]{@link DatumPlan_DSL} object, making generation of the plan spec more concise.
+The construction function (`datumPlan`) can also accept a Function that returns the POD spec described above.  If such a function is given, it is passed a [DSL]{@link DatumPlan_Dsl} object, making generation of the plan spec more concise.
 
 Let's use as an example a partial plan for an NPM `package.json` file:
 
@@ -201,6 +201,64 @@ const plan = datumPlan(({ VALUE, RAW }) => ({
 * `plan.name` will use the definition under `RAW`, with `first` and `last` properties.
 * `plan._keys` is a {@link Lens} with keys `['_keys']` (i.e. the definition spec'd for `_keys` is used).  Because it does not conflict with any normal {@link Lens} property, it has priority for the `_keys` property.
 * `plan.__keys` is a {@link Lens} with keys `['keys']`.  `keys` is a critical property for all [Lenses]{@link Lens} and `_keys` was already claimed by a non-conflicting property.
+
+### Plans from Plain Ol' Data (POD) Values
+
+In many places, JavaScript data comes down to Arrays, Objects, and scalar values (numbers, Boolean values, null, and strings).  All of these data types are conveniently serializable to JSON.  Such values are frequently used — as with Redux — to store complex state.  A particular instance of a POD value having approximately the datum shape desired for a datum plan is often available, perhaps as an initial value.  However, the initial, POD value may not be as detailed as desired or it may contain information that creates ambiguity when generating a datum plan.  And the actual initial value will not have the special datum plan terminal value marker (currently `"$"`) but will instead use arbitrary scalar values.
+
+For cases like these, this package provides `datumPlan.fromPOD()`, a function that solves all three problems:
+
+* Ambiguous or missing item spec in an Array not of length 1.
+* Missing specification for omitted keys.
+* Liberally accepting any scalar value as terminating a lensing branch.
+
+```js
+// Borrowed from https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-the-state-structure
+const todoAppInitialState = {
+  todos: [
+    { id: 0, text: 'Learn React', completed: true },
+    { id: 1, text: 'Learn Redux', completed: false, color: 'purple' },
+    { id: 2, text: 'Build something fun!', completed: false, color: 'blue' }
+  ],
+  filters: {
+    status: 'Active',
+    colors: ['red', 'blue']
+  }
+};
+
+const plan = datumPlan.fromPOD(todoAppInitialState, {
+  tweaks: (({ access, VALUE }) => [
+    access.ITEMS('todos').plan({
+      id: VALUE,
+      text: VALUE,
+      completed: VALUE,
+      color: VALUE,
+    }),
+    access.ITEMS('filters', 'colors'),
+  ]),
+});
+```
+
+The two `access.ITEMS` tweaks are necessary because, in both cases, the Arrays have more than one element, creating the potential for ambiguous structure among the Array items.
+
+This is equivalent to building the following datum plan:
+
+```js
+const equivPlan = datumPlan(({ VALUE } => ({
+  todos: [{
+    id: VALUE,
+    text: VALUE,
+    completed: VALUE,
+    color: VALUE,
+  }],
+  filters: {
+    status: VALUE,
+    colors: [VALUE],
+  },
+})));
+```
+
+But building the datum plan the "equivalent way" requires duplicating a lot of data, and changes to `todoAppInitialState` might not always be mirrored to `equivPlan`.  Conversely, using `datumPlan.fromPOD()` only requires additionally specifying tweaks to resolve ambiguities, and any changes to `todoAppInitialState` introducing new ambiguities will throw errors.
 
 ### Troubleshooting
 

@@ -457,6 +457,9 @@ export function makeExports({fuse, isLens, lens}) {
    *                         specified structure; either kind of use may be mixed into an
    *                         Object spec with other explicit own-properties via spread
    *                         syntax
+   * @property RAW  Allows specifying otherwise special property names; its value
+   *                should be an object whose properties will spec lenses in the
+   *                Object where *RAW* appears
    */
   
   /**
@@ -469,6 +472,114 @@ export function makeExports({fuse, isLens, lens}) {
    * [datumPlan]{@link module:natural-lenses/datum-plan} in order to use
    * active JavaScript in defining the datum plan specification or for use of
    * the named values and Functions passed in the *DSL* parameter.
+   */
+  
+  /**
+   * @callback DatumPlan_Tweak
+   * @param {Object|Array} plan  The plan to be modified
+   * @returns {Object|Array} Altered clone of *plan*
+   */
+  
+  /**
+   * @class DatumPlan_TweakBuilder
+   * @hideconstructor
+   * @classdesc
+   * The methods present on this value assist in composing common tweaks for
+   * building a good spec from a sample POD value.
+   */
+  
+  /**
+   * @function DatumPlan_TweakBuilder#VALUE
+   * @summary Compose a tweak making a specified slot into a terminal value in the datum plan
+   * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
+   * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
+   *
+   * @description
+   * Like using [datumPlan.value]{@link module:natural-lenses/datum-plan} in a
+   * standard plan, this tweak-composer specifies a point at some depth in the
+   * datum plan terminating the generation of deeper (i.e. more tightly focused)
+   * [Lenses]{@link Lens}.
+   *
+   * As with the other built-in tweak composers, the tweak function returned
+   * from this function has a `plan()` method, which creates the same tweak
+   * except substitutes the value spec passed to `plan()` at the point
+   * specified in the spec by all the *keys* instead of just substituting
+   * `datumPlan.value`.
+   *
+   * This particular method, with adjustments to *keys* and the value passed
+   * to `plan()`, can reproduce the effects of all the other methods.
+   */
+  
+  /**
+   * @function DatumPlan_TweakBuilder#ITEMS
+   * @summary Compose a tweak making a specified slot in the spec an Array
+   * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
+   * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
+   *
+   * @description
+   * This tweak-composer can be used to specify a slot within the original spec
+   * as being an Array.  This is often needed because the input POD data for the
+   * spec contains two or more elements in the slot indicated by the passed *keys*,
+   * which is not acceptable for datum plan generation.  Calling this function
+   * returns a tweak to set that slot to `[]`.
+   *
+   * As with the other built-in tweak composers, the tweak function returned
+   * from this function has a `plan()` method, which creates the same tweak
+   * except substitutes the item plan spec passed to `plan()` as the single
+   * element in the Array injected into the clone of the input spec, allowing
+   * the generated {@link Lens} to pass the item plan to its {@link IndexableMixin}
+   * methods.
+   */
+  
+  /**
+   * @function DatumPlan_TweakBuilder#NAMED_ENTRIES
+   * @summary Compose a tweak making a specified slot in the spec a dictionary-like collection
+   * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
+   * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
+   *
+   * @description
+   * `datumPlan.fromPOD()` has no way of determining that an Object in the spec
+   * is an example of *dictionary-like* behavior, but this method can be used
+   * to alter an initial POD spec to indicate the slot specified by *keys* is
+   * to be treated as a dictionary.
+   *
+   * As with the other built-in tweak composers, the tweak function returned
+   * from this function has a `plan()` method, which creates the same tweak
+   * except substitutes the entry value spec passed to `plan()` as the entry
+   * value spec at the point specified in the spec by all the *keys* instead of
+   * just substituting `datumPlan.value`.
+   */
+  
+  /**
+   * @function DatumPlan_TweakBuilder#NAMED_ENTRIES_ALSO
+   * @summary Compose a tweak marking the specified slot as supporting non-explicit keys
+   * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
+   * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
+   *
+   * @description
+   * `datumPlan.fromPOD()` has no way of determining that an Object in the spec
+   * is an example of *dictionary-like* behavior, but this method can be used
+   * to alter an initial POD spec to indicate the slot specified by *keys* is
+   * expected to contain keys in addition to the ones in the spec.
+   *
+   * As with the other built-in tweak composers, the tweak function returned
+   * from this function has a `plan()` method, which creates the same tweak
+   * except substitutes the entry value spec passed to `plan()` as the entry
+   * value spec for all incidental keys at the point in the spec specified by
+   * all the *keys* instead of just substituting `datumPlan.value`.
+   */
+  
+  /**
+   * @typedef DatumPlan_TweaksDsl
+   * @mixes DatumPlan_Dsl
+   * @property {DatumPlan_TweakBuilder} access
+   * @property {Function} lens  The default export of {@link module:natural-lenses}
+   */
+  
+  /**
+   * @callback DatumPlan_TweaksBuilderCallback
+   * @param {DatumPlan_TweaksDsl} DSL  Helpful values and Functions for altering POD into a datum plan specification
+   * @returns {Array.<DatumPlan_Tweak>}
    */
   
   GuardedLensHandlers.get = function (target, prop, receiver) {
@@ -506,8 +617,9 @@ export function makeExports({fuse, isLens, lens}) {
    * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    *
-   * @property {string} value   Used as a "tip" indicator for where generation of nested [Lenses]{@link Lens} ends
    * @property {string} others  Used as a key in an Object to indicate dictionary-like behavior
+   * @property {string} raw     Used as a key in an Object to provide additional properties for the host object, none of which are treated specially
+   * @property {string} value   Used as a "tip" indicator for where generation of nested [Lenses]{@link Lens} ends
    *
    * @description
    * This module is (when `require`d) or exports as default (when `import`ed) a
@@ -535,6 +647,14 @@ export function makeExports({fuse, isLens, lens}) {
    * in a dictionary-like manner for any non-explicit properties, and B) the
    * datum plan spec for each non-explicit entry's value (if something other than
    * *value* is provided).
+   *
+   * To allow specification of *any* property in an Object of a datum plan spec,
+   * the special key *raw* can be used to provide an additional Object whose
+   * own-properties are just like the properties for the Object containing the
+   * *raw* key, except none of the keys of this secondary object are treated
+   * as special -- not *raw*, nor *others*, nor any other key matching the
+   * "special key" pattern (double parentheses containing only lowercase
+   * letters).
    *
    * The resulting datum plan will be structured vaguely like *spec* and
    * constructed to access a value of similar shape to *spec*.
@@ -564,6 +684,32 @@ export function makeExports({fuse, isLens, lens}) {
     guardedGroups: {value: guardedGroups},
   });
   
+  /**
+   * @function module:natural-lenses/datum-plan#fromPOD
+   * @summary Generate a datum plan from Plain Ol' Data (POD)
+   * @param {Array|Object|string} spec  An object specifying the datum plan to be generated
+   * @param {Object} [opts]
+   * @param {Array.<DatumPlan_Tweak>|DatumPlan_TweaksBuilderCallback} [opts.tweaks=[]]  Modifications to apply to *spec* before generating datum plan
+   * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
+   * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
+   * @see module:natural-lenses/datum-plan
+   *
+   * @description
+   * If a intial state POD value is available, this function simplifies generating
+   * a datum plan to access the value.  One example application would be in a
+   * Redux store, where the initial state could be passed to this function and the
+   * resulting datum plan used to create selectors and reducers.
+   *
+   * Several aspects of the abstract structure of the target value as it
+   * evolves over time cannot be inferred from *spec* and some information in
+   * *spec* may be ambiguous in terms of generating a datum plan.  These difficulties
+   * can be addressed by passing an Array (or a DSL-consuming Function returning
+   * an Array) in *opts.tweaks*.  Idiomatic usage is to pass a
+   * {@link DatumPlan_TweaksBuilderCallback}, which can use the basic datum plan
+   * DSL values (from {@link DatumPlan_Dsl}) plus `lens` and `access` to build
+   * functions that make altered clones of *spec* which resolve these lacunae
+   * and ambiguities.
+   */
   function fromPOD(rawPlan, { tweaks = [], planGroup } = {}) {
     if (isFunction(tweaks)) {
       tweaks = tweaks.call(undefined, {
