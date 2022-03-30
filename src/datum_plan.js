@@ -476,12 +476,14 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @callback DatumPlan_Tweak
+   * @since 2.1.0
    * @param {Object|Array} plan  The plan to be modified
    * @returns {Object|Array} Altered clone of *plan*
    */
   
   /**
    * @class DatumPlan_TweakBuilder
+   * @since 2.1.0
    * @hideconstructor
    * @classdesc
    * The methods present on this value assist in composing common tweaks for
@@ -490,6 +492,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @function DatumPlan_TweakBuilder#VALUE
+   * @since 2.1.0
    * @summary Compose a tweak making a specified slot into a terminal value in the datum plan
    * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
    * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
@@ -512,6 +515,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @function DatumPlan_TweakBuilder#ITEMS
+   * @since 2.1.0
    * @summary Compose a tweak making a specified slot in the spec an Array
    * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
    * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
@@ -533,6 +537,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @function DatumPlan_TweakBuilder#NAMED_ENTRIES
+   * @since 2.1.0
    * @summary Compose a tweak making a specified slot in the spec a dictionary-like collection
    * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
    * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
@@ -552,6 +557,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @function DatumPlan_TweakBuilder#NAMED_ENTRIES_ALSO
+   * @since 2.1.0
    * @summary Compose a tweak marking the specified slot as supporting non-explicit keys
    * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
    * @returns {DatumPlan_Tweak}  A "tweak" function producing a cloned plan with the specified change
@@ -571,6 +577,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @typedef DatumPlan_TweaksDsl
+   * @since 2.1.0
    * @mixes DatumPlan_Dsl
    * @property {DatumPlan_TweakBuilder} access
    * @property {Function} lens  The default export of {@link module:natural-lenses}
@@ -578,6 +585,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @callback DatumPlan_TweaksBuilderCallback
+   * @since 2.1.0
    * @param {DatumPlan_TweaksDsl} DSL  Helpful values and Functions for altering POD into a datum plan specification
    * @returns {Array.<DatumPlan_Tweak>}
    */
@@ -686,6 +694,7 @@ export function makeExports({fuse, isLens, lens}) {
   
   /**
    * @function module:natural-lenses/datum-plan#fromPOD
+   * @since 2.1.0
    * @summary Generate a datum plan from Plain Ol' Data (POD)
    * @param {Array|Object|string} spec  An object specifying the datum plan to be generated
    * @param {Object} [opts]
