@@ -585,6 +585,12 @@ function testSequence(loaderName, subjects) {
           assert.isUndefined(sliceAnswer(0, 4));
         });
         
+        it('returns `undefined` from the call if the method is not present', () => {
+          const data = {question: 'What is the air speed of an unladen swallow?'};
+          const skiceQuestion = lens('question').binding('skice', {on: data});
+          assert.isUndefined(skiceQuestion(0, 4));
+        });
+        
         it("can throw from the call if the slot is not present", () => {
           const data = {question: 'What is the air speed of an unladen swallow?'};
           const error = new Error();
@@ -650,8 +656,8 @@ function testSequence(loaderName, subjects) {
         
         it('should return a no-op function when the target is not present', () => {
           const data = {question: 'What is the air speed of an unladen swallow?'};
-          const spliceQuestion = lens('question', 'splice').bound(data);
-          assert.isUndefined(spliceQuestion(0, 4, 'WAT'));
+          const skiceQuestion = lens('question', 'skice').bound(data);
+          assert.isUndefined(skiceQuestion(0, 4));
           assert.strictEqual(data.question, 'What is the air speed of an unladen swallow?');
         });
         

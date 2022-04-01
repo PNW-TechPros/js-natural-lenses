@@ -287,7 +287,11 @@ class Lens extends Optic {
    * @param {boolean} [options.bindNow=true]  Bind to the target of this lens with *subject* now rather than when the result function is invoked
    * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
    * @param {Function} [options.or]  {@link FallbackBindingResult}, a Function to return if the slot referenced does not contain a Function
-   * @return {Function} A Function bound to the previous object in the chain used to access the Function
+   * @return {Function} A Function bound to the previous object in the chain used to access the Function, or `function() {}` if no such function found
+   *
+   * The return value of this method is *always* a Function; if the slot identified
+   * by this Lens is not present in *subject* or does not contain a Function,
+   * the trivial function (`function () {}` or equivalent) will be returned.
    *
    * @description
    * Use this to avoid the dreaded Javascript binding repetition of
