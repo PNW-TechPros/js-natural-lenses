@@ -256,13 +256,18 @@ class Optic {
    * @param {boolean} [options.bindNow=false]  Bind to the Optic's target within *on* rather than binding to *on*
    * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
    * @param {Function} [options.or]  {@link FallbackBindingResult}, a Function to return if the slot referenced does not contain a Function
-   * @returns {{on: function(*): Function}}  A Function binding the *methodName* of the target of this optic to the target of this optic
+   * @returns {Function}  A Function binding the *methodName* of the target of this optic to the target of this optic, or `function() {}` if no such function found
    * @see {@link Lens#bound}
    *
    * @description
    * This method is a way to avoid duplicating code referencing an object within
    * *options.on* when 1) obtaining the reference to the method's function,
    * and 2) binding that method to the object from which it was accessed.
+   *
+   * The return value of this method is *always* a Function; if the slot identified
+   * by this optic is not present in *options.on* or does not host a method
+   * named *methodName*, the trivial function (`function () {}` or equivalent)
+   * will be returned.
    *
    * By default, the binding is lazy — the target of the lens within *on* is
    * evaluated when the resulting Function is invoked (though *on* itself is
