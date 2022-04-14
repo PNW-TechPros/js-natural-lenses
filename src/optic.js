@@ -321,6 +321,51 @@ class Optic {
       }
     };
   }
+  
+  /**
+   * @summary Construct a Function to extract (and possibly transform) the slot value from a subject
+   * @param {Function} [xform]  The transformation to apply to the slot's value
+   * @returns {Optic~Extractor}  The resulting extractor
+   * @since 2.2.0
+   */
+  extractor(xform) {
+    const inner = this.extractor_maybe(xform);
+    /**
+     * @function Optic~Extractor
+     * @param {*} subject  The input structured data
+     * @returns {*}  The extracted — and possibly transformed — slot value (`undefined` if slot is missing in *subject*)
+     * @since 2.2.0
+     * @see Optic#extractor
+     */
+    return (subject) => inner(subject).just;
+  }
+  
+  /**
+   * @summary Construct a Function to extract (and optionally transform) the slot value from a subject in a Maybe monad
+   * @param {Function} [xform]  The transformation to apply to the slot's value
+   * @returns {Optic~MaybeExtractor}  The resulting extractor
+   * @since 2.2.0
+   *
+   * @description
+   * Like [extractor]{@link Optic#extractor}, but with more clarity in the result
+   * about whether the slot existed or the transform returned `undefined` through
+   * use of the {@link Maybe} monad.
+   */
+  extractor_maybe(xform) {
+    /**
+     * @function Optic~MaybeExtractor
+     * @param {*} subject  The input structured data
+     * @returns {Maybe.<*>}  The extracted — and possibly transformed — slot value in a {@link Maybe} monad
+     * @since 2.2.0
+     * @see Optic#extractor_maybe
+     */
+    return (subject) => {
+      return this.getting(subject, {
+        then(val) {return {just: xform ? xform.call(undefined, val) : val}},
+        else() {return {}}
+      });
+    }
+  }
 }
 Object.assign(Optic.prototype, BinderMixin);
 export default Optic;
