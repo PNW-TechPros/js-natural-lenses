@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+* Added customized logging (`lens.setLogger()`, `lens.setLogger.forBlock()`, and `lens.asyncLogging()`)
+* Added `Optic#extractor` and `Optic#extractor_maybe`
+
+---
 ## 2.1.0
 
 * Added `fromPOD` generation of datum plans.
