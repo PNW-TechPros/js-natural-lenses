@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>natural-lenses - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#asyncLogging">asyncLogging</a></li><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li><li data-type='method'><a href="module-natural-lenses.html#setLogger">setLogger</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses_datum-plan.html#fromPOD">fromPOD</a></li></ul></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li></ul><h3>Interfaces</h3><ul><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#error">error</a></li><li data-type='method'><a href="Logger.html#info">info</a></li><li data-type='method'><a href="Logger.html#preinstallationCalls">preinstallationCalls</a></li><li data-type='method'><a href="Logger.html#trace">trace</a></li><li data-type='method'><a href="Logger.html#warn">warn</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="DatumPlan_TweakBuilder.html">DatumPlan_TweakBuilder</a><ul class='methods'><li data-type='method'><a href="DatumPlan_TweakBuilder.html#ITEMS">ITEMS</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES">NAMED_ENTRIES</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES_ALSO">NAMED_ENTRIES_ALSO</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#VALUE">VALUE</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#extractor">extractor</a></li><li data-type='method'><a href="Lens.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#extractor">extractor</a></li><li data-type='method'><a href="Optic.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li><li data-type='method'><a href="Optic.html#~Extractor">Extractor</a></li><li data-type='method'><a href="Optic.html#~MaybeExtractor">MaybeExtractor</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#extractor">extractor</a></li><li data-type='method'><a href="OpticArray.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">natural-lenses</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+                <div class="description usertext"><p>This module is (when <code>require</code>d) or exports as default (when <code>import</code>ed) a
+Function accepting an arbitrary number of keys and returning a <a href="Lens.html">Lens</a>.</p>
+<p>A Lens is a way to safely apply the indexing (i.e. square-bracket) operator
+repeatedly, and to clone-with-changes a complex value to assist programming
+in an immutable-data style.</p>
+<p>In addition to the properties enumerated here, all error classes are also
+exposed as properties or named exports.</p></div>
+            
+
+            
+                
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>asyncLogging</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#asyncLogging">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>at_maybe</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">symbol</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Key for method implementing retrieval from a container</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>clone</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">symbol</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Key for method implementing cloning of a container with modifications</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eachFound</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#eachFound">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Factory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="Factory.html">Class</a> for customized lens creation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fuse</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#fuse">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isLens</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">symbol</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Key for testing objects for &quot;lens-ness&quot;</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>JsContainerFactory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="JsContainerFactory.html">Class</a> for customized container creation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>jsContainers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="JsContainerFactory.html">JsContainerFactory</a> for standard JavaScript containers (Map and Array)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maybeDo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#maybeDo">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nfocal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#nfocal">Construct</a> a multifocal lens</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>polyfillImmutable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#polyfillImmutable">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setLogger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="module-natural-lenses.html#setLogger">Documentation</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Step</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="Step.html">Class</a> for customized Lens steps</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A name or index to use in successive subscripting (i.e. square bracket) operations</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The constructed lens</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Lens.html">Lens</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="at_maybe"><span class="type-signature">(constant) </span>at_maybe<span class="type-signature"> :symbol</span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line216">line 216</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This constant is a key used for querying a method from container objects of
+type <code>function(*): <a href="global.html#Maybe">Maybe</a>.&lt;*&gt;</code>.  The value passed to this method will be
+a <em>key</em> from a Lens -- the kind of value that should be passed for a
+conceptual &quot;indexing&quot; of the container.  For Object, this is a string property
+name.  For Array, this is an integer index, where negative values count
+backward from the end of the Array.  For Map, this uses <code>Map.prototype.has</code>
+and <code>Map.prototype.get</code>.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">symbol</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="clone"><span class="type-signature">(constant) </span>clone<span class="type-signature"> :symbol</span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This constant is a key used for querying a method from container objects of
+type <code>function({set: {0: *, 1: *}?, spliceOut: *?}): *</code>.  The intent of the
+method is to clone the container with some kind of alteration -- either
+a key/index set to the given value in the clone, or a key/index deleted
+from the clone.</p>
+<p>If the operation description passed contains a <code>set</code> property,
+the value of that property should be an Array where element 0 is a key or
+index into the container and element 1 is the value to set (cf. arguments
+to <code>Map.prototype.set</code>).</p>
+<p>If the operation description passed contains a <code>spliceOut</code> property,
+the value of that property should be a key or index to delete from the
+container.  Where possible, the result should be to leave the container
+in a state where <code>container[at_maybe](key)</code> returns <code>{}</code> (a <em>Nothing</em>).
+This is specifically a problem for <a href="external-immutable.List.html">immutable.List</a>,
+which offers only a dense presentation of elements: every non-negative index
+less than <code>size</code> is a valid and &quot;contained&quot; entry.  The implementation provided
+by this library for implementing this method on
+<a href="external-immutable.List.html">immutable.List</a> sets the value of the entry
+in the clone to <code>undefined</code>.</p>
+<p>In the provided implemenation for Array, negative indexes are interpreted
+counting backward from the end of the Array, as with <code>Array.prototype.slice</code>.</p>
+<p><code>Symbol.species</code> is honored for determining the constructor used for the
+clone; Object is a special case that defaults to Object if <code>Symbol.species</code>
+is not present.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">symbol</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isLens"><span class="type-signature">(constant) </span>isLens<span class="type-signature"> :symbol</span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line267">line 267</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This property is set on every kind of object to be recognized by this
+library as implementing lens-like behavior.  Setting this property to
+any truthy value on your own objects will cause this library to treat it
+in many ways like a <a href="Lens.html">Lens</a>.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">symbol</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="asyncLogging"><span class="type-signature"></span>asyncLogging<span class="signature">(engine)</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary usertext"><p>Enable asynchronous-context awareness for logger assignment</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line172">line 172</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>2.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Logging configuration is usually a global activity.  However, there are
+cases where some specific section of the code needs to redirect its
+logging to a different handler.</p>
+<p>In many languages and environments, this diversion of logging events would
+be handled with a thread- or fiber-local variable.  JavaScript — with its
+extensive use of closures and asynchronous callbacks/Promises — needs to
+associate the logging diversion with the asynchronous context of the
+code setting the logger.  There is, however, no standard way to do this.</p>
+<p>To bridge this gap, <a href="module-natural-lenses.html">natural-lenses</a> provides
+<em>asynchronous context engines</em> which can be configured on demand.  Setting
+the engine does not change the current logger, but can allow code to
+change the logger in a more local fashion.  Configuring the appropriate
+asynchronous context engine makes <a href="module-natural-lenses.html#~BlockLogger">setLogger.forBlock</a>
+much more adept at getting logging events to the correct handler in
+asynchronous contexts.</p>
+<h2>Engines</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Engine name</th>
+<th style="text-align:left">Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>node</code></td>
+<td style="text-align:left">Uses <code>require('async_hooks').AsyncLocalStorage</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>engine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the engine to use</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The module (for chainable configuration)</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="eachFound"><span class="type-signature">(generator) </span>eachFound<span class="signature">(maybe_val)</span><span class="type-signature"> &rarr; {<a href="global.html#FoundPair">FoundPair</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Iterate over Maybe monad contained value(s)</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_utils.js.html">src/utils.js</a>, <a href="src_utils.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="module-natural-lenses.html#maybeDo">module:natural-lenses#maybeDo</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>When called on the result of <a href="AbstractNFocal.html#get_maybe">getting a multifocal into a Maybe monad</a>,
+this function iterates found values (and only the found values), yielding the
+pair of the value and index for each, like the arguments to the callback of
+<code>Array.prototype.forEach</code> if it used &quot;rest&quot; syntax, e.g.</p>
+<pre class="prettyprint source lang-js"><code>values.forEach((...pair) => {
+  const [value, index] = pair;
+  // do something with index and value
+});
+</code></pre>
+<p>When called on the <code>get_maybe</code>-result of an <a href="ArrayNFocal.html">ArrayNFocal</a>, the index 1
+value of each yielded Array will be an integer index; with an <a href="ObjectNFocal.html">ObjectNFocal</a>,
+the index 1 value of each yeilded Array will be a string key.</p>
+<p>This function can also be applied to a <a href="global.html#Maybe">Maybe</a> monad value obtained from
+a monofocal optic (e.g. a <a href="Lens.html">Lens</a>), in which case it yields either a
+single element array containing the value if the input holds a <code>just</code> property
+and does not yield, otherwise.  It is more flexible to apply
+<a href="module-natural-lenses.html#maybeDo">maybeDo</a> or <a href="Optic.html#getting">Optic#getting</a>, as
+these allow separate handling of the <em>Nothing</em> case.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>maybe_val</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Maybe">Maybe</a>.&lt;*></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maybe monad of value or iterable value</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<h5>Yields:</h5>		
+		
+        
+<div class="param-desc">
+    Pairs of value and key
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#FoundPair">FoundPair</a></span>
+
+
+    </dd>
+</dl>
+		
+    
+
+        
+            
+
+    
+
+    <h4 class="name" id="fuse"><span class="type-signature"></span>fuse<span class="signature">(&hellip;optic)</span><span class="type-signature"> &rarr; {<a href="Lens.html">Lens</a>|<a href="OpticArray.html">OpticArray</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Fuse multiple optics into a single, sequential application</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line90">line 90</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>To understand the slot reference of the returned optic, consider the
+<em>getting</em> model: <code>optics[0]</code> will be applied to the input data, and
+for all other optics (i &gt; 0), <code>optics[i]</code> will be applied to the
+result from <code>optics[i - 1]</code>.  In other words, each optic <em>gets</em> something
+within the optic to its left, with the leftmost <em>getting</em> from the
+input data.  Modifications affect the same slot.</p>
+<p>If all <em>optics</em> are <a href="Lens.html">Lenses</a>, the result will be a Lens.  This
+does not apply for Lens-derived objects (e.g. from <a href="Factory.html">Factories</a>) —
+if such are passed, the result will always be an OpticArray.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>optic</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Optic.html">Optic</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optic object to fuse</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A single <a href="Optic.html">Optic</a> joining the <em>optics</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Lens.html">Lens</a></span>
+|
+
+<span class="param-type"><a href="OpticArray.html">OpticArray</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="maybeDo"><span class="type-signature"></span>maybeDo<span class="signature">(maybe, then, orElse<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {U}</span></h4>
+
+    
+    <p class="summary usertext"><p>Conditionally execute a function based on the construction of a <a href="global.html#Maybe">Maybe</a></p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_utils.js.html">src/utils.js</a>, <a href="src_utils.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Optic.html#getting">Optic#getting</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>This function resembles an <code>if</code> statement around the &quot;<em>Just</em>-ness&quot; of a <a href="global.html#Maybe">Maybe</a>
+value: the <em>then</em> Function gets called if <em>maybe</em> has a <code>just</code> and the <em>orElse</em>
+Function if not.  Because of the usual intent of this conditional situation,
+<code>maybe.just</code> value is passed to <em>then</em> if <em>then</em> is called.</p>
+<p>Whichever of <em>then</em> or <em>orElse</em> is called, its return value becomes the return
+value of this function call.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>maybe</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Maybe">Maybe</a>.&lt;T></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The input value determining which of the following arguments is invoked</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>then</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function executed with the <code>just</code> value of <em>maybe</em>, if present</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>orElse</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function executed if <em>maybe</em> contains no <code>just</code> property</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The result type of the invoked function</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">U</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="nfocal"><span class="type-signature"></span>nfocal<span class="signature">(lenses)</span><span class="type-signature"> &rarr; {<a href="ArrayNFocal.html">ArrayNFocal</a>|<a href="ObjectNFocal.html">ObjectNFocal</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Construct a multifocal lens</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line114">line 114</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Where a standard lens looks at a single <em>slot</em> within a JSONic object, a
+multifocal lens consists of multiple lenses (standard or multifocal) whose
+results are aggregated into a single value, which can be a dictionary-like
+Object or an Array.</p>
+<p>Pass an Array of lenses to create a multifocal lens that outputs an Array,
+where the position of each lens in the input Array corresponds to the
+output position of the data (when <em>getting</em> with the multifocal lens).  When
+<em>getting</em> in a Maybe context (<code>#get_maybe</code>), the result will always be an
+Object with a <code>just</code> property, though some elements of the Array may be
+empty.</p>
+<p>Pass an Object with lens values to create a multifocal lens outputting an
+Object, which will bear the same properties as the input Object and whose
+values are the values in the data referenced by the corresponding lens (when
+<em>getting</em> using this multifocal lens).</p>
+<p>Be aware that the <code>xformInClone</code> method on these kinds of multifocal lenses
+works differently from a basic Lens, since multifocals can have a
+&quot;stereoscopic&quot; view of data.  Instead of a single transformation function,
+<code>xformInClone</code> (and it's <code>_maybe</code> variant) accept an iterable of key/transform
+pairs (where the key is an integer index in the case of an Array multifocal).
+This allows full control over the order in which transformations are applied
+to the input data, resolving the issue of &quot;stereoscopic conflict&quot;.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>lenses</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Optic.html">Optic</a>></span>
+|
+
+<span class="param-type">Object.&lt;string, <a href="Optic.html">Optic</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Collection of <a href="Lens.html">Lenses</a> to combine</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="ArrayNFocal.html">ArrayNFocal</a></span>
+|
+
+<span class="param-type"><a href="ObjectNFocal.html">ObjectNFocal</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="polyfillImmutable"><span class="type-signature"></span>polyfillImmutable<span class="signature">(containerType)</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary usertext"><p>Add lensing support methods to an Immutable type</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_immutable_support.js.html">src/immutable_support.js</a>, <a href="src_immutable_support.js.html#line26">line 26</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Adds mixin methods for supporting lenses to the given Immutable container
+type.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>containerType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Target container type for support</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setLogger"><span class="type-signature"></span>setLogger<span class="signature">(logger)</span><span class="type-signature"> &rarr; {<a href="Logger.html">Logger</a>}</span></h4>
+
+    
+    <p class="summary usertext"><p>Set a custom logger</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line150">line 150</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>2.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>forBlock</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-natural-lenses.html#~BlockLogger">module:natural-lenses~BlockLogger</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Set the logger only for the duration of the callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>Calling this function changes the &quot;current logger&quot;...in some regard.  If
+<a href="module-natural-lenses.html#asyncLogging">asyncLogging</a> has not been
+called, then the global current logger is changed; if it has been called,
+the specific engine invoked determines what is set.  In the case of the
+<code>node</code> engine, <em>logger</em> becomes the receiver for subsequent logging calls
+in the synchronous context and any asynchronous contexts subsequently
+spawned from it.  When the <code>node</code> engine is in use and this function is
+called from an asynchronous context, the logging receiver change is local
+to that context but propagates to any asynchronous contexts it spawns.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>logger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Logger.html">Logger</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Custom logger to use, with interface like <code>console</code></p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The previous logger</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Logger.html">Logger</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id="~BlockLogger"><span class="type-signature"></span>BlockLogger<span class="signature">(logger, body)</span><span class="type-signature"> &rarr; {T}</span></h4>
+
+    
+    <p class="summary usertext"><p>Temporarily log to a different logger during callback</p></p>
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line11">line 11</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>2.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><p><code>forBlock</code> method of <a href="module-natural-lenses.html#setLogger">setLogger</a></p></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Calling this method temporarily redirects logging output to <em>logger</em> during
+the execution of <em>body</em>.</p>
+<h2>Asynchronicity without <a href="module-natural-lenses.html#asyncLogging">asyncLogging</a></h2>
+<p>If <em>body</em> registers callbacks that complete after it returns, logging calls
+will return to targeting the <em>status quo ante</em> logger (or whatever logger
+happens to be current at the time).  There is no way for this library to
+detect this has happend and warn about pending callbacks logging to a
+different logger.</p>
+<p>If <em>body</em> returns a <em>thenable</em> (i.e. an object with a <code>then</code> property, like
+a Promise), <em>logger</em> will remain the target logger until the result fulfills
+or rejects.  A warning will also be logged because the target logger for
+the entire process is changed by this usage.</p>
+<h2>Asynchronicity with <a href="module-natural-lenses.html#asyncLogging">asyncLogging</a></h2>
+<p>If <a href="module-natural-lenses.html#asyncLogging">asyncLogging</a> has been called
+to install an asynchronous-context-aware engine, then <em>logger</em> will be the
+target logger during the execution of <em>body</em> and <em>for any asynchronous
+execution starting within body</em>, whether via callback or thenable.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>logger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Logger.html">Logger</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Custom logger to use, with interface like <code>console</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback to execute, logging to <em>logger</em>; receives no arguments and returns T</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Return value from <em>body</em></p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">T</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Thu Apr 14 2022 21:32:29 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>
