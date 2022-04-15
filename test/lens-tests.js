@@ -529,9 +529,32 @@ function testSequence(loaderName, subjects) {
         });
         
         it('should log if output of fn is not an Array', () => {
-          lens('primes').xformIterableInClone({}, x => {
-            return 6;
-          })
+          const logger = {
+            preinstallationCalls() {},
+            warn: sinon.fake(),
+            trace: sinon.fake(),
+          };
+          lensUtils.setLogger(logger);
+          const subject = {}, xform = x => 6;
+          lens('primes').xformIterableInClone(subject, xform);
+          
+          let callArgs, callArg;
+          
+          sinon.assert.calledOnce(logger.warn);
+          callArgs = logger.warn.firstCall.args;
+          assert.strictEqual(callArgs.length, 1);
+          callArg = callArgs[0];
+          assert.include(callArg, {
+            fn: xform,
+            subject,
+            result: xform(),
+          });
+          assert.deepInclude(callArg, {
+            keys: ['primes'],
+            input: [],
+          });
+          
+          sinon.assert.calledOnce(logger.trace);
         });
         
         it('should return a modified clone if fn does not return its input', () => {

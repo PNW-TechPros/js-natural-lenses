@@ -8,6 +8,7 @@ export { eachFound, maybeDo } from './esm/utils.js';
 export { default as Factory } from './esm/lens_factory.js';
 export { default as fuse} from './fuse.mjs';
 export { default as JsContainerFactory, DEFAULT_FACTORY as jsContainers } from './esm/js_container_factory.js';
+export { enableAsync as asyncLogging, set as setLogger } from './esm/logger.js';
 export { default as nfocal } from './nfocal.mjs';
 export { polyfillImmutable } from './esm/immutable_support.js';
 export { default as Step } from './esm/custom_step.js';

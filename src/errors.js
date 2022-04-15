@@ -17,7 +17,6 @@ export { StereoscopyError };
  */
 class UndefinedPropertyError extends Error {
   constructor(missingProperty, lensKeys, lensProps) {
-    console.log({ lensKeys });
     const lensDesc = lensKeys.length > 0 ? `Lens with keys ${keyArrayDesc(lensKeys)}` : 'trivial Lens';
     lensProps = [...lensProps].sort();
     super(`No such property '${missingProperty}' on ${lensDesc} among properties ${lensProps.map(JSON.stringify).join(', ')}`);
