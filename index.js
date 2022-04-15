@@ -155,6 +155,17 @@ Object.defineProperties(makeLens, {
    * @returns {Logger}  The previous logger
    *
    * @property {module:natural-lenses~BlockLogger} forBlock  Set the logger only for the duration of the callback
+   *
+   * @description
+   * Calling this function changes the "current logger"...in some regard.  If
+   * [asyncLogging]{@link module:natural-lenses#asyncLogging} has not been
+   * called, then the global current logger is changed; if it has been called,
+   * the specific engine invoked determines what is set.  In the case of the
+   * `node` engine, *logger* becomes the receiver for subsequent logging calls
+   * in the synchronous context and any asynchronous contexts subsequently
+   * spawned from it.  When the `node` engine is in use and this function is
+   * called from an asynchronous context, the logging receiver change is local
+   * to that context but propagates to any asynchronous contexts it spawns.
    */
   setLogger: {enumerable: true, get: () => setLogger},
   
