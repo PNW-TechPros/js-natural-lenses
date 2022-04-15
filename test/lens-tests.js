@@ -852,6 +852,78 @@ function testSequence(loaderName, subjects) {
           assert.equal(L.thence('value').get(data), data[1].value);
         });
       });
+      
+      describe('#extractor()', () => {
+        before(() => {
+          this.L = lens('name');
+        });
+        
+        it("returns a 'getter' when called without params", () => {
+          const g = this.L.$`get`, x = this.L.extractor();
+          
+          const data = {name: Symbol('test value')};
+          
+          const g_result = g(data), x_result = x(data);
+          assert.strictEqual(g_result, data.name);
+          assert.strictEqual(x_result, g_result);
+        });
+        
+        it("applies the given transform when the slot exists in the subject", () => {
+          const retval = Symbol('retval');
+          const xformFake = sinon.fake.returns(retval);
+          const x = this.L.extractor(xformFake);
+          
+          const data = {name: "Fred Flintstone"};
+          
+          assert.strictEqual(x(data), retval);
+          assert(xformFake.calledOnce);
+          assert.strictEqual(xformFake.firstCall.args[0], this.L.get(data));
+        });
+        
+        it("does not apply the transform when the slot is missing from the subject", () => {
+          const xformFake = sinon.fake.returns('retval');
+          const x = this.L.extractor(xformFake);
+          
+          assert.isUndefined(x({}));
+          assert(xformFake.notCalled);
+        });
+      });
+      
+      describe('#extractor_maybe()', () => {
+        before(() => {
+          this.L = lens('name');
+        });
+        
+        it("returns a Maybe monad 'getter' when called without params", () => {
+          const g = this.L.$`get`, x = this.L.extractor_maybe();
+          
+          const data = {name: Symbol('test value')};
+          
+          const g_result = g(data), x_result = x(data);
+          assert.strictEqual(g_result, data.name);
+          assert.strictEqual(x_result.just, g_result);
+        });
+        
+        it("applies the given transform when the slot exists in the subject", () => {
+          const retval = Symbol('retval');
+          const xformFake = sinon.fake.returns(retval);
+          const x = this.L.extractor_maybe(xformFake);
+          
+          const data = {name: "Fred Flintstone"};
+          
+          assert.strictEqual(x(data).just, retval);
+          sinon.assert.calledOnce(xformFake);
+          assert.strictEqual(xformFake.firstCall.args[0], this.L.get(data));
+        });
+        
+        it("does not apply the transform when the slot is missing from the subject", () => {
+          const xformFake = sinon.fake.returns('retval');
+          const x = this.L.extractor_maybe(xformFake);
+          
+          assert.deepEqual(x({}), {});
+          sinon.assert.notCalled(xformFake);
+        });
+      });
     });
 
     describe('CustomStep', () => {
