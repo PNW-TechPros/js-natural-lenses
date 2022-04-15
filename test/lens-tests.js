@@ -822,7 +822,7 @@ function testSequence(loaderName, subjects) {
           this.L = lens('name');
         });
         
-        it("returns a 'getter' by when called without params", () => {
+        it("returns a 'getter' when called without params", () => {
           const g = this.L.$`get`, x = this.L.extractor();
           
           const data = {name: Symbol('test value')};
@@ -858,7 +858,7 @@ function testSequence(loaderName, subjects) {
           this.L = lens('name');
         });
         
-        it("returns a 'getter' by when called without params", () => {
+        it("returns a Maybe monad 'getter' when called without params", () => {
           const g = this.L.$`get`, x = this.L.extractor_maybe();
           
           const data = {name: Symbol('test value')};
@@ -876,7 +876,7 @@ function testSequence(loaderName, subjects) {
           const data = {name: "Fred Flintstone"};
           
           assert.strictEqual(x(data).just, retval);
-          assert(xformFake.calledOnce);
+          sinon.assert.calledOnce(xformFake);
           assert.strictEqual(xformFake.firstCall.args[0], this.L.get(data));
         });
         
@@ -885,7 +885,7 @@ function testSequence(loaderName, subjects) {
           const x = this.L.extractor_maybe(xformFake);
           
           assert.deepEqual(x({}), {});
-          assert(xformFake.notCalled);
+          sinon.assert.notCalled(xformFake);
         });
       });
     });
