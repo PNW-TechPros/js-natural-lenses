@@ -30,7 +30,7 @@ function keyArrayDesc(keys) {
   const content = keys.map(key => {
     try {
       return JSON.stringify(key);
-    } catch (e) {
+    } catch (e) /* istanbul ignore next */ {
       return '' + key;
     }
   });
