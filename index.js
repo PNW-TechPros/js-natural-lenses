@@ -3,9 +3,45 @@ const { at_maybe, cloneImpl, isLensClass } = require('./src-cjs/constants');
 const Errors = require('./cjs/errors');
 const fusion = require('./cjs/fusion').default;
 const Lens = require('./cjs/lens').default;
+const { set: setLogger, enableAsync: asyncLogging } = require('./cjs/logger');
 const { eachFound, maybeDo } = require('./cjs/utils');
 
 let fuse = null;
+
+/**
+ * @template T
+ * @callback module:natural-lenses~BlockLogger
+ * @summary Temporarily log to a different logger during callback
+ * @see `forBlock` method of [setLogger]{@link module:natural-lenses#setLogger}
+ * @since 2.2.0
+ * @param {Logger} logger       Custom logger to use, with interface like `console`
+ * @param {function(): T} body  Callback to execute, logging to *logger*; receives no arguments and returns T
+ * @returns {T}  Return value from *body*
+ *
+ * @description
+ * Calling this method temporarily redirects logging output to *logger* during
+ * the execution of *body*.
+ *
+ * ## Asynchronicity without [asyncLogging]{@link module:natural-lenses#asyncLogging}
+ *
+ * If *body* registers callbacks that complete after it returns, logging calls
+ * will return to targeting the *status quo ante* logger (or whatever logger
+ * happens to be current at the time).  There is no way for this library to
+ * detect this has happend and warn about pending callbacks logging to a
+ * different logger.
+ * 
+ * If *body* returns a *thenable* (i.e. an object with a `then` property, like
+ * a Promise), *logger* will remain the target logger until the result fulfills
+ * or rejects.  A warning will also be logged because the target logger for
+ * the entire process is changed by this usage.
+ *
+ * ## Asynchronicity with [asyncLogging]{@link module:natural-lenses#asyncLogging}
+ *
+ * If [asyncLogging]{@link module:natural-lenses#asyncLogging} has been called
+ * to install an asynchronous-context-aware engine, then *logger* will be the
+ * target logger during the execution of *body* and *for any asynchronous
+ * execution starting within body*, whether via callback or thenable.
+ */
 
 /**
  * @module natural-lenses
@@ -14,6 +50,7 @@ let fuse = null;
  * @param {...*} key  A name or index to use in successive subscripting (i.e. square bracket) operations
  * @returns {Lens}  The constructed lens
  *
+ * @property {Function} asyncLogging        [Documentation]{@link module:natural-lenses#asyncLogging}
  * @property {symbol}   at_maybe            Key for method implementing retrieval from a container
  * @property {symbol}   clone               Key for method implementing cloning of a container with modifications
  * @property {Function} eachFound           [Documentation]{@link module:natural-lenses#eachFound}
@@ -25,6 +62,7 @@ let fuse = null;
  * @property {Function} maybeDo             [Documentation]{@link module:natural-lenses#maybeDo}
  * @property {Function} nfocal              [Construct]{@link module:natural-lenses#nfocal} a multifocal lens
  * @property {Function} polyfillImmutable   [Documentation]{@link module:natural-lenses#polyfillImmutable}
+ * @property {Function} setLogger           [Documentation]{@link module:natural-lenses#setLogger}
  * @property {Function} Step                [Class]{@link Step} for customized Lens steps
  *
  * @description
@@ -107,6 +145,65 @@ Object.defineProperties(makeLens, {
    */
   nfocal: {enumerable: true, get: () => (lenses) => {
     return require('./cjs/nfocal').makeNFocal(lenses);
+  }},
+  
+  /**
+   * @function module:natural-lenses#setLogger
+   * @summary Set a custom logger
+   * @since 2.2.0
+   * @param {Logger} logger  Custom logger to use, with interface like `console`
+   * @returns {Logger}  The previous logger
+   *
+   * @property {module:natural-lenses~BlockLogger} forBlock  Set the logger only for the duration of the callback
+   *
+   * @description
+   * Calling this function changes the "current logger"...in some regard.  If
+   * [asyncLogging]{@link module:natural-lenses#asyncLogging} has not been
+   * called, then the global current logger is changed; if it has been called,
+   * the specific engine invoked determines what is set.  In the case of the
+   * `node` engine, *logger* becomes the receiver for subsequent logging calls
+   * in the synchronous context and any asynchronous contexts subsequently
+   * spawned from it.  When the `node` engine is in use and this function is
+   * called from an asynchronous context, the logging receiver change is local
+   * to that context but propagates to any asynchronous contexts it spawns.
+   */
+  setLogger: {enumerable: true, get: () => setLogger},
+  
+  /**
+   * @function module:natural-lenses#asyncLogging
+   * @summary Enable asynchronous-context awareness for logger assignment
+   * @since 2.2.0
+   * @param {string} engine  Name of the engine to use
+   * @returns The module (for chainable configuration)
+   *
+   * @description
+   * Logging configuration is usually a global activity.  However, there are
+   * cases where some specific section of the code needs to redirect its
+   * logging to a different handler.
+   *
+   * In many languages and environments, this diversion of logging events would
+   * be handled with a thread- or fiber-local variable.  JavaScript — with its
+   * extensive use of closures and asynchronous callbacks/Promises — needs to
+   * associate the logging diversion with the asynchronous context of the
+   * code setting the logger.  There is, however, no standard way to do this.
+   *
+   * To bridge this gap, [natural-lenses]{@link module:natural-lenses} provides
+   * *asynchronous context engines* which can be configured on demand.  Setting
+   * the engine does not change the current logger, but can allow code to
+   * change the logger in a more local fashion.  Configuring the appropriate
+   * asynchronous context engine makes [setLogger.forBlock]{@link module:natural-lenses~BlockLogger}
+   * much more adept at getting logging events to the correct handler in
+   * asynchronous contexts.
+   *
+   * ## Engines
+   * 
+   * | Engine name | Implementation |
+   * | :----- | :------------- |
+   * | `node` | Uses `require('async_hooks').AsyncLocalStorage` |
+   */
+  asyncLogging: {enumerable: true, get: () => (engine) => {
+    asyncLogging(engine);
+    return makeLens;
   }},
   
   Factory: {enumerable: true, get: () => require('./cjs/lens_factory').default},

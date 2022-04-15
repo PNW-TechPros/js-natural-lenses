@@ -2,6 +2,7 @@ import { isFunction, isUndefined } from 'underscore';
 import { cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import CustomStep from './custom_step.js';
 import fusion from './fusion.js';
+import { smartLog } from './logger.js';
 import Optic from './optic.js';
 import OpticArray from './optic_array.js';
 import { getIterator, handleNoniterableValue, index_maybe, isLens } from './utils.js';
@@ -337,7 +338,14 @@ class Lens extends Optic {
    */
   static fuse(...lenses) {
     if (!lenses.every(l => l.constructor === Lens)) {
-      throw "Expected all arguments to be exactly Lens (no derived classes)";
+      smartLog({
+        level: 'error',
+        trace: true,
+        message: "Expected all arguments to be exactly Lens (no derived classes)",
+        msgId: '105c91ddea3a',
+        argClasses: lenses.map(l => l.constructor),
+      });
+      throw new Error("Expected all arguments to be exactly Lens (no derived classes)");
     }
     return new Lens(...lenses.flatMap(l => l.keys));
   }

@@ -1,31 +1,41 @@
 const lens = require('#this'), lensUtils = lens;
 const { lensFactory: immutableLensFactory } = require('../cjs/immutable');
+const loggerInternals = require('../cjs/logger.js');
 const {assert} = require('chai');
 const sinon = require('sinon');
 const immutable = require('immutable');
 const { range } = require('underscore');
 
 async function loadEsmSubjects() {
-  const m = await import('#this');
   const { default: lens, ...lensUtils } = await import('#this');
+  const loggerInternals = await import('../esm/logger.js');
   const { lensFactory: immutableLensFactory } = await import('../esm/immutable.js');
-  return { lens, lensUtils, immutableLensFactory };
+  return { lens, lensUtils, immutableLensFactory, loggerInternals };
 }
 
 function testSequence(loaderName, subjects) {
   const origIt = it;
   describe(loaderName, () => {
     subjects = Promise.resolve(subjects);
-    let lens, lensUtils, immutableLensFactory;
+    let lens, lensUtils, immutableLensFactory, loggerInternals;
     
     async function loadSubjects() {
-      ({ lens, lensUtils, immutableLensFactory } = await subjects);
+      ({ lens, lensUtils, immutableLensFactory, loggerInternals } = await subjects);
     }
     
     let it = (name, body) => {
       return origIt(name, async () => {
         await loadSubjects();
-        return Promise.resolve(body());
+        loggerInternals.resetLoggerStore();
+        lensUtils.asyncLogging('node');
+        this.logger = {
+          error: sinon.fake(),
+          trace() {},
+        };
+        loggerInternals.rawSwapIn(
+          loggerInternals.makeDefaultLogger(this.logger)
+        );
+        return body();
       });
     };
     
@@ -529,9 +539,34 @@ function testSequence(loaderName, subjects) {
         });
         
         it('should log if output of fn is not an Array', () => {
-          lens('primes').xformIterableInClone({}, x => {
-            return 6;
-          })
+          const logger = {
+            preinstallationCalls() {},
+            warn: sinon.fake(),
+            trace: sinon.fake(),
+          };
+          debugger;
+          lensUtils.setLogger.forBlock(logger, () => {
+            const subject = {}, xform = x => 6;
+            lens('primes').xformIterableInClone(subject, xform);
+            
+            let callArgs, callArg;
+            
+            sinon.assert.calledOnce(logger.warn);
+            callArgs = logger.warn.firstCall.args;
+            assert.strictEqual(callArgs.length, 1);
+            callArg = callArgs[0];
+            assert.include(callArg, {
+              fn: xform,
+              subject,
+              result: xform(),
+            });
+            assert.deepInclude(callArg, {
+              keys: ['primes'],
+              input: [],
+            });
+            
+            sinon.assert.calledOnce(logger.trace);
+          });
         });
         
         it('should return a modified clone if fn does not return its input', () => {
@@ -801,6 +836,7 @@ function testSequence(loaderName, subjects) {
       
       describe('#fuse()', () => {
         it("throws if non-Lenses are provided (use .fuse() instead)", () => {
+          debugger;
           const Lens = lens(0).constructor;
           assert.throws(
             () => Lens.fuse(lens(0), lensUtils.nfocal([lens(1)])),
@@ -1645,5 +1681,5 @@ function testSequence(loaderName, subjects) {
   });
 }
 
-testSequence('CommonJS', { lens, lensUtils, immutableLensFactory });
+testSequence('CommonJS', { lens, lensUtils, immutableLensFactory, loggerInternals });
 testSequence('ESM', loadEsmSubjects());

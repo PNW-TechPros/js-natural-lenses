@@ -1,6 +1,7 @@
 import { isFunction, isUndefined } from 'underscore';
 import BinderMixin from './binder_mixin.js';
 import { isLensClass } from '../src-cjs/constants.js';
+import { smartLog } from './logger.js';
 import { getIterator, handleNoniterableValue, isLens } from './utils.js';
 
 class Optic {
@@ -208,9 +209,11 @@ class Optic {
         result = fn(input);
       }
       if (!getIterator(result)) {
-        log({
+        smartLog({
           level: 'warn',
+          trace: true,
           message: "Noniterable result from fn of xformIterableInClone; substituting empty Array",
+          msgId: 'e3e30f4a71fa',
           subject,
           ...this,
           opticConstructor: this.constructor,
@@ -327,9 +330,5 @@ export default Optic;
 
 /* istanbul ignore next */
 function abstractMethod() {
-  throw "Abstract method not implemented by concrete class";
-}
-
-function log(info) {
-  console[info.level || 'info'](info);
+  throw new Error("Abstract method not implemented by concrete class");
 }

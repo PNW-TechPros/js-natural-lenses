@@ -1,31 +1,42 @@
 const datumPlan = require('#this/datum-plan');
+const loggerInternals = require('../cjs/logger.js');
 const lens = require('#this');
 const {assert} = require('chai');
+const sinon = require('sinon');
 const _ = require('underscore');
 
 async function loadEsmSubjects() {
   const { default: datumPlan } = await import('#this/datum-plan');
+  const loggerInternals = await import('../esm/logger.js');
   const { default: lens, UndefinedPropertyError } = await import('#this');
-  return { datumPlan, lens, UndefinedPropertyError };
+  return { datumPlan, lens, UndefinedPropertyError, loggerInternals };
 }
 
 function testSequence(loaderName, subjects) {
   const origIt = it;
   describe(loaderName, () => {
     subjects = Promise.resolve(subjects);
-    let datumPlan, lens, UndefinedPropertyError;
+    let datumPlan, lens, UndefinedPropertyError, loggerInternals;
     
     async function loadSubjects() {
-      ({ datumPlan, lens, UndefinedPropertyError } = await subjects);
+      ({ datumPlan, lens, UndefinedPropertyError, loggerInternals } = await subjects);
     }
     
     let it = (name, body) => {
       return origIt(name, async () => {
         await loadSubjects();
+        loggerInternals.resetLoggerStore();
+        this.logger = {
+          error: sinon.fake(),
+          trace() {},
+        };
+        loggerInternals.rawSwapIn(
+          loggerInternals.makeDefaultLogger(this.logger)
+        );
         return Promise.resolve(body());
       });
     };
-
+    
     describe('lens.DatumPlan', () => {
       let plan;
       before(async () => {
@@ -965,7 +976,12 @@ function testSequence(loaderName, subjects) {
   });
 }
 
-testSequence('CommonJS', { datumPlan, lens, UndefinedPropertyError: lens.UndefinedPropertyError });
+testSequence('CommonJS', {
+  datumPlan,
+  lens,
+  UndefinedPropertyError: lens.UndefinedPropertyError,
+  loggerInternals,
+});
 testSequence('ESM', loadEsmSubjects());
 
 function withEnv(envvar, value, body) {

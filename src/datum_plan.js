@@ -1,5 +1,6 @@
 import { forEach, isArray, isFunction, isObject } from 'underscore';
 import { UndefinedPropertyError } from './errors.js';
+import { smartLog } from './logger.js';
 
 export function makeExports({fuse, isLens, lens}) {
   const value = '$', others = '((others))', raw = '((raw))';
@@ -35,6 +36,14 @@ export function makeExports({fuse, isLens, lens}) {
       if (isArray(rawPlan)) {
         const result = this.makeLens(...this.keys);
         if (rawPlan.length > 1) {
+          smartLog({
+            level: 'error',
+            trace: true,
+            message: "Ambiguous Array item plan",
+            msgId: 'f4b7c6e3ec76',
+            keys: this.keys,
+            specs: rawPlan,
+          });
           throw new Error(`Multiple plans for Array items at ${keyDesc(this.keys)}`);
         } else if (rawPlan.length) {
           result.$item = new PlanBuilder([], this.options).buildPlan(rawPlan[0]);
@@ -85,6 +94,14 @@ export function makeExports({fuse, isLens, lens}) {
       } else if (rawPlan === value || this.podInput) {
         return this.makeLens(...this.keys);
       } else {
+        smartLog({
+          level: 'error',
+          trace: true,
+          message: "Invalid item plan",
+          msgId: 'c6055933b28b',
+          keys: this.keys,
+          spec: rawPlan,
+        });
         throw new Error(`Invalid item in plan at ${keyDesc(this.keys)}`)
       }
     }
@@ -218,7 +235,14 @@ export function makeExports({fuse, isLens, lens}) {
               return mapped;
             });
           } else {
-            throw `.mapInside() requires one or two manipulators, ${manipulators.length} given`;
+            smartLog({
+              level: 'error',
+              trace: true,
+              message: ".mapInside() requires one or two manipulators",
+              msgId: 'c33c71ab7a04',
+              manipulators,
+            });
+            throw new Error(`.mapInside() requires one or two manipulators, ${manipulators.length} given`);
           }
         },
         
@@ -781,7 +805,14 @@ function entryValueModifier({ manipulators, valuePlan, fnName }) {
       valueXform.call(undefined, result[key], key, valuePlan)
     );
   } else {
-    throw `.${fnName}() requires one or two manipulators, ${manipulators.length} given`;
+    smartLog({
+      level: 'error',
+      trace: true,
+      message: `.${fnName}() requires one or two manipulators`,
+      msgId: '76bbc754b22d',
+      manipulators,
+    });
+    throw new Error(`.${fnName}() requires one or two manipulators, ${manipulators.length} given`);
   }
 }
 

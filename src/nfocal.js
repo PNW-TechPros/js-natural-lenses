@@ -361,7 +361,7 @@ function checkSet(result, expectedVal) {
       
       /* istanbul ignore next */
       default:
-        throw `Unrecognized value type '${typeof expectedVal}'`;
+        throw new Error(`Unrecognized value type '${typeof expectedVal}'`);
     }
     
     if (!sameValue) {
