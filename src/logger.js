@@ -169,7 +169,7 @@ function setAsyncStore(asyncStore) {
   const { reportLoggerCounts } = loggerStore.getStore();
   loggerStore = asyncStore;
   if (reportLoggerCounts) {
-    asyncStore.reportLoggerCounts = reportLoggerCounts;
+    asyncStore.getStore().reportLoggerCounts = reportLoggerCounts;
   }
 }
 export function enableAsync(engine) {

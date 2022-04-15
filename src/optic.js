@@ -213,6 +213,7 @@ class Optic {
           level: 'warn',
           trace: true,
           message: "Noniterable result from fn of xformIterableInClone; substituting empty Array",
+          msgId: 'e3e30f4a71fa',
           subject,
           ...this,
           opticConstructor: this.constructor,
@@ -329,5 +330,5 @@ export default Optic;
 
 /* istanbul ignore next */
 function abstractMethod() {
-  throw "Abstract method not implemented by concrete class";
+  throw new Error("Abstract method not implemented by concrete class");
 }
