@@ -728,7 +728,7 @@ export function makeExports({fuse, isLens, lens}) {
    * @see module:natural-lenses/datum-plan
    *
    * @description
-   * If a intial state POD value is available, this function simplifies generating
+   * If an initial state POD value is available, this function simplifies generating
    * a datum plan to access the value.  One example application would be in a
    * Redux store, where the initial state could be passed to this function and the
    * resulting datum plan used to create selectors and reducers.
