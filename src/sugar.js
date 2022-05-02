@@ -1,5 +1,8 @@
 import Lens from './lens.js';
-import { Parser, states, actions } from '../src-cjs/parser.js';
+import { Parser, states, actions } from '../src-cjs/tag-parser.js';
+
+const RAW_VALUE_MARK = '⦃…⦄';
+const MISSING_VALUE = new Error();
 
 /**
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
@@ -29,7 +32,7 @@ import { Parser, states, actions } from '../src-cjs/parser.js';
  * as a single backtick anyway.  If this causes confusion, the `\x60` escape
  * sequence can be used instead.
  */
-export default function lensFromJSONPath(stringParts, values) {
+export default function lensFromJSONPath(stringParts, ...values) {
   const stringsCursor = stringParts.raw[Symbol.iterator]();
   const valuesCursor = values[Symbol.iterator]();
   let {value: curString, done} = stringsCursor.next();
@@ -39,10 +42,14 @@ export default function lensFromJSONPath(stringParts, values) {
   
   const parser = new Parser();
   const steps = [];
-  let accum = '', charCursor = curString[Symbol.iterator()](), curCharRecord;
+  let accum = '', charCursor = curString[Symbol.iterator](), curCharRecord;
+  let consumed = '', captureStart;
   
   const actions = {
     append(ch) {
+      if (!accum) {
+        captureStart = consumed.length;
+      }
       accum += ch;
     },
     
@@ -57,27 +64,52 @@ export default function lensFromJSONPath(stringParts, values) {
     },
     
     consume_intercalated_value() {
-      steps.push(getNext(valuesCursor, "Too few values!"));
-      curString = getNext(stringsCursor, "Too few template parts!");
+      steps.push(getNext(valuesCursor, () => {throw MISSING_VALUE;}));
+      consumed += RAW_VALUE_MARK;
+      curString = getNext(stringsCursor, () => {
+        throw new Error("Too few template parts!");
+      });
       charCursor = curString[Symbol.iterator]();
       curCharRecord = charCursor.next();
       parser.state = states.subscript_value_emitted;
     },
     
     scan() {
+      consumed += curCharRecord.value;
       curCharRecord = charCursor.next();
     }
   };
   
   curCharRecord = charCursor.next();
-  while (!curCharRecord.done && parser.processChar(curCharRecord.value, actions)) {
-    if (curCharRecord.done) {
-      parser.inputEnds(actions);
+  try {
+    while (!curCharRecord.done && parser.processChar(curCharRecord.value, actions)) {
+      if (curCharRecord.done) {
+        parser.inputEnds(actions);
+      }
     }
+  } catch (e) {
+    if (e !== MISSING_VALUE) throw e;
+  }
+  
+  if (!parser.state) {
+    const reducedInput = stringParts.raw.join(RAW_VALUE_MARK),
+      asciiArt = `\n    ${reducedInput}\n    ${' '.repeat(consumed.length)}^\n`;
+    throw Object.assign(
+      new Error("JSONPath (subset) syntax error\n" + asciiArt),
+      { consumed, from: reducedInput }
+    );
   }
   
   if (!parser.isFinal()) {
-    throw new Error("Path ended prematurely!");
+    const reducedInput = stringParts.raw.join(RAW_VALUE_MARK),
+      asciiArt = `\n\n    ${reducedInput}\n    ${' '.repeat(captureStart) + '^'.repeat(reducedInput.length - captureStart)}\n`;
+    const error = new Error("Path ended prematurely!" + (
+      accum ? asciiArt : ''
+    ));
+    if (accum) {
+      error.accumulatedText = accum;
+    }
+    throw error;
   }
   
   if (!valuesCursor.next().done) {
@@ -87,10 +119,10 @@ export default function lensFromJSONPath(stringParts, values) {
   return new Lens(...steps);
 }
 
-function getNext(cursor, errMsg) {
+function getNext(cursor, getDefault) {
   const { value, done } = cursor.next();
   if (done) {
-    throw new Error(errMsg);
+    return getDefault();
   }
   return value;
 }

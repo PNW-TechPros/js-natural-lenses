@@ -157,4 +157,6 @@ class Parser {
     return isFinalState(this.state);
   }
 }
-Object.assign(exports, { Parser, states, actions });
+exports.Parser = Parser;
+exports.states = states;
+exports.actions = actions;

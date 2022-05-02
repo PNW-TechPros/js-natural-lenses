@@ -267,7 +267,9 @@ module JsGenerator
     code.puts "  }"
     code.puts "}"
     
-    code.puts "Object.assign(exports, { Parser, states, actions });"
+    %w[Parser states actions].each do |export_name|
+      code.puts "exports.#{export_name} = #{export_name};"
+    end
   end
 end
 
@@ -277,7 +279,7 @@ class JsonPathTemplateParserJsGenerator < JsonPathTemplateParser
   def self.generate!
     output_path = File.join(
       *(__dir__ ? [__dir__, '..', '..', '..', 'src-cjs'] : ['.']),
-      "parser.js"
+      "tag-parser.js"
     )
     File.open(output_path, 'w') do |outf|
       JsonPathTemplateParserJsGenerator.generate to: outf
