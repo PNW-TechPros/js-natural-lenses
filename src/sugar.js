@@ -35,6 +35,21 @@ const MISSING_VALUE = new Error();
  * brackets, in which case the backslash-backtick sequence will be interpreted
  * as a single backtick anyway.  If this causes confusion, the `\x60` escape
  * sequence can be used instead.
+ *
+ * # Examples
+ * 
+ * ```js
+ * const lens = require('natural-lenses'),  A = require('natural-lenses/sugar');
+ *
+ * # Equivalent expressions
+ *
+ * const lensExplicit1 = lens('foo', 'bar'), lensSugar1 = A`$.foo.bar`;
+ *
+ * const lensExplicit2 = lens('street', 1), lensSugar2 = A`$.street[1]`;
+ *
+ * const marker = Symbol('marker');
+ * const lensExplicit3 = lens('item', marker), lensSugar3 = A`$.item[${marker}]`;
+ * ```
  */
 export default function lensFromJSONPath(stringParts, ...values) {
   const stringsCursor = stringParts.raw[Symbol.iterator]();
