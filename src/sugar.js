@@ -5,11 +5,14 @@ const RAW_VALUE_MARK = '⦃…⦄';
 const MISSING_VALUE = new Error();
 
 /**
+ * @module natural-lenses/sugar
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
+ * @returns {Lens} A lens constructed from the JSONPath (and intercalated values) given
  *
  * @description
- * This string template tag allows a subset of JSONPath to be used for
- * constructing [Lenses]{@link Lens}.  The only supported JSONPath operators
+ * This module is (when `require`d) or exports as default (when `import`ed) a
+ * Function implementing a string template tag interpreting a subset of JSONPath
+ * to construct a {@link Lens}.  The only supported JSONPath operators
  * are the single dot (`.`) and the square brackets (`[...]`); all other
  * operators would result in a non-Lens optic.  Within the square brackets,
  * only string literals (in single- or double-quotes), unsigned or negative
@@ -21,7 +24,8 @@ const MISSING_VALUE = new Error();
  * When an intercalated value is used within a subscript operator, the actual
  * JavaScript value — not its string representation — is used as the step in
  * the {@link Lens}; this allows for using [`lens.Step`]{@link Step} for
- * for custom stepping or arbitrary JavaScript values for keys into a Map.
+ * custom stepping or arbitrary JavaScript values for keys into a Map or similar
+ * container.
  *
  * This template tag processes the raw strings used in the template (to avoid
  * doubling of backslashes for escape sequences); though this means a
@@ -37,7 +41,7 @@ export default function lensFromJSONPath(stringParts, ...values) {
   const valuesCursor = values[Symbol.iterator]();
   let {value: curString, done} = stringsCursor.next();
   if (done) {
-    return lens();
+    return new Lens();
   }
   
   const parser = new Parser();
@@ -110,6 +114,10 @@ export default function lensFromJSONPath(stringParts, ...values) {
       error.accumulatedText = accum;
     }
     throw error;
+  }
+  
+  if (!stringsCursor.next().done) {
+    throw new Error("Too many strings!");
   }
   
   if (!valuesCursor.next().done) {
