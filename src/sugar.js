@@ -4,6 +4,7 @@ import { Parser, states, actions } from '../src-cjs/tag-parser.js';
 const RAW_VALUE_MARK = '⦃…⦄';
 const MISSING_VALUE = new Error();
 
+const lensBuilderCache = new Map();
 /**
  * @module natural-lenses/sugar
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
@@ -52,15 +53,27 @@ const MISSING_VALUE = new Error();
  * ```
  */
 export default function lensFromJSONPath(stringParts, ...values) {
-  const stringsCursor = stringParts.raw[Symbol.iterator]();
-  const valuesCursor = values[Symbol.iterator]();
+  const cacheKey = stringParts.raw.join('!');
+  let lensBuilder = lensBuilderCache.get(cacheKey);
+  if (!lensBuilder) {
+    lensBuilderCache.set(
+      cacheKey,
+      (lensBuilder = lensBuilderFromTemplateStrings(stringParts.raw))
+    );
+  }
+  return lensBuilder(values);
+}
+
+const INTERCALATED_VALUE_PLACEHOLDER = Symbol('intercalated value');
+function lensBuilderFromTemplateStrings(stringParts) {
+  const stringsCursor = stringParts[Symbol.iterator]();
   let {value: curString, done} = stringsCursor.next();
   if (done) {
-    return new Lens();
+    return () => new Lens();
   }
   
   const parser = new Parser();
-  const steps = [];
+  const steps = [], ivIndexes = [];
   let accum = '', charCursor = curString[Symbol.iterator](), curCharRecord;
   let consumed = '', captureStart;
   
@@ -83,7 +96,8 @@ export default function lensFromJSONPath(stringParts, ...values) {
     },
     
     consume_intercalated_value() {
-      steps.push(getNext(valuesCursor, () => {throw MISSING_VALUE;}));
+      ivIndexes.push(steps.length);
+      steps.push(INTERCALATED_VALUE_PLACEHOLDER);
       consumed += RAW_VALUE_MARK;
       curString = getNext(stringsCursor, () => {
         throw new Error("Too few template parts!");
@@ -96,12 +110,12 @@ export default function lensFromJSONPath(stringParts, ...values) {
     scan() {
       consumed += curCharRecord.value;
       curCharRecord = charCursor.next();
-    }
+    },
   };
   
   curCharRecord = charCursor.next();
   try {
-    while (!curCharRecord.done && parser.processChar(curCharRecord.value, actions)) {
+    while(!curCharRecord.done && parser.processChar(curCharRecord.value, actions)) {
       if (curCharRecord.done) {
         parser.inputEnds(actions);
       }
@@ -111,7 +125,7 @@ export default function lensFromJSONPath(stringParts, ...values) {
   }
   
   if (!parser.state) {
-    const reducedInput = stringParts.raw.join(RAW_VALUE_MARK),
+    const reducedInput = stringParts.join(RAW_VALUE_MARK),
       asciiArt = `\n    ${reducedInput}\n    ${' '.repeat(consumed.length)}^\n`;
     throw Object.assign(
       new Error("JSONPath (subset) syntax error\n" + asciiArt),
@@ -120,7 +134,7 @@ export default function lensFromJSONPath(stringParts, ...values) {
   }
   
   if (!parser.isFinal()) {
-    const reducedInput = stringParts.raw.join(RAW_VALUE_MARK),
+    const reducedInput = stringParts.join(RAW_VALUE_MARK),
       asciiArt = `\n\n    ${reducedInput}\n    ${' '.repeat(captureStart) + '^'.repeat(reducedInput.length - captureStart)}\n`;
     const error = new Error("Path ended prematurely!" + (
       accum ? asciiArt : ''
@@ -132,14 +146,20 @@ export default function lensFromJSONPath(stringParts, ...values) {
   }
   
   if (!stringsCursor.next().done) {
-    throw new Error("Too many strings!");
+    throw new Error("Too many string parts!");
   }
   
-  if (!valuesCursor.next().done) {
-    throw new Error("Too many values!")
-  }
-  
-  return new Lens(...steps);
+  return (values) => {
+    if (values.length !== ivIndexes.length) {
+      throw new Error(`Expected ${ivIndexes.length} values, received ${values.length}`);
+    }
+    
+    const lensSteps = [...steps];
+    ivIndexes.forEach((stepsIndex, i) => {
+      lensSteps[stepsIndex] = values[i];
+    });
+    return new Lens(...lensSteps);
+  };
 }
 
 function getNext(cursor, getDefault) {
