@@ -4,7 +4,10 @@ import { Parser, states, actions } from '../src-cjs/tag-parser.js';
 const RAW_VALUE_MARK = '⦃…⦄';
 const MISSING_VALUE = new Error();
 
+const cacheSpaceAllocations = new Map([[null, 100]]);
+
 const lensBuilderCache = new Map();
+lensBuilderCache.allocated = cacheSpaceAllocations.get(null);
 /**
  * @module natural-lenses/sugar
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
@@ -54,13 +57,14 @@ const lensBuilderCache = new Map();
  */
 export default function lensFromJSONPath(stringParts, ...values) {
   const cacheKey = stringParts.raw.join('!');
-  let lensBuilder = lensBuilderCache.get(cacheKey);
-  if (!lensBuilder) {
-    lensBuilderCache.set(
-      cacheKey,
-      (lensBuilder = lensBuilderFromTemplateStrings(stringParts.raw))
-    );
-  }
+  let lensBuilder = lensBuilderCache.get(cacheKey) ||
+    lensBuilderFromTemplateStrings(stringParts.raw);
+  
+  // Delete before setting to implement LRU caching
+  lensBuilderCache.delete(cacheKey);
+  lensBuilderCache.set(cacheKey, lensBuilder);
+  pruneLensBuilderCache();
+  
   return lensBuilder(values);
 }
 
@@ -168,4 +172,81 @@ function getNext(cursor, getDefault) {
     return getDefault();
   }
   return value;
+}
+
+function pruneLensBuilderCache() {
+  for (const key of lensBuilderCache.keys()) {
+    if (lensBuilderCache.size <= lensBuilderCache.allocated) {
+      break;
+    }
+    
+    lensBuilderCache.delete(key);
+  }
+}
+
+/**
+ * @name module:natural-lenses/sugar#cache
+ * @summary Parse Cache Control
+ *
+ * @description
+ * 
+ */
+export const cache = {
+  /**
+   * @summary Create or update an allocation of parser cache entries
+   * @param {Symbol|Object} allocationKey - Key for allocation
+   * @param {Number}        size          - Number of cache slots to allocate
+   *
+   * @description
+   * Cache allocations should be made by any package depending on this package
+   * and making significant use of sugar syntax.  It can be used to either
+   * temporarily boost the cache size or to more permanently boost the cache
+   * size for ongoing operations.
+   */
+  setAllocation(allocationKey, size) {
+    if (isNaN(size) || (size = Number(size)) < 0) {
+      throw new Error("Cache allocation size must be a valid, non-negative number");
+    }
+    cacheSpaceAllocations.set(allocationKey, size);
+    recomputeCacheAllocation();
+  },
+  
+  /**
+   * @summary Remove a previously placed cache allocation
+   * @param {Symbol|Object} allocationKey - Key for allocation
+   *
+   * @description
+   * If the need for a previously placed cache allocation is removed, call this
+   * method with the key used to make the allocation.
+   */
+  cancelAllocation(allocationKey) {
+    cacheSpaceAllocations.delete(allocationKey);
+    recomputeCacheAllocation();
+  },
+  
+  /**
+   * @summary Current total of allocated cache slots
+   * @type {number}
+   */
+  get totalAllocated() {
+    return lensBuilderCache.allocated;
+  },
+  
+  /**
+   * @summary Current number of cache slots consumed
+   * @type {number}
+   */
+  get used() {
+    return lensBuilderCache.size;
+  },
+}
+
+function recomputeCacheAllocation() {
+  lensBuilderCache.allocated = [...cacheSpaceAllocations.values()].reduce(
+    (r, v) => r + v,
+    0
+  );
+  if (lensBuilderCache.size > lensBuilderCache.allocated) {
+    pruneLensBuilderCache();
+  }
 }

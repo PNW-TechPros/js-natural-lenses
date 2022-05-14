@@ -1,10 +1,12 @@
 const A = require('#this/sugar');
 const {default: Lens} = require('#this/cjs/lens');
+const _ = require('underscore');
 const {assert} = require('chai');
 
 async function loadEsmSubjects() {
   const subjectPromises = Object.entries({
     A: import('#this/sugar').then(m => m.default),
+    cache: import('#this/sugar').then(m => m.cache),
     Lens: import('../esm/lens.js').then(m => m.default),
   });
   
@@ -19,10 +21,10 @@ function testSequence(loaderName, subjects) {
   const origIt = it;
   describe(loaderName, () => {
     subjects = Promise.resolve(subjects);
-    let A, Lens;
+    let A, cache, Lens;
     
     async function loadSubjects() {
-      ({ A, Lens } = await subjects);
+      ({ A, cache, Lens } = await subjects);
     }
     
     let it = (name, body) => {
@@ -161,10 +163,73 @@ function testSequence(loaderName, subjects) {
           assert.throws( () => A({raw: ['$.foo', 'bar']}) );
         });
       });
+      
+      describe('parse cache', () => {
+        const addCacheEntry = (function() {
+          let counter = 0;
+          return () => A({raw: [`$[${counter++}]`]});
+        }());
+        
+        it("expires cached entries when the cache is full", () => {
+          _.times(cache.totalAllocated + 1, addCacheEntry);
+          
+          assert.isAtMost(cache.used, cache.totalAllocated,
+            "cache used exceeds allocation");
+        });
+        
+        it("can enlarge", () => {
+          _.times(cache.totalAllocated + 1, addCacheEntry);
+          
+          assert.isAtMost(cache.used, cache.totalAllocated);
+          const usedBeforeEnlargement = cache.used;
+          
+          const localAllocation = Symbol('test allocation');
+          cache.setAllocation(localAllocation, 1);
+          try {
+            addCacheEntry();
+            
+            assert.strictEqual(cache.used, usedBeforeEnlargement + 1);
+            
+            addCacheEntry();
+            
+            assert.strictEqual(cache.used, usedBeforeEnlargement + 1,
+              "cache did not adhere to new limit");
+          } finally {
+            cache.cancelAllocation(localAllocation);
+          }
+        });
+        
+        it("can shrink", () => {
+          const allocationBeforeEnlargement = cache.totalAllocated;
+          const localAllocation = Symbol('test allocation');
+          cache.setAllocation(localAllocation, 1);
+          try {
+            _.times(cache.totalAllocated + 1, addCacheEntry);
+          } finally {
+            cache.cancelAllocation(localAllocation);
+          }
+          assert.strictEqual(cache.totalAllocated, allocationBeforeEnlargement);
+          assert.isAtMost(cache.used, cache.totalAllocated);
+        });
+        
+        it("does not allow non-numeric cache allocation", () => {
+          assert.throws(() => cache.setAllocation('foo', 'S@G0&x$xiKf'));
+        });
+        
+        it("does not allow negative cache allocation", () => {
+          assert.throws(() => cache.setAllocation('foo', -1));
+        });
+        
+        it("allows infinite cache allocation", () => {
+          const localAllocation = Symbol('test allocation');
+          assert.doesNotThrow(() => cache.setAllocation(localAllocation, Infinity));
+          cache.cancelAllocation(localAllocation);
+        });
+      });
     });
   });
 }
 
-testSequence('CommonJS', { A, Lens });
+testSequence('CommonJS', { A, cache: A.cache, Lens });
 
 testSequence('ESM', loadEsmSubjects());

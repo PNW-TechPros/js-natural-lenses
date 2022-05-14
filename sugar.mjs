@@ -1,1 +1,1 @@
-export {default as default} from './esm/sugar.js';
+export {default as default, cache} from './esm/sugar.js';
