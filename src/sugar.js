@@ -8,6 +8,12 @@ const cacheSpaceAllocations = new Map([[null, 100]]);
 
 const lensBuilderCache = new Map();
 lensBuilderCache.allocated = cacheSpaceAllocations.get(null);
+
+/**
+ * @class Sugar_CacheControl
+ * @hideconstructor
+ */
+
 /**
  * @module natural-lenses/sugar
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
@@ -185,56 +191,71 @@ function pruneLensBuilderCache() {
 }
 
 /**
- * @name module:natural-lenses/sugar#cache
- * @summary Parse Cache Control
+ * @member {Sugar_CacheControl} module:natural-lenses/sugar#cache
+ * @summary Parse cache control
  *
  * @description
- * 
+ * This object contains methods and properties to observe and control the parse
+ * cache for {@link module:natural-lenses/sugar}.
  */
 export const cache = {
   /**
-   * @summary Create or update an allocation of parser cache entries
-   * @param {Symbol|Object} allocationKey - Key for allocation
-   * @param {Number}        size          - Number of cache slots to allocate
+   * @callback Sugar_CacheControl~AllocationAdjuster
+   * @param {number} [newSize = 0] - The new size (>= 0) for this allocation
    *
    * @description
-   * Cache allocations should be made by any package depending on this package
+   * Call this to adjust the size of the allocation (which returned this
+   * function); setting *newSize* to 0 (the default) cancels the allocation,
+   * though it can be reinstated by later calls to this function.
+   */
+  
+  /**
+   * @memberof Sugar_CacheControl
+   * @instance
+   * @summary Create an allocation of parser cache entries
+   * @param {Number} size - Number of cache slots to allocate
+   * @returns {Sugar_CacheControl~AllocationAdjuster} A function to cancel or adjust the allocation 
+   *
+   * @description
+   * Cache allocations should be made by any package consuming this package
    * and making significant use of sugar syntax.  It can be used to either
    * temporarily boost the cache size or to more permanently boost the cache
    * size for ongoing operations.
    */
-  setAllocation(allocationKey, size) {
-    if (isNaN(size) || (size = Number(size)) < 0) {
-      throw new Error("Cache allocation size must be a valid, non-negative number");
-    }
+  addCapacity(size) {
+    size = validateCacheAllocationSize(size);
+    const allocationKey = Symbol();
     cacheSpaceAllocations.set(allocationKey, size);
     recomputeCacheAllocation();
+    
+    return function adjustTo(newSize = 0) {
+      newSize = validateCacheAllocationSize(newSize);
+      if (newSize === 0) {
+        cacheSpaceAllocations.delete(allocationKey);
+      } else {
+        cacheSpaceAllocations.set(allocationKey, newSize);
+      }
+      recomputeCacheAllocation();
+    };
   },
   
   /**
-   * @summary Remove a previously placed cache allocation
-   * @param {Symbol|Object} allocationKey - Key for allocation
-   *
-   * @description
-   * If the need for a previously placed cache allocation is removed, call this
-   * method with the key used to make the allocation.
-   */
-  cancelAllocation(allocationKey) {
-    cacheSpaceAllocations.delete(allocationKey);
-    recomputeCacheAllocation();
-  },
-  
-  /**
+   * @memberof Sugar_CacheControl
+   * @instance
    * @summary Current total of allocated cache slots
    * @type {number}
+   * @readonly
    */
   get totalAllocated() {
     return lensBuilderCache.allocated;
   },
   
   /**
+   * @memberof Sugar_CacheControl
+   * @instance
    * @summary Current number of cache slots consumed
    * @type {number}
+   * @readonly
    */
   get used() {
     return lensBuilderCache.size;
@@ -249,4 +270,11 @@ function recomputeCacheAllocation() {
   if (lensBuilderCache.size > lensBuilderCache.allocated) {
     pruneLensBuilderCache();
   }
+}
+
+function validateCacheAllocationSize(size) {
+  if (isNaN(size) || (size = Number(size)) < 0) {
+    throw new Error("Cache allocation size must be a valid, non-negative number");
+  }
+  return size;
 }

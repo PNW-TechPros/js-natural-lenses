@@ -183,8 +183,7 @@ function testSequence(loaderName, subjects) {
           assert.isAtMost(cache.used, cache.totalAllocated);
           const usedBeforeEnlargement = cache.used;
           
-          const localAllocation = Symbol('test allocation');
-          cache.setAllocation(localAllocation, 1);
+          const cancelAllocation = cache.addCapacity(1);
           try {
             addCacheEntry();
             
@@ -195,18 +194,17 @@ function testSequence(loaderName, subjects) {
             assert.strictEqual(cache.used, usedBeforeEnlargement + 1,
               "cache did not adhere to new limit");
           } finally {
-            cache.cancelAllocation(localAllocation);
+            cancelAllocation();
           }
         });
         
         it("can shrink", () => {
           const allocationBeforeEnlargement = cache.totalAllocated;
-          const localAllocation = Symbol('test allocation');
-          cache.setAllocation(localAllocation, 1);
+          const cancelAllocation = cache.addCapacity(1);
           try {
             _.times(cache.totalAllocated + 1, addCacheEntry);
           } finally {
-            cache.cancelAllocation(localAllocation);
+            cancelAllocation();
           }
           assert.strictEqual(cache.totalAllocated, allocationBeforeEnlargement);
           assert.isAtMost(cache.used, cache.totalAllocated);
@@ -221,9 +219,13 @@ function testSequence(loaderName, subjects) {
         });
         
         it("allows infinite cache allocation", () => {
-          const localAllocation = Symbol('test allocation');
-          assert.doesNotThrow(() => cache.setAllocation(localAllocation, Infinity));
-          cache.cancelAllocation(localAllocation);
+          const previousSize = cache.totalAllocated;
+          let cancelAllocation = _.identity;
+          assert.doesNotThrow(() => {
+            cancelAllocation = cache.addCapacity(Infinity);
+          });
+          cancelAllocation();
+          assert.strictEqual(cache.totalAllocated, previousSize);
         });
       });
     });
