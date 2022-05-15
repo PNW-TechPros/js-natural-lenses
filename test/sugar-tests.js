@@ -227,6 +227,28 @@ function testSequence(loaderName, subjects) {
           cancelAllocation();
           assert.strictEqual(cache.totalAllocated, previousSize);
         });
+        
+        it("can adjust one allocation multiple times", () => {
+          const initialAllocation = cache.totalAllocated;
+          const adjustAllocation = cache.addCapacity(0);
+          assert.strictEqual(cache.totalAllocated, initialAllocation);
+          function testAllocationChange(n) {
+            adjustAllocation(n);
+            assert.strictEqual(cache.totalAllocated, initialAllocation + n);
+          }
+          
+          testAllocationChange(5);
+          testAllocationChange(10);
+          
+          // cancel allocation
+          adjustAllocation();
+        });
+        
+        it("does not allow adjustment to a non-numeric value", () => {
+          const adjustAllocation = cache.addCapacity(0);
+          assert.throws(() => adjustAllocation('foo'));
+          adjustAllocation();
+        });
       });
     });
   });

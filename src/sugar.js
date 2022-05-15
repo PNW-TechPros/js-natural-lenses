@@ -12,6 +12,9 @@ lensBuilderCache.allocated = cacheSpaceAllocations.get(null);
 /**
  * @class Sugar_CacheControl
  * @hideconstructor
+ *
+ * @classdesc
+ * The only instance of this class is available as {@link module:natural-lenses/sugar#cache}.
  */
 
 /**
