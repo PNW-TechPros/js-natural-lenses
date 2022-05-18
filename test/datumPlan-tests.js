@@ -184,6 +184,46 @@ function testSequence(loaderName, subjects) {
           const data = {[datumPlan.others]: "friends"};
           assert.strictEqual(plan[datumPlan.others].get(data), data[datumPlan.others]);
         });
+        
+        it("can prefer specified property over newer Lens method", () => {
+          const plan = datumPlan(({ VALUE }) => ({
+            address: {
+              extractor: VALUE,
+            },
+          }), {methodsVersion: '2.1'});
+          
+          const data = {address: {extractor: Symbol('value')}};
+          assert.strictEqual(
+            plan.address.extractor.get(data),
+            data.address.extractor
+          );
+          assert.strictEqual(
+            plan.address._extractor(a => a.extractor)(data),
+            data.address.extractor
+          );
+        });
+        
+        it("can prefer raw-specified property over newer Lens method", () => {
+          const plan = datumPlan(({ VALUE, RAW }) => ({
+            address: {
+              city: VALUE,
+              [RAW]: {
+                extractor: VALUE,
+                city: VALUE,
+              }
+            },
+          }), {methodsVersion: '2.1'});
+          
+          const data = {address: {extractor: Symbol('value')}};
+          assert.strictEqual(
+            plan.address.extractor.get(data),
+            data.address.extractor
+          );
+          assert.strictEqual(
+            plan.address._extractor(a => a.extractor)(data),
+            data.address.extractor
+          );
+        });
       });
       
       describe("#at()", () => {
