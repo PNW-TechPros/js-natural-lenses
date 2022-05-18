@@ -544,7 +544,6 @@ function testSequence(loaderName, subjects) {
             warn: sinon.fake(),
             trace: sinon.fake(),
           };
-          debugger;
           lensUtils.setLogger.forBlock(logger, () => {
             const subject = {}, xform = x => 6;
             lens('primes').xformIterableInClone(subject, xform);
@@ -836,7 +835,6 @@ function testSequence(loaderName, subjects) {
       
       describe('#fuse()', () => {
         it("throws if non-Lenses are provided (use .fuse() instead)", () => {
-          debugger;
           const Lens = lens(0).constructor;
           assert.throws(
             () => Lens.fuse(lens(0), lensUtils.nfocal([lens(1)])),

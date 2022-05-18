@@ -202,6 +202,18 @@ const plan = datumPlan(({ VALUE, RAW }) => ({
 * `plan._keys` is a {@link Lens} with keys `['_keys']` (i.e. the definition spec'd for `_keys` is used).  Because it does not conflict with any normal {@link Lens} property, it has priority for the `_keys` property.
 * `plan.__keys` is a {@link Lens} with keys `['keys']`.  `keys` is a critical property for all [Lenses]{@link Lens} and `_keys` was already claimed by a non-conflicting property.
 
+As this package introduces new methods or properties on `Lens`es via the prototype — often in minor version updates — certain properties of existing datum plans might experience new conflicts.  By passing a `methodsVersion` option when constructing the datum plan, the deconfliction of names between the datum plan and the prototype of `Lens` can be "locked," resolving conflicts with "newer" `Lens` methods in favor of the datum plan specification.  An example, using the `extractor` method introduced in version 2.3.0:
+
+```js
+const plan = datumPlan(({ VALUE }) => ({
+  address: {
+    extractor: VALUE,
+  },
+}), {methodsVersion: '2.2'});
+```
+
+Without the `methodsVersion` option, `plan.address.extractor` would be a method of `plan.address` for building a function for extracting information from the `'address'` property/entry of the subject data, and the "deeper" `Lens` would be assigned to `plan.address._extractor`.  With the option given, however, the assignments are reversed: `plan.address.extractor` is a `Lens` and `plan.address._extractor` is a method of `plan.address`.
+
 ### Plans from Plain Ol' Data (POD) Values
 
 In many places, JavaScript data comes down to Arrays, Objects, and scalar values (numbers, Boolean values, null, and strings).  All of these data types are conveniently serializable to JSON.  Such values are frequently used — as with Redux — to store complex state.  A particular instance of a POD value having approximately the datum shape desired for a datum plan is often available, perhaps as an initial value.  However, the initial, POD value may not be as detailed as desired or it may contain information that creates ambiguity when generating a datum plan.  And the actual initial value will not have the special datum plan terminal value marker (currently `"$"`) but will instead use arbitrary scalar values.

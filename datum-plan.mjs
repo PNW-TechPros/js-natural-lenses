@@ -8,4 +8,4 @@ const cjsExports = makeExports({
 });
 
 export default cjsExports;
-export const { value, others } = cjsExports;
+export const { value, others, raw, fromPOD } = cjsExports;

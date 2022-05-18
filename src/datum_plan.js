@@ -3,6 +3,30 @@ import { UndefinedPropertyError } from './errors.js';
 import { smartLog } from './logger.js';
 
 export function makeExports({fuse, isLens, lens}) {
+  const WEAK_LENS_METHODS = (function() {
+    const result = {},
+      getHas = lens('has').$`bound`,
+      getIterator = lens(Symbol.iterator).$`bound`;
+    let namesPreviouslyGiven = [];
+    function addVersionEntry(version, names) {
+      if (!names) {
+        result[version] = namesPreviouslyGiven;
+        return;
+      }
+      const nameSet = new Set([...namesPreviouslyGiven, ...names]);
+      result[version] = namesPreviouslyGiven = {
+        has: getHas(nameSet),
+        [Symbol.iterator]: getIterator(nameSet),
+      };
+    }
+    
+    addVersionEntry('2.1', ['extractor', 'extractor_maybe']);
+    addVersionEntry('2.0');
+    
+    return Object.freeze(result);
+  }());
+  const NO_WEAK_LENS_METHODS = {has: () => false};
+
   const value = '$', others = '((others))', raw = '((raw))';
   const guardedGroups = new Set(
     (process.env.DATUM_PLAN_GUARDS || '').split(',')
@@ -22,6 +46,7 @@ export function makeExports({fuse, isLens, lens}) {
       this.keys = keys;
       this.parent = null;
       this.options = {...options};
+      this.weakLensMethods = WEAK_LENS_METHODS[options.methodsVersion || ''] || NO_WEAK_LENS_METHODS;
     }
     
     get proxyGuarded() {
@@ -58,14 +83,25 @@ export function makeExports({fuse, isLens, lens}) {
             result.$entryValue = new PlanBuilder([], this.options).buildPlan(rawPlan[others]);
             Object.assign(result, this.entriesMixin(result.$entryValue, Object.keys(rawPlan)));
           }
-          const conflictedChildren = {};
+          const conflictedChildren = {}, addedChildren = new Set();
           for (let key of Object.keys(rawPlan)) {
             if (/\(\([a-z]+\)\)/.test(key)) continue;
             this.keys = theseKeys.concat([key]);
             try {
               this.parent = result;
-              (key in result ? conflictedChildren : result)[key] =
-                this.buildPlan(rawPlan[key]);
+              const childPlan = this.buildPlan(rawPlan[key]);
+              if (key in result) {
+                if (this.weakLensMethods.has(key)) {
+                  conflictedChildren[key] = result[key];
+                  result[key] = childPlan;
+                  addedChildren.add(key);
+                } else {
+                  conflictedChildren[key] = childPlan;
+                }
+              } else {
+                result[key] = childPlan;
+                addedChildren.add(key);
+              }
             } finally {
               this.parent = null;
             }
@@ -74,8 +110,17 @@ export function makeExports({fuse, isLens, lens}) {
             this.keys = theseKeys.concat([key]);
             try {
               this.parent = result;
-              (key in result ? conflictedChildren : result)[key] =
-                this.buildPlan(rawPlan[raw][key]);
+              const childPlan = this.buildPlan(rawPlan[raw][key]);
+              if (key in result && !addedChildren.has(key)) {
+                if (this.weakLensMethods.has(key)) {
+                  conflictedChildren[key] = result[key];
+                  result[key] = childPlan;
+                } else {
+                  conflictedChildren[key] = childPlan;
+                }
+              } else {
+                result[key] = childPlan;
+              }
             } finally {
               this.parent = null;
             }
@@ -647,6 +692,7 @@ export function makeExports({fuse, isLens, lens}) {
    * @param {Array|Object|string|DatumPlan_DslCallback} spec  An object specifying the datum plan to be generated, or a {@link DatumPlan_DslCallback} to return such an object
    * @param {Object} [opts]
    * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
+   * @param {string} [opts.methodsVersion]  The *major.minor* version of the {@link Lens} methods to use; this avoids changes to deconfliction of declared datum plan properties with later-introduced Lens method names
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    *
    * @property {string} others  Used as a key in an Object to indicate dictionary-like behavior
@@ -700,17 +746,18 @@ export function makeExports({fuse, isLens, lens}) {
    * @see DatumPlan_Dsl
    * @see {@tutorial datum-plans} tutorial
    */
-  function makeDatumPlan(rawPlan, { planGroup } = {}) {
+  function makeDatumPlan(rawPlan, { planGroup, methodsVersion } = {}) {
     if (isFunction(rawPlan)) {
       rawPlan = rawPlan.call(undefined, makeDatumPlanDSL());
     }
-    return new PlanBuilder([], { planGroup }).buildPlan(rawPlan);
+    return new PlanBuilder([], { planGroup, methodsVersion }).buildPlan(rawPlan);
   }
   Object.assign(makeDatumPlan, {
     fromPOD,
     others,
     raw,
     value,
+    WEAK_LENS_METHODS,
   });
   Object.defineProperties(makeDatumPlan, {
     guardedGroups: {value: guardedGroups},
