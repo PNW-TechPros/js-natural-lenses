@@ -662,9 +662,9 @@ export function makeExports({fuse, isLens, lens}) {
    * receives as its first argument a DSL object providing relevantly named
    * values.
    *
-   * The terminal *value* indicates where descent into *spec* terminates.
-   * Otherwise, specification descent continues, though differently through
-   * Arrays and other Objects.
+   * The terminal `value` (or `VALUE` in the DSL) indicates where descent into
+   * *spec* terminates.  Otherwise, specification descent continues, though
+   * differently through Arrays and other Objects.
    *
    * Descent through an Array expects either 0 or 1 elements in the Array:
    * if one entry is given, it is the "item spec" for items in the Array; if
@@ -675,21 +675,23 @@ export function makeExports({fuse, isLens, lens}) {
    * Descent through an Object produces [Lenses]{@link Lens} for each own-property
    * of the spec Object, attaching them to the {@link Lens} which would retrieve
    * the instant Object spec.  Spec Objects can have a special own-property with
-   * the key given by *others*, which specifies A) that this Object behaves at
+   * the key given by `[others]`, which specifies A) that this Object behaves at
    * in a dictionary-like manner for any non-explicit properties, and B) the
    * datum plan spec for each non-explicit entry's value (if something other than
-   * *value* is provided).
+   * *value* is provided).  The DSL near-equivalent of using `[others]` is
+   * [`NAMED_VALUES`]{@link DatumPlan_Dsl}.
    *
    * To allow specification of *any* property in an Object of a datum plan spec,
-   * the special key *raw* can be used to provide an additional Object whose
+   * the special key `[raw]` can be used to provide an additional Object whose
    * own-properties are just like the properties for the Object containing the
-   * *raw* key, except none of the keys of this secondary object are treated
-   * as special -- not *raw*, nor *others*, nor any other key matching the
+   * `[raw]` key, except none of the keys of this secondary object are treated
+   * as special -- not `[raw]`, nor `[others]`, nor any other key matching the
    * "special key" pattern (double parentheses containing only lowercase
    * letters).
    *
-   * The resulting datum plan will be structured vaguely like *spec* and
-   * constructed to access a value of similar shape to *spec*.
+   * The resulting datum plan will be structured vaguely like *spec* (or the
+   * result of calling *spec*) and constructed to access a value of similar
+   * structure to *spec*.
    *
    * If *options.planGroup* is given, the constructed datum plan can be instrumented
    * with JavaScript proxies to detect and report cases where undefined properties

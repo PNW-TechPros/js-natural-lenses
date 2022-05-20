@@ -128,7 +128,7 @@ Object.defineProperties(makeLens, {
    * output position of the data (when *getting* with the multifocal lens).  When
    * *getting* in a Maybe context (`#get_maybe`), the result will always be an
    * Object with a `just` property, though some elements of the Array may be
-   * empty.
+   * empty (see [eachFound]{@link module:natural-lenses#eachFound}).
    *
    * Pass an Object with lens values to create a multifocal lens outputting an
    * Object, which will bear the same properties as the input Object and whose
@@ -217,28 +217,71 @@ Object.defineProperties(makeLens, {
  * @constant
  * @name module:natural-lenses#at_maybe
  * @type {symbol}
- *
- * @description
- * This constant is a key used for querying a method from container objects of
- * type `function(*): {@link Maybe}.<*>`.  The value passed to this method will be
- * a *key* from a Lens -- the kind of value that should be passed for a
- * conceptual "indexing" of the container.  For Object, this is a string property
- * name.  For Array, this is an integer index, where negative values count
- * backward from the end of the Array.  For Map, this uses `Map.prototype.has`
- * and `Map.prototype.get`.
+ * @see {@link Container}
  */
 
 /**
  * @constant
  * @name module:natural-lenses#clone
  * @type {symbol}
+ * @see {@link Container}
+ */
+
+/**
+ * @constant
+ * @name module:natural-lenses#isLens
+ * @type {symbol}
  *
  * @description
- * This constant is a key used for querying a method from container objects of
- * type `function({set: {0: *, 1: *}?, spliceOut: *?}): *`.  The intent of the
- * method is to clone the container with some kind of alteration -- either
- * a key/index set to the given value in the clone, or a key/index deleted
- * from the clone.
+ * This property is set on every kind of object to be recognized by this
+ * library as implementing lens-like behavior.  Setting this property to
+ * any truthy value on your own objects will cause this library to treat it
+ * in many ways like a {@link Lens}.
+ */
+
+
+module.exports = makeLens;
+
+/**
+ * @interface Container
+ *
+ * @description
+ * Objects implementing this interface define how they are handled as containers
+ * by [Lenses]{@link Lens}.  Implementations are automatically polyfilled for
+ * Object, Array, and Map.  Implementations can be polyfilled to support
+ * [Immutable]{@link external:immutable} by `require`-ing or `import`ing
+ * {@link module:natural-lenses/immutable} or calling
+ * {@link module:natural-lenses#polyfillImmutable}.
+ *
+ * The names of the methods of this interface are defined by symbols from
+ * {@link module:natural-lenses}.
+ */
+
+/**
+ * @function
+ * @name Container#[at_maybe]
+ * @param {*} key - The key/index whose value to retrieve from *this* container
+ * @returns {Maybe.<*>} A Maybe for the value associated with *key* in *this*
+ *
+ * @description
+ * The *key* passed to this method will be from the *keys* of a Lens -- the kind
+ * of value that should be passed for a conceptual "indexing" of the container.
+ * For Object, this is a string property name.  For Array, this is an integer index,
+ * where negative values count backward from the end of the Array.  For Map, the
+ * argument may be any type, which is passed to `Map.prototype.has` and possibly
+ * `Map.prototype.get` as a key value.
+ */
+
+/**
+ * @function
+ * @name Container#[clone]
+ * @param {{set: {0: *, 1: *}?, spliceOut: *?}} opDesc
+ * @returns {*} A modified clone of *this*
+ *
+ * @description
+ * The intent of the method is to clone the container with some kind of
+ * alteration -- either a key/index set to the given value in the clone, or a
+ * key/index deleted from the clone.
  *
  * If the operation description passed contains a `set` property,
  * the value of that property should be an Array where element 0 is a key or
@@ -262,18 +305,10 @@ Object.defineProperties(makeLens, {
  * `Symbol.species` is honored for determining the constructor used for the
  * clone; Object is a special case that defaults to Object if `Symbol.species`
  * is not present.
- */
-
-/**
- * @constant
- * @name module:natural-lenses#isLens
- * @type {symbol}
  *
- * @description
- * This property is set on every kind of object to be recognized by this
- * library as implementing lens-like behavior.  Setting this property to
- * any truthy value on your own objects will cause this library to treat it
- * in many ways like a {@link Lens}.
+ * In a future major version, it is likely that the call interface for this
+ * method will change to `function({key: *} | {key: *, just: *}): *`, where
+ * presence of `just` (and its associated value) in the argument represents a
+ * "setting" of *key* in the result, and absence of `just` represents omission
+ * of *key* from the result.
  */
-
-module.exports = makeLens;

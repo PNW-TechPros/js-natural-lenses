@@ -1,4 +1,4 @@
-Many applications of JSON take advantage of its strongly hierarchical structure, resulting in JSON documents with layers upon layers of containers.  While lenses can assist in digging into the POD result of parsing the JSON, convenient notation for generating all the lenses necessary for accessing the POD received, all in one centralized location, would be even more helpful.  Better yet if the generated lenses are bound together into a JavaScript structure that is more sensitive to typos than *ad hoc* lens instances.  The solution is the *datum plan*.
+Many applications of JSON take advantage of its strongly hierarchical structure, resulting in JSON documents with layers upon layers of containers.  A {@link Lens} can help consistently read or "write" a single slot in such a data structure, but what really helps a development team is an easily written, easily readable way to lay out the anticipated structure of a JSON document (or other complex data structure) giving access to all the needed lenses.  Better yet, this structure can be sensitive to typos in a way that exceeds both *ad hoc* lenses and vanilla JavaScript.  `natural-lenses` calls this structure of Lenses a *datum plan*.
 
 A datum plan is to a single piece of data (i.e. a datum) what a building plan is to a building: it specifies *what* is expected to be found *where*.  In the world of `natural-lenses`, a datum plan is constructed from lenses, some of which may be extended with additional members to assist with dictionary-like or array access patterns.  Construction of a datum plan is actually very simple: pass a JSONizable value — the datum plan spec — to the Function imported from `natural-lenses/datum-plan`, and get a datum plan in return.
 
@@ -68,7 +68,7 @@ This feature should not typically be needed.
 
 ### Accessing an Array
 
-When an Array is present in the spec — as with `contributors` — the lens which would `get` the Array receives additional methods from {@link IndexableMixin}: `length(...)`, `at(...)`, `mapInside(...)`, and `flatMapInside(...)`.  Additionally, if an item spec was given for the Array (that is, a sub-spec as the single element of the Array in the spec), the datum plan for the item is stored on the generated {@link Lens}'s property `$item`.
+When an Array is present in the spec — as with `$npmPackage.contributors` — the lens which would `get` the Array receives additional methods from {@link IndexableMixin}: `length(...)`, `at(...)`, `mapInside(...)`, and `flatMapInside(...)`.  Additionally, if an item spec was given for the Array (that is, a sub-spec as the single element of the Array in the spec), the datum plan for the item is stored on the generated {@link Lens}'s property `$item` -- `$npmPackage.contributors.$item` in the example case.
 
 #### [`length`]{@link IndexableMixin~length}
 

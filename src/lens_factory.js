@@ -33,9 +33,17 @@ class LensFactory {
   }
   
   /**
-   * Construct a lens through the factory
+   * @summary Construct a lens through the factory
+   * @function Factory#lens
    * @param {...*} key  A key of the customized lens type
    * @returns {Lens}  A lens with customized container creation behavior
+   * @see module:natural-lenses
+   *
+   * @description
+   * This method works the same way as the main {@link Lens} constructor of
+   * {@link module:natural-lenses}, except that missing container construction
+   * is managed via the {@link ContainerFactory} with which this Factory was
+   * constructed.
    */
   lens(...keys) {
     const result = new CCCLens(...keys);
