@@ -27,4 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: TEST_FLAGS=datumPlanApiVersions npm test
+    - run: npm test
+      env:
+        TEST_FLAGS: "datumPlanApiVersions"
