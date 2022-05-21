@@ -30,6 +30,9 @@
   "immutable-support": {
     "title": "Support for Immutable"
   },
+  "sugar": {
+    "title": "Lenses from Tagged String Templates"
+  },
   "utilities": {
     "title": "Utilities"
   }
