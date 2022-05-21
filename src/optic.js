@@ -97,6 +97,9 @@ class Optic {
    * The presence of the slot determines whether *branches.then* or *branches.else*
    * is evaluated, with the result being returned from this method.  If the
    * indicated property of *branches* is missing, then `undefined` is returned.
+   *
+   * If *branches.then* is called, it is passed the value from this slot in
+   * *subject*.
    */
   getting(subject, {then: thenDo, else: elseDo}) {
     const maybeVal = this.get_maybe(subject),
@@ -255,11 +258,11 @@ class Optic {
    * @summary DRYly bind a Function to the Object from which it was obtained
    * @param {string|symbol} methodName
    * @param {Object} options
-   * @param {*} options.on  The subject of the Function binding; becomes *this* for the result
-   * @param {boolean} [options.bindNow=false]  Bind to the Optic's target within *on* rather than binding to *on*
+   * @param {*} options.on  The subject of the Function binding; the result of applying this Optic to the value given becomes *this* for the result
+   * @param {boolean} [options.bindNow=false]  Whether to apply this Optic to *options.on* now or when the bound function is invoked
    * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
    * @param {Function} [options.or]  {@link FallbackBindingResult}, a Function to return if the slot referenced does not contain a Function
-   * @returns {Function}  A Function binding the *methodName* of the target of this optic to the target of this optic, or `function() {}` if no such function found
+   * @returns {Function}  A Function binding the *methodName* of the target of this Optic to the target of this Optic, or `function() {}` if no such function found
    * @see {@link Lens#bound}
    *
    * @description

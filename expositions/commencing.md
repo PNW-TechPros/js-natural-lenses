@@ -8,7 +8,7 @@ const lens = require('natural-lenses');
 const data = {answer: [1,2,3]};
 console.log(lens('answer', 1).get(data)); // prints  2 (data.answer[1])
 const newData = lens('answer', 2).setInClone(data, 4);
-console.log(newData); // prints [1,2,4]
+console.log(newData); // prints {answer: [1,2,4]}
 ```
 
 ### Key Points

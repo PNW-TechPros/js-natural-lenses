@@ -42,4 +42,4 @@ const requestLenses = new lens.Factory({
 const request = requestLenses.lens('accessToken', 'password').set({}, '12345');
 ```
 
-While the first case handles integration of the container types with the lens system, for the second it is imperative to implement handler methods for the `Symbol`s [`lens.at_maybe`]{@link module:natural-lenses#at_maybe} and [`lens.clone`]{@link module:natural-lenses#clone} on the container types used.
+While the first case handles integration of the container types with the lens system, for the second it is imperative to implement the {@link Container} interface on the container types used.
