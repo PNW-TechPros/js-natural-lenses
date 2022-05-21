@@ -9,16 +9,18 @@ data Person = Person
   } deriving (Show)
 
 
-demo :: [Show]
+demo :: [String]
 demo =
   -- Expression to extract the "name" field from the Person "person"
-  [ (name person)
+  [ show (name person)
   -- Expression to create a copy of the Person "person" with a different name
-  , person { name="Pauline Lewis" }
+  , show (person { name="Pauline Lewis" })
   ]
-  where person =
-    -- Expression to construct a person
-    Person { name="Polly Lewis", email="udki@usiasozo.az" }
+  -- Expression to construct a person
+  where person = Person {
+      name="Polly Lewis"
+    , email="udki@usiasozo.az"
+    }
 ```
 
 The *lens* construct was created to remedy this issue, and this construct has broader application than just Haskell programs.  JavaScript — while a *very* different language than Haskell — runs into some of the same problems that led to lenses (as well as prisms, traversals, and other "optics") when *Plain Ol' Data* (POD) — often parsed from JSON — becomes involved: the data present carry no behaviors other than the standard ones for Array and Object.  Lenses allow us to build getter and setter logic from *outside* the POD, facilitating consistent reading and writing of our target data structure.
