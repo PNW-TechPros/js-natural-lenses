@@ -1,3 +1,4 @@
+import BinderMixin from './binder_mixin.js';
 import CCCLens from './ccc_lens.js';
 import { DEFAULT_FACTORY as jsContainers } from './js_container_factory.js';
 
@@ -17,6 +18,7 @@ class LensFactory {
   /**
    * @constructs Factory
    * @summary A factory for Lens-derived objects with customized container construction
+   * @mixes BinderMixin
    * @param {Object} spec
    * @param {ContainerFactory} spec.containerFactory  Factory for containers, used by [Lenses]{@link Lens} created by this Factory, invoked when modify-cloning missing containers in subject data
    * 
@@ -33,7 +35,8 @@ class LensFactory {
   }
   
   /**
-   * Construct a lens through the factory
+   * @function Factory#lens
+   * @summary Construct a lens through the factory
    * @param {...*} key  A key of the customized lens type
    * @returns {Lens}  A lens with customized container creation behavior
    */
@@ -43,5 +46,6 @@ class LensFactory {
     return result;
   }
 }
+Object.assign(LensFactory.prototype, BinderMixin);
 
 export default LensFactory;
