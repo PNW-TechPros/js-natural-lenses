@@ -11,3 +11,5 @@ jsdoc.conf.js
 scripts/
 expositions/
 package-lock.json
+.mocharc.js
+.github/
