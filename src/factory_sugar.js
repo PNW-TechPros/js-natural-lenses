@@ -28,6 +28,11 @@ import sugar from './sugar.js';
  * ```
  * const A = new Factory({...}).$`A`;
  * ```
+ *
+ * ## Why `A`?
+ *
+ * `A` is intended to represent "access", and the letter "LATIN CAPITAL LETTER A"
+ * (U+0041) is often rendered to look a bit like light rays focusing through a lens.
  */
 LensFactory.prototype.A = function(...args) {
   return this.lens(...sugar(...args).keys);
