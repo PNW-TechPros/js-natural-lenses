@@ -46,6 +46,6 @@ class LensFactory {
     return result;
   }
 }
-Object.assign(Optic.prototype, BinderMixin);
+Object.assign(LensFactory.prototype, BinderMixin);
 
 export default LensFactory;
