@@ -20,6 +20,7 @@ export function makeExports({fuse, isLens, lens}) {
       };
     }
     
+    addVersionEntry('2.2');
     addVersionEntry('2.1', ['extractor', 'extractor_maybe']);
     addVersionEntry('2.0');
     
