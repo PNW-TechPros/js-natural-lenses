@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.0
+
+* Removed `debugger` statements
+* Upgraded dependencies (for development)
+* Added `methodsVersion` option for datum plan construction
+* Added string template tag function for lens construction
+* Improved documentation
+
 ## 2.2.0
 
 * Added customized logging (`lens.setLogger()`, `lens.setLogger.forBlock()`, and `lens.asyncLogging()`)
