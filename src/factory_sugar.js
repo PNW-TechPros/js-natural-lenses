@@ -3,6 +3,7 @@ import sugar from './sugar.js';
 
 /**
  * @module natural-lenses/sugar-factory
+ * @since 2.3.0
  *
  * @description
  * Import or require this module to extend the {@link Factory} class with a
@@ -15,6 +16,7 @@ import sugar from './sugar.js';
 
 /**
  * @function Factory#A
+ * @since 2.3.0
  * @param {...*} args String template tag arguments
  * @returns {Lens} A lens with customized container construction behavior
  * @see module:natural-lenses/sugar

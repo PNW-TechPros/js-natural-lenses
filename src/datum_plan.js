@@ -699,7 +699,7 @@ export function makeExports({fuse, isLens, lens}) {
    * @param {Array|Object|string|DatumPlan_DslCallback} spec  An object specifying the datum plan to be generated, or a {@link DatumPlan_DslCallback} to return such an object
    * @param {Object} [opts]
    * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
-   * @param {string} [opts.methodsVersion]  The *major.minor* version of the {@link Lens} methods to use; this avoids changes to deconfliction of declared datum plan properties with later-introduced Lens method names
+   * @param {string} [opts.methodsVersion]  *(since 2.3.0)* The *major.minor* version of the {@link Lens} methods to use; this avoids changes to deconfliction of declared datum plan properties with later-introduced Lens method names
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    *
    * @property {string} others  Used as a key in an Object to indicate dictionary-like behavior
