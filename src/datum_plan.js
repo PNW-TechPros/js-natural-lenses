@@ -30,7 +30,13 @@ export function makeExports({fuse, isLens, lens}) {
 
   const value = '$', others = '((others))', raw = '((raw))';
   const guardedGroups = new Set(
-    (process.env.DATUM_PLAN_GUARDS || '').split(',')
+    (function() {
+      try {
+        return (process.env.DATUM_PLAN_GUARDS || '').split(/\s*,\s*/g);
+      } catch (e) {
+        return [];
+      }
+    }())
   );
 
   const lengthProp = lens('length');

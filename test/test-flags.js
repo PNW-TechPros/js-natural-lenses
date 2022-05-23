@@ -7,7 +7,7 @@ const FLAGS_GIVEN = new Set(
 
 exports.include = (
   FLAGS_GIVEN.has('ALL')
-  ? () => true
+  ? (flag) => !flag.match(/(^s|S)kip[^a-z]/)
   : FLAGS_GIVEN.has.bind(FLAGS_GIVEN)
 );
 

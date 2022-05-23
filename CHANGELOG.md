@@ -7,6 +7,7 @@
 * Added `methodsVersion` option for datum plan construction
 * Added string template tag function for lens construction
 * Improved documentation
+* Made datum plan code loadable directly from supporting browsers
 
 ## 2.2.0
 
