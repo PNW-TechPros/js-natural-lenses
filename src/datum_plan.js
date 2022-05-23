@@ -777,9 +777,8 @@ export function makeExports({fuse, isLens, lens}) {
    * @since 2.1.0
    * @summary Generate a datum plan from Plain Ol' Data (POD)
    * @param {Array|Object|string} spec  An object specifying the datum plan to be generated
-   * @param {Object} [opts]
+   * @param {Object} [opts] See [*opts* in datumPlan]{@link module:natural-lenses/datum-plan} for additional options
    * @param {Array.<DatumPlan_Tweak>|DatumPlan_TweaksBuilderCallback} [opts.tweaks=[]]  Modifications to apply to *spec* before generating datum plan
-   * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    * @see module:natural-lenses/datum-plan
    *
@@ -799,7 +798,7 @@ export function makeExports({fuse, isLens, lens}) {
    * functions that make altered clones of *spec* which resolve these lacunae
    * and ambiguities.
    */
-  function fromPOD(rawPlan, { tweaks = [], planGroup } = {}) {
+  function fromPOD(rawPlan, { tweaks = [], ...opts } = {}) {
     if (isFunction(tweaks)) {
       tweaks = tweaks.call(undefined, {
         ...makeDatumPlanDSL(),
@@ -834,7 +833,7 @@ export function makeExports({fuse, isLens, lens}) {
     for (const tweak of tweaks) {
       rawPlan = tweak.call(undefined, rawPlan);
     }
-    return new PlanBuilder([], { planGroup, podInput: true }).buildPlan(rawPlan);
+    return new PlanBuilder([], { ...opts, podInput: true }).buildPlan(rawPlan);
   }
   
   return makeDatumPlan;
