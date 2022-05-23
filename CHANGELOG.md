@@ -10,6 +10,7 @@
 * Made datum plan code loadable directly from supporting browsers
 * Mixed `BinderMixin` into `Factory`
 
+---
 ## 2.2.0
 
 * Added customized logging (`lens.setLogger()`, `lens.setLogger.forBlock()`, and `lens.asyncLogging()`)
