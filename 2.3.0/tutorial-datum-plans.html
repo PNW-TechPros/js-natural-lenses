@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Tutorial: Datum Plans - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#asyncLogging">asyncLogging</a></li><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li><li data-type='method'><a href="module-natural-lenses.html#setLogger">setLogger</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses_datum-plan.html#fromPOD">fromPOD</a></li></ul></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li><li><a href="module-natural-lenses_sugar.html">natural-lenses/sugar</a></li><li><a href="module-natural-lenses_sugar-factory.html">natural-lenses/sugar-factory</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_process.env_.html">"process.env"</a></li></ul><h3>Interfaces</h3><ul><li><a href="Container.html">Container</a><ul class='methods'><li data-type='method'><a href="Container.html#%255Bat_maybe%255D">[at_maybe]</a></li><li data-type='method'><a href="Container.html#%255Bclone%255D">[clone]</a></li></ul></li><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#error">error</a></li><li data-type='method'><a href="Logger.html#info">info</a></li><li data-type='method'><a href="Logger.html#preinstallationCalls">preinstallationCalls</a></li><li data-type='method'><a href="Logger.html#trace">trace</a></li><li data-type='method'><a href="Logger.html#warn">warn</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="DatumPlan_TweakBuilder.html">DatumPlan_TweakBuilder</a><ul class='methods'><li data-type='method'><a href="DatumPlan_TweakBuilder.html#ITEMS">ITEMS</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES">NAMED_ENTRIES</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES_ALSO">NAMED_ENTRIES_ALSO</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#VALUE">VALUE</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a><ul class='methods'><li data-type='method'><a href="Factory.html#A">A</a></li><li data-type='method'><a href="Factory.html#lens">lens</a></li></ul></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#extractor">extractor</a></li><li data-type='method'><a href="Lens.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#extractor">extractor</a></li><li data-type='method'><a href="Optic.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li><li data-type='method'><a href="Optic.html#~Extractor">Extractor</a></li><li data-type='method'><a href="Optic.html#~MaybeExtractor">MaybeExtractor</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#extractor">extractor</a></li><li data-type='method'><a href="OpticArray.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="Sugar_CacheControl.html">Sugar_CacheControl</a><ul class='methods'><li data-type='method'><a href="Sugar_CacheControl.html#addCapacity">addCapacity</a></li></ul></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-sugar.html">Lenses from Tagged String Templates</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Tutorial: Datum Plans</h1>
+    
+
+    <section>
+
+<header>
+    
+
+    <h2>Datum Plans</h2>
+</header>
+
+<article>
+    <p>Many applications of JSON take advantage of its strongly hierarchical structure, resulting in JSON documents with layers upon layers of containers.  A <a href="Lens.html">Lens</a> can help consistently read or &quot;write&quot; a single slot in such a data structure, but what really helps a development team is an easily written, easily readable way to lay out the anticipated structure of a JSON document (or other complex data structure) giving access to all the needed lenses.  Better yet, this structure can be sensitive to typos in a way that exceeds both <em>ad hoc</em> lenses and vanilla JavaScript.  <code>natural-lenses</code> calls this structure of Lenses a <em>datum plan</em>.</p>
+<p>A datum plan is to a single piece of data (i.e. a datum) what a building plan is to a building: it specifies <em>what</em> is expected to be found <em>where</em>.  In the world of <code>natural-lenses</code>, a datum plan is constructed from lenses, some of which may be extended with additional members to assist with dictionary-like or array access patterns.  Construction of a datum plan is actually very simple: pass a JSONizable value — the datum plan spec — to the Function imported from <code>natural-lenses/datum-plan</code>, and get a datum plan in return.</p>
+<p>An important note: a plan only indicates what is <em>expected</em> to be present and how it relates to the overall structure.  Just as a building's architectural plan may not call out tables put out in the foyer for receptions, there may be data present in the subject document of which the plan will be blissfully unaware.  And — as the plan is constructed of lenses — even if some structural aspect of the subject document does not conform to the plan, the lens will simply return <code>undefined</code> (or <code>{}</code> in a <a href="global.html#Maybe">Maybe</a> monad).</p>
+<h3>The Datum Plan Spec</h3>
+<pre class="prettyprint source lang-js"><code>const datumPlan = require('natural-lenses/datum-plan');
+</code></pre>
+<p>The JSONizable value passed to the datum plan construction function has a few quirks compared to standard JSON-compatible data:</p>
+<ul>
+<li>Arrays should have 0 or 1 elements.  The presence of an Array indicates within the target document structure an Array of zero or more elements having the same structure.  For a &quot;tuple&quot; (where Array elements are given semantics by their position), use an Object with numeric string properties (e.g. <code>&quot;0&quot;</code>).</li>
+<li>Objects intended to be used (at least partially) as a dictionary-like collection have a special property name to specify, which is given by <code>datumPlan.others</code>.</li>
+<li>When the plan gets to a &quot;leaf node&quot; (the position within the target documents of an item whose structure is not of interest to the datum plan), use <code>datumPlan.value</code> to indicate the tip of the access pathway.</li>
+</ul>
+<p>The construction function (<code>datumPlan</code>) can also accept a Function that returns the POD spec described above.  If such a function is given, it is passed a <a href="global.html#DatumPlan_Dsl">DSL</a> object, making generation of the plan spec more concise.</p>
+<p>Let's use as an example a partial plan for an NPM <code>package.json</code> file:</p>
+<pre class="prettyprint source lang-js"><code>const $npmPackage = datumPlan(({ VALUE, NAMED_VALUES }) => ({
+  name: VALUE,
+  version: VALUE,
+  author: VALUE,
+  contributors: [{
+    name: VALUE,
+    url: VALUE,
+    email: VALUE,
+  }],
+  dependencies: NAMED_VALUES,
+  main: VALUE,
+  module: VALUE,
+  exports: {
+    import: VALUE,
+    require: VALUE,
+    ...NAMED_VALUES({
+      import: VALUE,
+      require: VALUE,
+    }),
+  },
+}), { planGroup: &quot;package.json&quot; });
+
+const thePackage = JSON.parse(require('fs').readFileSync(...));
+</code></pre>
+<h3>Simple Example</h3>
+<p>With the code from above, <code>$npmPackage.name.get(thePackage)</code> will retrieve the name of <code>thePackage</code> from the JSON we've loaded.</p>
+<h3>Spec'ing Special Properties</h3>
+<p>If there is some reason to create a datum plan where the spec'd property name happens to be a special-case property name for datum plan construction (any string consisting of doubled parentheses with one or more lowercase letters between, like <code>((others))</code>), such a property can be included in the datum plan via <code>datumPlan.raw</code> or <code>RAW</code> in the DSL.  The value of this key is an Object with names that are never treated as special-case but otherwise treated as part of the spec Object containing the <code>datumPlan.raw</code>/<code>RAW</code> key.</p>
+<pre class="prettyprint source lang-js"><code>const plan = datumPlan(({ VALUE, RAW }) => ({
+  [RAW]: {
+    &quot;((zyx))&quot;: {
+      name: VALUE,
+    },
+  },
+}));
+</code></pre>
+<p>This feature should not typically be needed.</p>
+<h3>Accessing an Array</h3>
+<p>When an Array is present in the spec — as with <code>$npmPackage.contributors</code> — the lens which would <code>get</code> the Array receives additional methods from <a href="IndexableMixin.html">IndexableMixin</a>: <code>length(...)</code>, <code>at(...)</code>, <code>mapInside(...)</code>, and <code>flatMapInside(...)</code>.  Additionally, if an item spec was given for the Array (that is, a sub-spec as the single element of the Array in the spec), the datum plan for the item is stored on the generated <a href="Lens.html">Lens</a>'s property <code>$item</code> -- <code>$npmPackage.contributors.$item</code> in the example case.</p>
+<h4><a href="IndexableMixin.html#~length"><code>length</code></a></h4>
+<p>Get the length of the <code>contributors</code> array with <code>$npmPackage.contributors.length(thePackage)</code>.</p>
+<h4><a href="IndexableMixin.html#~at"><code>at</code></a></h4>
+<p>Use this lens extension to retrieve something from within the targeted Array.  The simplest usage in this case would be <code>$npmPackage.contributors.at(0)</code> to retrieve the first element of the contributors.  (Here's a fun note: since <code>contributors</code> in a <code>package.json</code> may contain elements that are either string or Object, it's convenient that this expression builds a <a href="Lens.html">Lens</a> to access whatever value happens to be in the first element of <code>contributors</code>, even if it is a string that does not match the plan spec!)</p>
+<p><code>at</code> can also construct lenses that dig deeper into the elements of an Array through it's second argument, which can fuse another lens to the one accessing the Array.  The second argument can take two forms: it can be an <a href="Optic.html">Optic</a> or it can be a Function returning an <a href="Optic.html">Optic</a>.  If it is a Function and the spec provided a sub-spec for the Array's elements, the Function will receive the item plan built from the sub-spec as it's only argument.  We can, therefore, build a lens to the name of the first <code>contributor</code> element with <code>$npmPackage.contributors.at(0, ctbtr =&gt; ctbtr.name)</code>.  It would also work to do this with <code>$npmPackage.contributors.at(0, lens('name'))</code>.</p>
+<p>If <code>at</code> is given a negative index, the returned lens references an element counted from the end of the subject Array it is given, with <code>-1</code> indexing the last element of the Array.</p>
+<h4><a href="IndexableMixin.html#~mapInside"><code>mapInside</code></a></h4>
+<p>When you need to clone the subject with a transform applied to an Array from the datum plan spec, look to the <code>mapInside</code> method.  Like <code>at</code> it has three forms: a simple one that maps the elements themselves, one that takes a lens to transform a slot within each element, and one that take a Function to return a slot to transform within each element.</p>
+<p>The simplest call could be used to transform the <code>contributors</code> to a list of only strings:</p>
+<pre class="prettyprint source lang-js"><code>const stringContribPackage = $npmPackage.contributors.mapInside(thePackage,
+  (ctbtr, i, $ctbtr) => {
+    let val;
+    if (val = $ctbtr.name.get(ctbtr)) return val;
+    if (val = $ctbtr.email.get(ctbtr)) return val;
+    if (val = $ctbtr.url.get(ctbtr)) return val;
+    return ctbtr.toString();
+  }
+);
+</code></pre>
+<p>When <code>mapInside</code> is called this way, the transform function receives each element of the targeted Array, the element's index within the Array, and the datum plan for the element as indicated in the plan spec we provided.</p>
+<p>If we wanted to transform each contributor name to upper case — which is a bit silly, but a good example — we could use the second or third form and reduce the complexity of our transform function:</p>
+<pre class="prettyprint source lang-js"><code>const capNameContribPackage = $npmPackage.contributors.mapInside(thePackage,
+  ctbtr => ctbtr.name,
+  name => name && name.toUpperCase ? name.toUpperCase() : name
+);
+</code></pre>
+<p>The same operation could be written more verbosely and repetetively as:</p>
+<pre class="prettyprint source lang-js"><code>const capNameContribPackage2 = $npmPackage.contributors.mapInside(thePackage,
+  (ctbtr, i, $ctbtr) => $ctbtr.name.xformInClone(
+    ctbtr,
+    name => name && name.toUpperCase ? name.toUpperCase() : name
+  )
+);
+</code></pre>
+<h4><a href="IndexableMixin.html#~flatMapInside"><code>flatMapInside</code></a></h4>
+<p>As <code>Array.prototype.flatMap</code> is to <code>Array.prototype.map</code>, so is <code>flatMapInside</code> to <code>mapInside</code>, though <code>flatMapInside</code> is a bit more restricted in that it always applies its transform over the elements themselves and never a slot within each element.  The transform must return an iterable value.  A third argument may be passed to customize how the values captured from all transforms are reduced to an iterable; this could be used, for example, to output a Set instead of an Array.</p>
+<p>One example of using this method would be to eliminate all contributors with no <code>name</code> specified (including entries that are just strings):</p>
+<pre class="prettyprint source lang-js"><code>const noAContribPackage = $npmPackage.contributors.flatMapInside(thePackage,
+  (ctbtr, i, $ctbtr) => $ctbtr.name.present(ctbtr) ? [ctbtr] : []
+);
+</code></pre>
+<h3>Accessing a Dictionary-like Object</h3>
+<p>An Object in the datum plan spec can specify a key of <code>datumPlan.others</code> (or use <code>...NAMED_VALUES</code> or <code>...NAMED_VALUES(spec)</code> when passing a spec Function) to indicate dictionary-like or partially dictionary-like behavior.  In this case, the lens targeting the corresponding slot in the subject data receives the additional methods <code>at(...)</code>, <code>mapInside(...)</code>, and <code>mapAllInside(...)</code> from <a href="EntriesMixin.html">EntriesMixin</a>.  If a spec was given for the named entries, the datum plan generated from that sub-spec is assigned to the <code>$entryValue</code> property of the resulting <a href="Lens.html">Lens</a>.</p>
+<h4><a href="EntriesMixin.html#~at"><code>at</code></a></h4>
+<p>Equivalent to the <code>at</code> method for accessing an Array, this method builds a lens to the property of the targeted object.  The same argument patterns are supported as for the lens coming from an Array spec, only substituting a string property name for the integer index.</p>
+<pre class="prettyprint source lang-js"><code>const requireSlots = [
+  $npmPackage.exports.at('.', e => e.require),
+  $npmPackage.exports.at('require'),
+  $npmPackage.main,
+];
+function getRequireTarget(thePackage) {
+  for (const slot of requireSlots) {
+    const val_maybe = slot.get_maybe(thePackage);
+    if ('just' in val_maybe) return val_maybe.just;
+  }
+}
+</code></pre>
+<pre class="prettyprint source lang-js"><code>const importSlots = [
+  $npmPackage.exports.at('.', e => e.import),
+  $npmPackage.exports.at('import'),
+  $npmPackage.module,
+  $npmPackage.main,
+];
+function getImportTarget(thePackage) {
+  for (const slot of importSlots) {
+    const val_maybe = slot.get_maybe(thePackage);
+    if ('just' in val_maybe) return val_maybe.just;
+  }
+}
+</code></pre>
+<h4><a href="EntriesMixin.html#~mapInside"><code>mapInside</code></a></h4>
+<p>This method is mostly equivalent to the <code>mapInside</code> method added to lenses spec'ed from Arrays, except:</p>
+<ul>
+<li>The callbacks receive a string property name/key instead of an integer index.</li>
+<li>Any explicitly spec'ed property names will <em>not</em> be iterated (as they may have a different intended plan).</li>
+</ul>
+<p><code>mapInside</code> will only iterate over own-properties of the target object.</p>
+<h4><a href="EntriesMixin.html#~mapAllInside"><code>mapAllInside</code></a></h4>
+<p>This method is just like <code>mapInside</code>, except it iterates <em>all</em> own-properties without regard for whether they were spec'ed explicitly.</p>
+<h3>Name Deconfliction</h3>
+<p>The data modeled with a datum plan may have property names that conflict with the properties and/or methods critical to the operation of the <a href="Lens.html">Lens</a>.  Any such spec'd properties will have underscores added as a prefix until the resulting property name does not conflict with existing names on the <a href="Lens.html">Lens</a>.  Non-conflicting properties always have top priority.  Any spec'd property name defined in both plain form and in <code>datumPlan.raw</code>/<code>RAW</code> will use the definition in <code>datumPlan.raw</code>.  Let's consider this plan:</p>
+<pre class="prettyprint source lang-js"><code>const plan = datumPlan(({ VALUE, RAW }) => ({
+  name: VALUE,
+  keys: [],
+  _keys: [],
+  [RAW]: {
+    name: {first: VALUE, last: VALUE},
+  },
+}));
+</code></pre>
+<ul>
+<li><code>plan.name</code> will use the definition under <code>RAW</code>, with <code>first</code> and <code>last</code> properties.</li>
+<li><code>plan._keys</code> is a <a href="Lens.html">Lens</a> with keys <code>['_keys']</code> (i.e. the definition spec'd for <code>_keys</code> is used).  Because it does not conflict with any normal <a href="Lens.html">Lens</a> property, it has priority for the <code>_keys</code> property.</li>
+<li><code>plan.__keys</code> is a <a href="Lens.html">Lens</a> with keys <code>['keys']</code>.  <code>keys</code> is a critical property for all <a href="Lens.html">Lenses</a> and <code>_keys</code> was already claimed by a non-conflicting property.</li>
+</ul>
+<p>As this package introduces new methods or properties on <code>Lens</code>es via the prototype — often in minor version updates — certain properties of existing datum plans might experience new conflicts.  By passing a <code>methodsVersion</code> option when constructing the datum plan, the deconfliction of names between the datum plan and the prototype of <code>Lens</code> can be &quot;locked,&quot; resolving conflicts with &quot;newer&quot; <code>Lens</code> methods in favor of the datum plan specification.  An example, using the <code>extractor</code> method introduced in version 2.3.0:</p>
+<pre class="prettyprint source lang-js"><code>const plan = datumPlan(({ VALUE }) => ({
+  address: {
+    extractor: VALUE,
+  },
+}), {methodsVersion: '2.2'});
+</code></pre>
+<p>Without the <code>methodsVersion</code> option, <code>plan.address.extractor</code> would be a method of <code>plan.address</code> for building a function for extracting information from the <code>'address'</code> property/entry of the subject data, and the &quot;deeper&quot; <code>Lens</code> would be assigned to <code>plan.address._extractor</code>.  With the option given, however, the assignments are reversed: <code>plan.address.extractor</code> is a <code>Lens</code> and <code>plan.address._extractor</code> is a method of <code>plan.address</code>.</p>
+<h3>Plans from Plain Ol' Data (POD) Values</h3>
+<p>In many places, JavaScript data comes down to Arrays, Objects, and scalar values (numbers, Boolean values, null, and strings).  All of these data types are conveniently serializable to JSON.  Such values are frequently used — as with Redux — to store complex state.  A particular instance of a POD value having approximately the datum shape desired for a datum plan is often available, perhaps as an initial value.  However, the initial, POD value may not be as detailed as desired or it may contain information that creates ambiguity when generating a datum plan.  And the actual initial value will not have the special datum plan terminal value marker (currently <code>&quot;$&quot;</code>) but will instead use arbitrary scalar values.</p>
+<p>For cases like these, this package provides <code>datumPlan.fromPOD()</code>, a function that solves all three problems:</p>
+<ul>
+<li>Ambiguous or missing item spec in an Array not of length 1.</li>
+<li>Missing specification for omitted keys.</li>
+<li>Liberally accepting any scalar value as terminating a lensing branch.</li>
+</ul>
+<pre class="prettyprint source lang-js"><code>// Borrowed from https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-the-state-structure
+const todoAppInitialState = {
+  todos: [
+    { id: 0, text: 'Learn React', completed: true },
+    { id: 1, text: 'Learn Redux', completed: false, color: 'purple' },
+    { id: 2, text: 'Build something fun!', completed: false, color: 'blue' }
+  ],
+  filters: {
+    status: 'Active',
+    colors: ['red', 'blue']
+  }
+};
+
+const plan = datumPlan.fromPOD(todoAppInitialState, {
+  tweaks: (({ access, VALUE }) => [
+    access.ITEMS('todos').plan({
+      id: VALUE,
+      text: VALUE,
+      completed: VALUE,
+      color: VALUE,
+    }),
+    access.ITEMS('filters', 'colors'),
+  ]),
+});
+</code></pre>
+<p>The two <code>access.ITEMS</code> tweaks are necessary because, in both cases, the Arrays have more than one element, creating the potential for ambiguous structure among the Array items.</p>
+<p>This is equivalent to building the following datum plan:</p>
+<pre class="prettyprint source lang-js"><code>const equivPlan = datumPlan(({ VALUE } => ({
+  todos: [{
+    id: VALUE,
+    text: VALUE,
+    completed: VALUE,
+    color: VALUE,
+  }],
+  filters: {
+    status: VALUE,
+    colors: [VALUE],
+  },
+})));
+</code></pre>
+<p>But building the datum plan the &quot;equivalent way&quot; requires duplicating a lot of data, and changes to <code>todoAppInitialState</code> might not always be mirrored to <code>equivPlan</code>.  Conversely, using <code>datumPlan.fromPOD()</code> only requires additionally specifying tweaks to resolve ambiguities, and any changes to <code>todoAppInitialState</code> introducing new ambiguities will throw errors.</p>
+<h3>Troubleshooting</h3>
+<p><em>This feature only works in interpreters providing the ES6 <code>Proxy</code> class.</em></p>
+<p>Datum plans, like other complex JavaScript values, suffer from JavaScript's lenient approach to access of undefined properties.  The <code>undefined</code> value can creep in at some point and not be detected until much later when it is difficult to determine which access failed unexpectedly.  To combat this, a <code>planGroup</code> option naming the plan group may be specified when the datum plan is constructed and this same group name specified as one of the comma-separated group names in the <code>DATUM_PLAN_GUARDS</code> environment variable.  Alternatively, the plan group name can be programmatically added to the guarded groups <em>prior</em> to constructing the datum plan:</p>
+<pre class="prettyprint source lang-js"><code>datumPlan.guardedGroups.add('SimpleRecord');
+const plan = datumPlan(({ VALUE }) => ({
+  name: VALUE,
+}), { planGroup: 'SimpleRecord' });
+
+plan.address; // This will not raise any errors
+plan.address.get; // This will raise UndefinedPropertyError: No such property 'address' on trivial Lens among properties &quot;keys&quot;, &quot;name&quot;
+</code></pre>
+<p>One of the nicest aspects about the error reporting is that the code location where the undefined property is accessed is captured and is the location reported when any property of the &quot;tripwire&quot; value is accessed.  In the example above it does not matter, but if it were instead:</p>
+<pre class="prettyprint source lang-js"><code>function getBadLens() {
+  return plan.address;
+}
+
+getBadLens().get({});
+</code></pre>
+<p>the error would reference the line <code>return plan.address;</code>, not <code>getBadLens().get({});</code>.  The latter line doesn't really help understand where the error occurred, but the former points out directly where the non-existent property of the plan was accessed.  Here is some sample output from an interactive <code>node</code> session:</p>
+<pre class="source"><code>UndefinedPropertyError: No such property 'address' on trivial Lens among properties &quot;keys&quot;, &quot;name&quot;
+    at .../natural-lenses/cjs/datum_plan.js:1:38361
+    at Object.GuardedLensHandlers.get (.../natural-lenses/cjs/datum_plan.js:1:38478)
+    at getBadLens (REPL32:2:13) {
+  lensKeys: [],
+  missingProperty: 'address'
+}
+</code></pre>
+<p>The availability of this troubleshooting feature comes with some recommended practices when using datum plan lenses:</p>
+<ul>
+<li>Prefer <code>'prop' in obj</code> to <code>obj.prop === undefined</code> or <code>typeof obj.prop === 'undefined'</code>; the latter two expressions change from <code>true</code> to <code>false</code> when guard proxies are activated.</li>
+<li>If getting <code>undefined</code> for a missing property on a datum plan lens is desirable, use <code>lens('prop').get(obj)</code>: lens <em>does</em> an <code>in</code> test and returns <code>undefined</code> if it fails, producing the intuitive result.</li>
+<li><code>Lens#get_maybe</code> works on guarded datum plan lenses, if a <a href="global.html#Maybe">Maybe</a> context for the Lens's property is desired.</li>
+</ul>
+</article>
+
+</section>
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Sat May 28 2022 11:47:27 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>
