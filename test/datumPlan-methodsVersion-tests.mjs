@@ -13,7 +13,8 @@ describe("datumPlan methodsVersion-option verity", () => {
   versions.slice(0, -1).forEach(version => {
     it(`correctly locks version ${version}`, function() {
       if (!tflags.include(tflags.DATUM_PLAN_LENS_API_VERSIONS)) {
-        this.skip()
+        this._runnable.title += ` (skipped because TEST_FLAGS does not include '${tflags.DATUM_PLAN_LENS_API_VERSIONS}')`;
+        this.skip();
       }
       
       const versionMethods = API_MAP.get(version);

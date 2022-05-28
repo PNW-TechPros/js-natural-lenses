@@ -20,6 +20,7 @@ export function makeExports({fuse, isLens, lens}) {
       };
     }
     
+    addVersionEntry('2.2');
     addVersionEntry('2.1', ['extractor', 'extractor_maybe']);
     addVersionEntry('2.0');
     
@@ -29,7 +30,13 @@ export function makeExports({fuse, isLens, lens}) {
 
   const value = '$', others = '((others))', raw = '((raw))';
   const guardedGroups = new Set(
-    (process.env.DATUM_PLAN_GUARDS || '').split(',')
+    (function() {
+      try {
+        return (process.env.DATUM_PLAN_GUARDS || '').split(/\s*,\s*/g);
+      } catch (e) {
+        return [];
+      }
+    }())
   );
 
   const lengthProp = lens('length');
@@ -692,7 +699,7 @@ export function makeExports({fuse, isLens, lens}) {
    * @param {Array|Object|string|DatumPlan_DslCallback} spec  An object specifying the datum plan to be generated, or a {@link DatumPlan_DslCallback} to return such an object
    * @param {Object} [opts]
    * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
-   * @param {string} [opts.methodsVersion]  The *major.minor* version of the {@link Lens} methods to use; this avoids changes to deconfliction of declared datum plan properties with later-introduced Lens method names
+   * @param {string} [opts.methodsVersion]  *(since 2.3.0)* The *major.minor* version of the {@link Lens} methods to use; this avoids changes to deconfliction of declared datum plan properties with later-introduced Lens method names
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    *
    * @property {string} others  Used as a key in an Object to indicate dictionary-like behavior
@@ -770,9 +777,8 @@ export function makeExports({fuse, isLens, lens}) {
    * @since 2.1.0
    * @summary Generate a datum plan from Plain Ol' Data (POD)
    * @param {Array|Object|string} spec  An object specifying the datum plan to be generated
-   * @param {Object} [opts]
+   * @param {Object} [opts] See [*opts* in datumPlan]{@link module:natural-lenses/datum-plan} for additional options
    * @param {Array.<DatumPlan_Tweak>|DatumPlan_TweaksBuilderCallback} [opts.tweaks=[]]  Modifications to apply to *spec* before generating datum plan
-   * @param {string} [opts.planGroup]  String name to associate with all lenses in this plan; should not contain any commas
    * @returns {Lens} A Lens with {@link Lens} properties which may, in turn, have {@link Lens} properties; mixin methods may be added to some of these lenses
    * @see module:natural-lenses/datum-plan
    *
@@ -792,7 +798,7 @@ export function makeExports({fuse, isLens, lens}) {
    * functions that make altered clones of *spec* which resolve these lacunae
    * and ambiguities.
    */
-  function fromPOD(rawPlan, { tweaks = [], planGroup } = {}) {
+  function fromPOD(rawPlan, { tweaks = [], ...opts } = {}) {
     if (isFunction(tweaks)) {
       tweaks = tweaks.call(undefined, {
         ...makeDatumPlanDSL(),
@@ -827,7 +833,7 @@ export function makeExports({fuse, isLens, lens}) {
     for (const tweak of tweaks) {
       rawPlan = tweak.call(undefined, rawPlan);
     }
-    return new PlanBuilder([], { planGroup, podInput: true }).buildPlan(rawPlan);
+    return new PlanBuilder([], { ...opts, podInput: true }).buildPlan(rawPlan);
   }
   
   return makeDatumPlan;

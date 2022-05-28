@@ -12,6 +12,7 @@ lensBuilderCache.allocated = cacheSpaceAllocations.get(null);
 /**
  * @class Sugar_CacheControl
  * @hideconstructor
+ * @since 2.3.0
  *
  * @classdesc
  * The only instance of this class is available as {@link module:natural-lenses/sugar#cache}.
@@ -19,6 +20,7 @@ lensBuilderCache.allocated = cacheSpaceAllocations.get(null);
 
 /**
  * @module natural-lenses/sugar
+ * @since 2.3.0
  * @summary String template tag for constructing a Lens with JSONPath-like syntax
  * @returns {Lens} A lens constructed from the JSONPath (and intercalated values) given
  *
@@ -195,6 +197,7 @@ function pruneLensBuilderCache() {
 
 /**
  * @member {Sugar_CacheControl} module:natural-lenses/sugar#cache
+ * @since 2.3.0
  * @summary Parse cache control
  *
  * @description
@@ -204,6 +207,7 @@ function pruneLensBuilderCache() {
 export const cache = {
   /**
    * @callback Sugar_CacheControl~AllocationAdjuster
+   * @since 2.3.0
    * @param {number} [newSize = 0] - The new size (>= 0) for this allocation
    *
    * @description
@@ -214,6 +218,7 @@ export const cache = {
   
   /**
    * @memberof Sugar_CacheControl
+   * @since 2.3.0
    * @instance
    * @summary Create an allocation of parser cache entries
    * @param {Number} size - Number of cache slots to allocate
@@ -244,6 +249,7 @@ export const cache = {
   
   /**
    * @memberof Sugar_CacheControl
+   * @since 2.3.0
    * @instance
    * @summary Current total of allocated cache slots
    * @type {number}
@@ -255,6 +261,7 @@ export const cache = {
   
   /**
    * @memberof Sugar_CacheControl
+   * @since 2.3.0
    * @instance
    * @summary Current number of cache slots consumed
    * @type {number}
