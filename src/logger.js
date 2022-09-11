@@ -1,4 +1,5 @@
-import { isObject, isUndefined } from 'underscore';
+import isObject from './functional/isObject.js';
+import isUndefined from './functional/isUndefined.js';
 import importSync from '../src-cjs/import-sync.js';
 
 /**

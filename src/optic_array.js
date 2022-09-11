@@ -1,4 +1,3 @@
-import { isEmpty, isUndefined, reduce, reduceRight } from 'underscore';
 import Optic from './optic.js';
 import { isLens, lensCap } from './utils.js';
 
@@ -23,8 +22,7 @@ class OpticArray extends Optic {
   present(subject) {
     if (this.lenses.length === 0) return true;
     const throughLenses = this.lenses.slice(), finalLens = throughLenses.pop();
-    const rval = reduce(
-      throughLenses,
+    const rval = throughLenses.reduce(
       (subject, lens) => lens.get(subject),
       subject
     );
@@ -35,7 +33,7 @@ class OpticArray extends Optic {
    * @inheritdoc
    */
   get(subject, ...tail) {
-    const subjResult = reduce(
+    const subjResult = Array.prototype.reduce.call(
       this.lenses,
       (subject, lens) => lens.get(subject),
       subject
@@ -105,7 +103,7 @@ function get_maybe_internal(subject_maybe) {
   for (let i = 0; i < this.lenses.length; i++) {
     const lens = this.lenses[i];
     stepSubject = lens.get_maybe(stepSubject.just);
-    if (isEmpty(stepSubject.just)) {
+    if (!('just' in stepSubject)) {
       return {};
     }
   }

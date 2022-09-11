@@ -1,4 +1,3 @@
-import { forEach } from 'underscore';
 import { at_maybe, cloneImpl } from '../src-cjs/constants.js';
 
 function ImmutableMixin({spliceOutWithDelete}) {
@@ -37,8 +36,7 @@ function polyfillImmutable(containerType) {
   const isList = containerType.isList;
   const proto = containerType.prototype,
     mixins = ImmutableMixin({spliceOutWithDelete: !isList});
-  forEach(
-    Object.getOwnPropertySymbols(mixins),
+  Object.getOwnPropertySymbols(mixins).forEach(
     (name) => {
       if (!proto.hasOwnProperty(name)) {
         Object.defineProperty(proto, name, {
@@ -49,7 +47,7 @@ function polyfillImmutable(containerType) {
         });
       }
     }
-  )
+  );
 }
 
 export { polyfillImmutable };

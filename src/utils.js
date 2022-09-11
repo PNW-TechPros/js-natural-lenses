@@ -1,4 +1,8 @@
-import { isArray, isObject, isString, isUndefined, property } from 'underscore';
+const { isArray } = Array;
+import isObject from './functional/isObject.js';
+import isString from './functional/isString.js';
+import isUndefined from './functional/isUndefined.js';
+import property from './functional/property.js';
 import { isLensClass, at_maybe } from '../src-cjs/constants.js';
 
 export const isLens = property(isLensClass);

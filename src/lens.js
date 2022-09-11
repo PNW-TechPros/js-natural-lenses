@@ -1,4 +1,5 @@
-import { isFunction, isUndefined } from 'underscore';
+import isFunction from './functional/isFunction.js';
+import isUndefined from './functional/isUndefined.js';
 import { cloneImpl, isLensClass } from '../src-cjs/constants.js';
 import CustomStep from './custom_step.js';
 import fusion from './fusion.js';
