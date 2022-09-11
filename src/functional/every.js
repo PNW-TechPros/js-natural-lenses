@@ -3,7 +3,7 @@ import isArrayLike from './_isArrayLike.js';
 
 export default function every(container, predicate, context) {
   predicate = bindCb(predicate, context);
-  const keys = container == null ? [] : Object.keys(container),
+  const keys = !isArrayLike(container) && Object.keys(container || {}),
     length = (keys || container).length;
   for (let i = 0; i < length; ++i) {
     const curKey = keys ? keys[i] : i;

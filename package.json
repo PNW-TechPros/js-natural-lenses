@@ -27,6 +27,10 @@
     "#this/*": {
       "import": "./*.mjs",
       "default": "./*.js"
+    },
+    "#src/*": {
+      "import": "./esm/*.js",
+      "default": "./cjs/*.js"
     }
   },
   "scripts": {
