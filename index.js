@@ -1,4 +1,4 @@
-const { mapObject } = require('underscore');
+const mapObject = require('./cjs/functional/mapObject').default;
 const { at_maybe, cloneImpl, isLensClass } = require('./src-cjs/constants');
 const Errors = require('./cjs/errors');
 const fusion = require('./cjs/fusion').default;

@@ -1,4 +1,5 @@
-import { isArray, range, reduce } from 'underscore';
+const { isArray } = Array;
+import range from './functional/range.js';
 
 /**
  * @mixin
@@ -24,8 +25,7 @@ export default {
   $(method) {
     // Support tagged template syntax
     if (isArray(method)) {
-      method = reduce(
-        range(1, arguments.length),
+      method = range(1, arguments.length).reduce(
         (cur, i) => cur + arguments[i].toString() + method[i],
         method[0]
       );

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.1
+
+* Removed dependencies on `@babel/runtime` and `underscore`
+
+---
 ## 2.3.0
 
 * Removed `debugger` statements

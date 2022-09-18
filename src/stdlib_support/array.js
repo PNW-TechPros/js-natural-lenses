@@ -1,4 +1,5 @@
-import { forEach, isUndefined } from 'underscore';
+const { forEach } = {};
+import isUndefined from '../functional/isUndefined.js';
 import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
 import { incorporateStdlibSupport } from '../utils.js';
 
