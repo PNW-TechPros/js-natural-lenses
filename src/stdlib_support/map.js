@@ -1,4 +1,4 @@
-import { forEach } from 'underscore';
+const { forEach } = {};
 import { at_maybe, cloneImpl } from '../../src-cjs/constants.js';
 import { incorporateStdlibSupport } from '../utils.js';
 

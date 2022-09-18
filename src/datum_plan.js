@@ -1,4 +1,7 @@
-import { forEach, isArray, isFunction, isObject } from 'underscore';
+const { isArray } = Array;
+import forEach from './functional/each.js';
+import isFunction from './functional/isFunction.js';
+import isObject from './functional/isObject.js';
 import { UndefinedPropertyError } from './errors.js';
 import { smartLog } from './logger.js';
 

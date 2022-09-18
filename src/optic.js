@@ -1,4 +1,5 @@
-import { isFunction, isUndefined } from 'underscore';
+import isFunction from './functional/isFunction.js';
+import isUndefined from './functional/isUndefined.js';
 import BinderMixin from './binder_mixin.js';
 import { isLensClass } from '../src-cjs/constants.js';
 import { smartLog } from './logger.js';

@@ -16,9 +16,6 @@ module.exports = {
         ...sharedPresets
       ],
       plugins: [
-        ["@babel/plugin-transform-runtime", {
-          
-        }],
       ],
     },
   }

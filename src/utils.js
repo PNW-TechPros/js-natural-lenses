@@ -1,4 +1,8 @@
-import { isArray, isObject, isString, isUndefined, property } from 'underscore';
+const { isArray } = Array;
+import isObject from './functional/isObject.js';
+import isString from './functional/isString.js';
+import isUndefined from './functional/isUndefined.js';
+import property from './functional/property.js';
 import { isLensClass, at_maybe } from '../src-cjs/constants.js';
 
 export const isLens = property(isLensClass);
@@ -50,31 +54,63 @@ export function getIterator(val) {
  * [maybeDo]{@link module:natural-lenses#maybeDo} or {@link Optic#getting}, as
  * these allow separate handling of the *Nothing* case.
  */
-export function* eachFound(maybe_val) {
+export function eachFound(maybe_val) {
   if (!('just' in maybe_val)) {
-    return;
+    return makeIterable(() => ({done: true}));
   }
   const val = maybe_val.just;
   if (!maybe_val.multiFocal) {
-    yield [val];
-    return;
+    let i = 0;
+    return makeIterable(() => {
+      if (i === 0) {
+        ++i;
+        return {done: false, value: [val]};
+      } else {
+        return {done: true};
+      }
+    });
   }
   
   if (isArray(val)) {
-    for (let i = 0; i < val.length; i++) {
-      if (i in val) {
-        yield [val[i], i];
+    let i = 0;
+    return makeIterable(() => {
+      while (i < val.length && !(i in val)) {
+        ++i;
       }
-    }
+      if (i < val.length) {
+        const iterVal = [val[i], i];
+        ++i;
+        return {done: false, value: iterVal};
+      } else {
+        return {done: true};
+      }
+    });
   } else /* istanbul ignore else: unsupported case */ if (isObject(val)) {
-    for (const key in val) {
-      if (val.hasOwnProperty(key)) {
-        yield [val[key], key];
+    const entries = Object.entries(val);
+    let i = 0;
+    return makeIterable(() => {
+      if (i >= entries.length) {
+        return {done: true};
       }
-    }
+      const iterVal = {done: false, value: entries[i].reverse()};
+      ++i;
+      return iterVal;
+    });
   } else {
-    yield [val];
+    let i = 0;
+    return makeIterable(() => {
+      if (i === 0) {
+        ++i;
+        return {done: false, value: [val]};
+      } else {
+        return {done: true};
+      }
+    });
   }
+}
+
+function makeIterable(next) {
+  return {[Symbol.iterator]: () => ({ next })};
 }
 
 /**

@@ -1,7 +1,11 @@
-import {
-  each as _each, every, identity, isArray, isFunction, map as _map, mapObject,
-  reduce as _reduce, reduceRight
-} from 'underscore';
+const { isArray } = Array;
+import _each from './functional/each.js';
+import every from './functional/every.js';
+import identity from './functional/identity.js';
+import isFunction from './functional/isFunction.js';
+import _map from './functional/map.js';
+import mapObject from './functional/mapObject.js';
+import _reduce from './functional/reduce.js';
 import { StereoscopyError } from './errors.js';
 import { at_maybe, cloneImpl } from '../src-cjs/constants.js';
 import Optic from './optic.js';
@@ -218,7 +222,7 @@ export class ArrayNFocal extends AbstractNFocal {
     const valSource = newVals || [];
     const result = this.xformInClone_maybe(
       subject,
-      _map(this.lenses, (l, i) => 
+      Array.prototype.map.call(this.lenses, (l, i) => 
         [i, () => (i in valSource) ? {just: valSource[i]} : {}]
       )
     );
