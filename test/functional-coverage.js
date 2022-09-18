@@ -106,7 +106,6 @@ function testSequence(loaderName, subjects) {
   });
 }
 
-// testSequence('CommonJS', { each, every, range, reduce });
 testSequence('CommonJS', Object.fromEntries(functionalModules.map(
   fnName => [fnName, require(`#src/functional/${fnName}`).default]
 )));
