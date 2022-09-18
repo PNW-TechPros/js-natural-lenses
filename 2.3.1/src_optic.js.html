@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>src/optic.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="../versions.html" class="menu-item version-select" id="other_versions" >select version</a></h2><h3>Modules</h3><ul><li><a href="module-natural-lenses.html">natural-lenses</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses.html#asyncLogging">asyncLogging</a></li><li data-type='method'><a href="module-natural-lenses.html#eachFound">eachFound</a></li><li data-type='method'><a href="module-natural-lenses.html#fuse">fuse</a></li><li data-type='method'><a href="module-natural-lenses.html#maybeDo">maybeDo</a></li><li data-type='method'><a href="module-natural-lenses.html#nfocal">nfocal</a></li><li data-type='method'><a href="module-natural-lenses.html#polyfillImmutable">polyfillImmutable</a></li><li data-type='method'><a href="module-natural-lenses.html#setLogger">setLogger</a></li></ul></li><li><a href="module-natural-lenses_datum-plan.html">natural-lenses/datum-plan</a><ul class='methods'><li data-type='method'><a href="module-natural-lenses_datum-plan.html#fromPOD">fromPOD</a></li></ul></li><li><a href="module-natural-lenses_immutable.html">natural-lenses/immutable</a></li><li><a href="module-natural-lenses_sugar.html">natural-lenses/sugar</a></li><li><a href="module-natural-lenses_sugar-factory.html">natural-lenses/sugar-factory</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_process.env_.html">"process.env"</a></li></ul><h3>Interfaces</h3><ul><li><a href="Container.html">Container</a><ul class='methods'><li data-type='method'><a href="Container.html#%255Bat_maybe%255D">[at_maybe]</a></li><li data-type='method'><a href="Container.html#%255Bclone%255D">[clone]</a></li></ul></li><li><a href="ContainerFactory.html">ContainerFactory</a><ul class='methods'><li data-type='method'><a href="ContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#error">error</a></li><li data-type='method'><a href="Logger.html#info">info</a></li><li data-type='method'><a href="Logger.html#preinstallationCalls">preinstallationCalls</a></li><li data-type='method'><a href="Logger.html#trace">trace</a></li><li data-type='method'><a href="Logger.html#warn">warn</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="AbstractNFocal.html">AbstractNFocal</a><ul class='methods'><li data-type='method'><a href="AbstractNFocal.html#binding">binding</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="AbstractNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#get">get</a></li><li data-type='method'><a href="AbstractNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="AbstractNFocal.html#getting">getting</a></li><li data-type='method'><a href="AbstractNFocal.html#present">present</a></li><li data-type='method'><a href="AbstractNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#thence">thence</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="AbstractNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="AbstractNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ArrayNFocal.html">ArrayNFocal</a><ul class='methods'><li data-type='method'><a href="ArrayNFocal.html#binding">binding</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ArrayNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#get">get</a></li><li data-type='method'><a href="ArrayNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ArrayNFocal.html#getting">getting</a></li><li data-type='method'><a href="ArrayNFocal.html#present">present</a></li><li data-type='method'><a href="ArrayNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#thence">thence</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ArrayNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ArrayNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="DatumPlan_TweakBuilder.html">DatumPlan_TweakBuilder</a><ul class='methods'><li data-type='method'><a href="DatumPlan_TweakBuilder.html#ITEMS">ITEMS</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES">NAMED_ENTRIES</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#NAMED_ENTRIES_ALSO">NAMED_ENTRIES_ALSO</a></li><li data-type='method'><a href="DatumPlan_TweakBuilder.html#VALUE">VALUE</a></li></ul></li><li><a href="external-immutable.List.html">List</a></li><li><a href="external-immutable.Map.html">Map</a></li><li><a href="external-immutable.OrderedMap.html">OrderedMap</a></li><li><a href="Factory.html">Factory</a><ul class='methods'><li data-type='method'><a href="Factory.html#A">A</a></li><li data-type='method'><a href="Factory.html#lens">lens</a></li></ul></li><li><a href="JsContainerFactory.html">JsContainerFactory</a><ul class='methods'><li data-type='method'><a href="JsContainerFactory.html#construct">construct</a></li></ul></li><li><a href="Lens.html">Lens</a><ul class='methods'><li data-type='method'><a href="Lens.html#.fuse">fuse</a></li><li data-type='method'><a href="Lens.html#binding">binding</a></li><li data-type='method'><a href="Lens.html#bound">bound</a></li><li data-type='method'><a href="Lens.html#extractor">extractor</a></li><li data-type='method'><a href="Lens.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Lens.html#get">get</a></li><li data-type='method'><a href="Lens.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Lens.html#getIterable">getIterable</a></li><li data-type='method'><a href="Lens.html#getting">getting</a></li><li data-type='method'><a href="Lens.html#present">present</a></li><li data-type='method'><a href="Lens.html#setInClone">setInClone</a></li><li data-type='method'><a href="Lens.html#thence">thence</a></li><li data-type='method'><a href="Lens.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Lens.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Lens.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="ObjectNFocal.html">ObjectNFocal</a><ul class='methods'><li data-type='method'><a href="ObjectNFocal.html#binding">binding</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor">extractor</a></li><li data-type='method'><a href="ObjectNFocal.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#get">get</a></li><li data-type='method'><a href="ObjectNFocal.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#getIterable">getIterable</a></li><li data-type='method'><a href="ObjectNFocal.html#getting">getting</a></li><li data-type='method'><a href="ObjectNFocal.html#present">present</a></li><li data-type='method'><a href="ObjectNFocal.html#setInClone">setInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#thence">thence</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="ObjectNFocal.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="ObjectNFocal.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Optic.html">Optic</a><ul class='methods'><li data-type='method'><a href="Optic.html#binding">binding</a></li><li data-type='method'><a href="Optic.html#extractor">extractor</a></li><li data-type='method'><a href="Optic.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="Optic.html#get">get</a></li><li data-type='method'><a href="Optic.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="Optic.html#getIterable">getIterable</a></li><li data-type='method'><a href="Optic.html#getting">getting</a></li><li data-type='method'><a href="Optic.html#present">present</a></li><li data-type='method'><a href="Optic.html#setInClone">setInClone</a></li><li data-type='method'><a href="Optic.html#thence">thence</a></li><li data-type='method'><a href="Optic.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="Optic.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="Optic.html#xformIterableInClone">xformIterableInClone</a></li><li data-type='method'><a href="Optic.html#~Extractor">Extractor</a></li><li data-type='method'><a href="Optic.html#~MaybeExtractor">MaybeExtractor</a></li></ul></li><li><a href="OpticArray.html">OpticArray</a><ul class='methods'><li data-type='method'><a href="OpticArray.html#binding">binding</a></li><li data-type='method'><a href="OpticArray.html#extractor">extractor</a></li><li data-type='method'><a href="OpticArray.html#extractor_maybe">extractor_maybe</a></li><li data-type='method'><a href="OpticArray.html#get">get</a></li><li data-type='method'><a href="OpticArray.html#get_maybe">get_maybe</a></li><li data-type='method'><a href="OpticArray.html#getIterable">getIterable</a></li><li data-type='method'><a href="OpticArray.html#getting">getting</a></li><li data-type='method'><a href="OpticArray.html#present">present</a></li><li data-type='method'><a href="OpticArray.html#setInClone">setInClone</a></li><li data-type='method'><a href="OpticArray.html#thence">thence</a></li><li data-type='method'><a href="OpticArray.html#xformInClone">xformInClone</a></li><li data-type='method'><a href="OpticArray.html#xformInClone_maybe">xformInClone_maybe</a></li><li data-type='method'><a href="OpticArray.html#xformIterableInClone">xformIterableInClone</a></li></ul></li><li><a href="Step.html">Step</a></li><li><a href="StereoscopyError.html">StereoscopyError</a></li><li><a href="Sugar_CacheControl.html">Sugar_CacheControl</a><ul class='methods'><li data-type='method'><a href="Sugar_CacheControl.html#addCapacity">addCapacity</a></li></ul></li><li><a href="UndefinedPropertyError.html">UndefinedPropertyError</a></li></ul><h3>Mixins</h3><ul><li><a href="BinderMixin.html">BinderMixin</a><ul class='methods'><li data-type='method'><a href="BinderMixin.html#$">$</a></li></ul></li><li><a href="EntriesMixin.html">EntriesMixin</a><ul class='methods'><li data-type='method'><a href="EntriesMixin.html#~at">at</a></li><li data-type='method'><a href="EntriesMixin.html#~mapAllInside">mapAllInside</a></li><li data-type='method'><a href="EntriesMixin.html#~mapInside">mapInside</a></li></ul></li><li><a href="ImmutableLensMixin.html">ImmutableLensMixin</a><ul class='methods'><li data-type='method'><a href="ImmutableLensMixin.html#~getSeq">getSeq</a></li></ul></li><li><a href="IndexableMixin.html">IndexableMixin</a><ul class='methods'><li data-type='method'><a href="IndexableMixin.html#~at">at</a></li><li data-type='method'><a href="IndexableMixin.html#~flatMapInside">flatMapInside</a></li><li data-type='method'><a href="IndexableMixin.html#~length">length</a></li><li data-type='method'><a href="IndexableMixin.html#~mapInside">mapInside</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-immutable.html">immutable</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-background.html">Background</a></li><li><a href="tutorial-commencing.html">Getting Started</a></li><li><a href="tutorial-datum-plans.html">Datum Plans</a></li><li><a href="tutorial-immutable-support.html">Support for Immutable</a></li><li><a href="tutorial-maybe-monad.html">The Maybe Monad</a></li><li><a href="tutorial-multifocal-lensing.html">Multifocal Lensing</a></li><li><a href="tutorial-non-pod.html">Non-POD Containers</a></li><li><a href="tutorial-sugar.html">Lenses from Tagged String Templates</a></li><li><a href="tutorial-utilities.html">Utilities</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/optic.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import isFunction from './functional/isFunction.js';
+import isUndefined from './functional/isUndefined.js';
+import BinderMixin from './binder_mixin.js';
+import { isLensClass } from '../src-cjs/constants.js';
+import { smartLog } from './logger.js';
+import { getIterator, handleNoniterableValue, isLens } from './utils.js';
+
+class Optic {
+  [isLensClass] = true;
+  
+  /**
+   * @class
+   * @mixes BinderMixin
+   */
+  constructor() {}
+  
+  /* istanbul ignore next */
+  /**
+   * @abstract
+   * @summary Get a combination of present and value of this slot
+   * @param {*} subject  The data to query
+   * @param {...*} tail  Additional subject for repeated application
+   * @returns {Maybe.&lt;*>}  The value of the slot in a Maybe moand (*Nothing* if the slot is missing in *subject*)
+   *
+   * @description
+   * If *tail* is given and getting this slot from from *subject* yields a
+   * lens-like object (as indicated by a truthy `lens.isLens` property), then `#get_maybe()`
+   * is called on that lens, passing the spread of *tail*.  If the value of
+   * this slot is *not* a lens, the result is an empty Object.
+   */
+  get_maybe() { abstractMethod(); }
+  
+  /**
+   * @summary Get the value of this slot within subject data
+   * @param {*}    subject  The data to query
+   * @param {...*} tail     Additional subjects for repeated application
+   * @return {*} The value of this slot, or `undefined` if this slot is not present in *subject*
+   *
+   * @description
+   * If *tail* is given, then `#get()` is called on the result of getting this
+   * slot from *subject*, passing the spread of *tail*.  This eliminates
+   * repeated use of `.get` in code.  The chaining fails, returning `undefined`,
+   * if this slot in *subject* is not a lens-like object (as indicated by a truthy
+   * `lens.isLens` property).
+   */
+  get(subject, ...tail) {
+    const subjResult = this.get_maybe(subject).just;
+    if (tail.length > 0) {
+      return isLens(subjResult) ? subjResult.get(...tail) : undefined;
+    }
+    return subjResult;
+  }
+  
+  /**
+   * @summary Get the (iterable) value of this slot within some subject data
+   * @param {*} subject  The data to query
+   * @param {Object} [options]
+   * @param {*} [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
+   * @return {Iterable.&lt;*>} An iterable of values from this slot (or an empty Array)
+   *
+   * @description
+   * If the slot does not exist within *subject*, this method returns an empty
+   * Array.  If the slot within *subject* contains a non-iterable value, this
+   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
+   * behavior is the same as if the slot did not exist: an empty Array is
+   * returned.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
+   * *orThrow* is an Object, its `noniterableValue` property will be set to the
+   * slot's value before being thrown. 
+   *
+   * This method differs from {@link Optic#get} in that the returned value will always
+   * be iterable; thus, the return value of this method may safely be passed
+   * into any function expecting an iterable value.  One example usage is
+   * constructing a `Seq` from the `immutable` package.
+   *
+   * Strings, though iterable, are considered scalar values; if the targeted
+   * slot contains a string, the slot will be treated as non-iterable.
+   */
+  getIterable(subject, {orThrow} = {}) {
+    const maybeVal = this.get_maybe(subject);
+    if (getIterator(maybeVal.just)) {
+      return maybeVal.just;
+    } else {
+      handleNoniterableValue(orThrow, maybeVal);
+      return [];
+    }
+  }
+  
+  /**
+   * @template T
+   * @summary Conditionally evaluate functions depending on presence of slot
+   * @param {*}              subject  The input structured data
+   * @param {Object}         branches
+   * @param {function(*): T} [branches.then]  Function evaluated if slot is present in *subject*
+   * @param {function(): T}  [branches.else]  Function evaluated if slot is absent from *subject*
+   * @returns {T} The value computed by *branches.then* or *branches.else*, or `undefined`
+   *
+   * @description
+   * The presence of the slot determines whether *branches.then* or *branches.else*
+   * is evaluated, with the result being returned from this method.  If the
+   * indicated property of *branches* is missing, then `undefined` is returned.
+   *
+   * If *branches.then* is called, it is passed the value from this slot in
+   * *subject*.
+   */
+  getting(subject, {then: thenDo, else: elseDo}) {
+    const maybeVal = this.get_maybe(subject),
+      handler = ('just' in maybeVal ? thenDo : elseDo) || (() => {});
+    return handler.call(undefined, maybeVal.just);
+  }
+  
+  /**
+   * @summary Test for the presence of this slot in subject data
+   * @param {*}        subject The data to test
+   * @return {Boolean}         Whether this slot is present in *subject*
+   */
+  present(subject) {
+    return 'just' in this.get_maybe(subject);
+  }
+  
+  /* istanbul ignore next */
+  /**
+   * @template T
+   * @summary Clone the input, transforming or deleting the Maybe value of this slot with a function
+   * @param {T}                              subject  The input structured data
+   * @param {function(Maybe.&lt;*>): Maybe.&lt;*>} fn       The function transforming the {@link Maybe} value of the slot
+   * @return {T} A minimally changed clone of *subject* with this slot transformed per *fn*
+   *
+   * @description
+   * The concept of this method is of applying some clear algorithm to the
+   * content of the slot targeted by this Optic instance (in a {@link Maybe} monad,
+   * to cover the possibility of the slot itself not existing in *subject*)
+   * with the result returned in a {@link Maybe} monad (to allow for potential removal
+   * of the slot).
+   *
+   * This implements what conceptually could, in Haskell, be described as:
+   *
+   *    Json -> (Maybe Json -> Maybe Json) -> Json
+   *
+   * "Minimally changed" means that reference-copies are used wherever possible
+   * while leaving subject unchanged, and that setting the slot to the strict-
+   * equal value it already has results in returning *subject*.
+   */
+  xformInClone_maybe() { abstractMethod(); }
+  
+  /**
+   * @template T
+   * @summary Clone the input, transforming the value within this slot with a function
+   * @param {T}              subject  The input structured data
+   * @param {function(*): *} fn  The function that transforms the slot value
+   * @param {Object}         [opts]
+   * @param {Boolean}        opts.addMissinng=false  Whether to add the slot if missing in subject
+   * @return {T} A minimally changed clone of *subject* with *fn* applied to the value in this slot
+   *
+   * @description
+   * If this slot is missing in *subject*, *fn* will not be called unless *addMissing*
+   * is true, in which case fn will be called with `undefined`.
+   *
+   * "Minimally changed" means that reference-copies are used wherever possible
+   * while leaving subject unchanged, and that setting the slot to the strict-
+   * equal value it already has results in returning *subject*.
+   */
+  xformInClone(subject, fn, {addMissing = false} = {}) {
+    return this.xformInClone_maybe(subject, (value_maybe) => {
+      if ('just' in value_maybe || addMissing) {
+        return {just: fn(value_maybe.just)};
+      } else {
+        return {};
+      }
+    });
+  }
+  
+  /**
+   * @template T
+   * @summary Clone the input, transforming the iterable value within this slot with a function
+   * @param {T}        subject  The input structured data
+   * @param {Function} fn       The function that transforms the (iterable) slot value
+   * @param {Object}   [options]
+   * @param {*}        [options.orThrow]  {@link OptionalThrow} if the value of the slot exists but is not iterable
+   * @return {T} A minimally changed clone of subject with the transformed value in this slot
+   *
+   * @description
+   * If the slot does not exist within *subject*, *fn* is invoked on an empty
+   * Array.  If the slot within *subject* contains a non-iterable value, this
+   * method's behavior depends on *orThrow*.  If *orThrow* is `undefined`, the
+   * behavior is the same as if the slot did not exist: an empty Array is
+   * passed to *fn*.  If *orThrow* is not `undefined`, *orThrow* is thrown; if
+   * *orThrow* is an Object, its `noniterableValue` property will be set to the
+   * slot's value before being thrown.
+   *
+   * The primary differences between this method and {@link Lens#xformInClone} are that
+   * this method always passes an iterable value to *fn* and always calls *fn*
+   * even if the slot is missing or does not contain an iterable value (unless
+   * *orThrow* is given).
+   *
+   * Strings, though iterable, are considered scalar values; if the targeted
+   * slot contains a string, the slot will be treated as non-iterable.
+   *
+   * "Minimally changed" means that reference-copies are used wherever possible
+   * while leaving *subject* unchanged, and that setting the slot to the strict-
+   * equal value it already has results in returning *subject*.
+   */
+  xformIterableInClone(subject, fn, {orThrow} = {}) {
+    return this.xformInClone_maybe(subject, maybeVal => {
+      let input, result;
+      if (getIterator(maybeVal.just)) {
+        result = fn(input = maybeVal.just);
+      } else {
+        handleNoniterableValue(orThrow, maybeVal);
+        input = [];
+        if ('just' in maybeVal) {
+          input.noniterableValue = maybeVal.just;
+        }
+        result = fn(input);
+      }
+      if (!getIterator(result)) {
+        smartLog({
+          level: 'warn',
+          trace: true,
+          message: "Noniterable result from fn of xformIterableInClone; substituting empty Array",
+          msgId: 'e3e30f4a71fa',
+          subject,
+          ...this,
+          opticConstructor: this.constructor,
+          input,
+          fn,
+          result,
+        });
+        return {just: []};
+      }
+      return {just: result};
+    });
+  }
+  
+  /**
+   * @template T
+   * @summary Clone *subject*, assigning the given value to this slot within the clone
+   * @param {T} subject  The input structured data
+   * @param {*} newVal   The new value to inject into the slot identified by this lens within the returned clone
+   * @returns {T} A minimally changed clone of *subject* with *newVal* in this slot
+   *
+   * @description
+   * Where {@link Optic#xformInClone_maybe} is about applying some algorithmic
+   * transformation to the Maybe of this slot value, possibly setting or omitting
+   * this slot from the resulting clone, this method is about creating a clone
+   * returning the *newVal* when {@link Optic#get} of this instance is applied
+   * to it.  This base implementation suffices when the `xformInClone_maybe`
+   * accepts as it's transform argument (i.e. second argument) a Function
+   * returning a Maybe of the slot value.
+   *
+   * "Minimally changed" means that reference-copies are used wherever possible
+   * while leaving *subject* unchanged, and that setting the slot to the strict-equal
+   * value it already has results in returning *subject*.
+   */
+  setInClone(subject, newVal) {
+    return this.xformInClone_maybe(subject, () => ({just: newVal}));
+  }
+  
+  /**
+   * @summary DRYly bind a Function to the Object from which it was obtained
+   * @param {string|symbol} methodName
+   * @param {Object} options
+   * @param {*} options.on  The subject of the Function binding; the result of applying this Optic to the value given becomes *this* for the result
+   * @param {boolean} [options.bindNow=false]  Whether to apply this Optic to *options.on* now or when the bound function is invoked
+   * @param {*} [options.orThrow]  {@link OptionalThrow} if the slot referenced does not contain a Function; has precedence over *or*
+   * @param {Function} [options.or]  {@link FallbackBindingResult}, a Function to return if the slot referenced does not contain a Function
+   * @returns {Function}  A Function binding the *methodName* of the target of this Optic to the target of this Optic, or `function() {}` if no such function found
+   * @see {@link Lens#bound}
+   *
+   * @description
+   * This method is a way to avoid duplicating code referencing an object within
+   * *options.on* when 1) obtaining the reference to the method's function,
+   * and 2) binding that method to the object from which it was accessed.
+   *
+   * The return value of this method is *always* a Function; if the slot identified
+   * by this optic is not present in *options.on* or does not host a method
+   * named *methodName*, the trivial function (`function () {}` or equivalent)
+   * will be returned.
+   *
+   * By default, the binding is lazy — the target of the lens within *on* is
+   * evaluated when the resulting Function is invoked (though *on* itself is
+   * bound in this call).  To bind the resulting Function to its target
+   * immediately when this method is called, set *options.bindNow* to `true`.
+   *
+   * @example
+   * const data = {question: "What is the ultimate answer?"};
+   * const qStarts = lens('question').binding('startsWith', {on: data});
+   * qStarts('What') // => true
+   * data.question = "Why is a raven like a writing desk?";
+   * qStarts('What') // => false
+   * qStarts('Why') // => true
+   *
+   * @example
+   * const data = {question: "What is the ultimate answer?"};
+   * const qStarts = lens('question').binding('startsWith', {on: data, bindNow: true});
+   * qStarts('What') // => true
+   * data.question = "Why is a raven like a writing desk?";
+   * qStarts('What') // => true (because qStarts bound to the target of the lens when `binding` was called)
+   */
+  binding(methodName, {on, bindNow = false, orThrow, or}) {
+    const optic = this;
+    function lookUpPlayers() {
+      const mSubj = optic.get(on), fn = (function() {
+        try {return mSubj[methodName];} catch (e) {}  
+      }());
+      return {mSubj, fn};
+    }
+    
+    if (bindNow) {
+      const {mSubj, fn} = lookUpPlayers();
+      if (isFunction(fn)) {
+        return fn.bind(mSubj);
+      }
+      if (orThrow) {
+        throw orThrow;
+      } else if (!isUndefined(or)) {
+        return or;
+      }
+      return function() {};
+    } else return function (...args) {
+      const {mSubj, fn} = lookUpPlayers();
+      if (isFunction(fn)) {
+        return fn.apply(mSubj, args);
+      }
+      if (orThrow) {
+        throw orThrow;
+      } else if (!isUndefined(or)) {
+        return or.apply(undefined, args);
+      }
+    };
+  }
+  
+  /**
+   * @summary Construct a Function to extract (and possibly transform) the slot value from a subject
+   * @param {Function} [xform]  The transformation to apply to the slot's value
+   * @returns {Optic~Extractor}  The resulting extractor
+   * @since 2.2.0
+   */
+  extractor(xform) {
+    const inner = this.extractor_maybe(xform);
+    /**
+     * @function Optic~Extractor
+     * @param {*} subject  The input structured data
+     * @returns {*}  The extracted — and possibly transformed — slot value (`undefined` if slot is missing in *subject*)
+     * @since 2.2.0
+     * @see Optic#extractor
+     */
+    return (subject) => inner(subject).just;
+  }
+  
+  /**
+   * @summary Construct a Function to extract (and optionally transform) the slot value from a subject in a Maybe monad
+   * @param {Function} [xform]  The transformation to apply to the slot's value
+   * @returns {Optic~MaybeExtractor}  The resulting extractor
+   * @since 2.2.0
+   *
+   * @description
+   * Like [extractor]{@link Optic#extractor}, but with more clarity in the result
+   * about whether the slot existed or the transform returned `undefined` through
+   * use of the {@link Maybe} monad.
+   */
+  extractor_maybe(xform) {
+    /**
+     * @function Optic~MaybeExtractor
+     * @param {*} subject  The input structured data
+     * @returns {Maybe.&lt;*>}  The extracted — and possibly transformed — slot value in a {@link Maybe} monad
+     * @since 2.2.0
+     * @see Optic#extractor_maybe
+     */
+    return (subject) => {
+      return this.getting(subject, {
+        then(val) {return {just: xform ? xform.call(undefined, val) : val}},
+        else() {return {}}
+      });
+    }
+  }
+}
+Object.assign(Optic.prototype, BinderMixin);
+export default Optic;
+
+/* istanbul ignore next */
+function abstractMethod() {
+  throw new Error("Abstract method not implemented by concrete class");
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Sun Sep 18 2022 11:59:04 GMT-0700 (Pacific Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="styles/pkg-custom.css">
+    
+</body>
+</html>
